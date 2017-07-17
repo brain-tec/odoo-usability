@@ -65,6 +65,118 @@
     </field>
 </record>
 
+<!-- Having a menu entry on invoice lines is often very usefull for odoo user:
+they can search in their lines, etc...
+So I enhance the generic views and add actions, but I don't add menu entries here ;
+the creation of the corresponding menu entry should be done in the customer-specific
+module -->
+<record id="view_invoice_line_tree" model="ir.ui.view">
+    <field name="name">account_usability.invoice_line_tree</field>
+    <field name="model">account.invoice.line</field>
+    <field name="inherit_id" ref="account.view_invoice_line_tree"/>
+    <field name="arch" type="xml">
+        <field name="name" position="before">
+            <field name="partner_id" invisible="not context.get('show_invoice_fields')"/>
+            <field name="date_invoice" invisible="not context.get('show_invoice_fields')"/>
+            <field name="invoice_number" invisible="not context.get('show_invoice_fields')"/>
+        </field>
+        <field name="price_subtotal" position="after">
+            <field name="currency_id"/>
+            <field name="state" invisible="not context.get('show_invoice_fields')"/>
+            <field name="invoice_type" invisible="1"/>
+        </field>
+        <xpath expr="/tree" position="attributes">
+            <attribute name="edit">0</attribute>
+            <attribute name="create">0</attribute>
+        </xpath>
+    </field>
+</record>
+
+<record id="account_invoice_line_search" model="ir.ui.view">
+    <field name="name">account_usability.invoice_line_search</field>
+    <field name="model">account.invoice.line</field>
+    <field name="arch" type="xml">
+        <search string="Search Invoice Lines">
+            <field name="partner_id"/>
+            <field name="product_id"/>
+            <field name="account_id"/>
+            <field name="invoice_number"/>
+            <field name="name"/>
+            <filter name="out_invoice" string="Customer Invoices"
+                domain="[('invoice_type', '=', 'out_invoice')]"/>
+            <filter name="out_refund" string="Customer Refunds"
+                domain="[('invoice_type', '=', 'out_refund')]"/>
+            <filter name="in_invoice" string="Supplier Invoices"
+                domain="[('invoice_type', '=', 'in_invoice')]"/>
+            <filter name="in_refund" string="Supplier Refunds"
+                domain="[('invoice_type', '=', 'in_refund')]"/>
+            <separator/>
+            <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+            <filter name="unpaid" string="Not Paid" domain="[('state', '=', 'open')]"/>
+            <filter name="paid" string="Paid" domain="[('state', '=', 'paid')]"/>
+
+            <group string="Group By" name="groupby">
+                <filter name="partner_groupby" string="Partner"
+                    context="{'group_by': 'partner_id'}"/>
+                <filter name="commercial_partner_group_by" string="Commercial Partner"
+                    context="{'group_by': 'commercial_partner_id'}"/>
+                <filter name="date_groupby" string="Invoice Date"
+                    context="{'group_by': 'date_invoice'}"/>
+                <filter name="product_groupby" string="Product"
+                    context="{'group_by': 'product_id'}"/>
+                <filter name="account_groupby" string="Account"
+                    context="{'group_by': 'account_id'}"/>
+            </group>
+        </search>
+    </field>
+</record>
+
+<record id="out_invoice_line_action" model="ir.actions.act_window">
+    <field name="name">Customer Invoice Lines</field>
+    <field name="res_model">account.invoice.line</field>
+    <field name="view_mode">tree,form</field>
+    <field name="domain">[('invoice_type', '=', 'out_invoice')]</field>
+    <field name="context">{'show_invoice_fields': True}</field>
+</record>
+
+<record id="out_refund_line_action" model="ir.actions.act_window">
+    <field name="name">Customer Refund Lines</field>
+    <field name="res_model">account.invoice.line</field>
+    <field name="view_mode">tree,form</field>
+    <field name="domain">[('invoice_type', '=', 'out_refund')]</field>
+    <field name="context">{'show_invoice_fields': True}</field>
+</record>
+
+<record id="in_invoice_line_action" model="ir.actions.act_window">
+    <field name="name">Supplier Invoice Lines</field>
+    <field name="res_model">account.invoice.line</field>
+    <field name="view_mode">tree,form</field>
+    <field name="domain">[('invoice_type', '=', 'in_invoice')]</field>
+    <field name="context">{'show_invoice_fields': True}</field>
+</record>
+
+<record id="in_refund_line_action" model="ir.actions.act_window">
+    <field name="name">Supplier Refund Lines</field>
+    <field name="res_model">account.invoice.line</field>
+    <field name="view_mode">tree,form</field>
+    <field name="domain">[('invoice_type', '=', 'in_refund')]</field>
+    <field name="context">{'show_invoice_fields': True}</field>
+</record>
+
+<record id="view_account_invoice_report_search" model="ir.ui.view">
+    <field name="name">usability.account.invoice.report.search</field>
+    <field name="model">account.invoice.report</field>
+    <field name="inherit_id" ref="account.view_account_invoice_report_search"/>
+    <field name="arch" type="xml">
+        <field name="categ_id" position="after">
+            <field name="product_id"/>
+        </field>
+        <filter name="category_product" position="after">
+            <filter string="Product" name="product_group_by" context="{'group_by': 'product_id'}"/>
+        </filter>
+    </field>
+</record>
+
 <!-- model account.move.line / Journal Items -->
 <record id="account.action_account_moves_all_a" model="ir.actions.act_window">
     <field name="limit">200</field>
@@ -101,6 +213,7 @@
     <field name="arch" type="xml">
         <field name="partner_id" position="after">
             <field name="reconcile_ref" />
+            <field name="debit" filter_domain="['|', ('debit', '=', self), ('credit', '=', self)]" string="Debit or Credit"/>
         </field>
         <filter name="unreconciled" position="before">
             <filter name="reconciled" string="Fully Reconciled" domain="[('reconcile_id', '!=', False)]"/>
@@ -128,6 +241,7 @@
     <field name="name">account_usability.account_move_line_tree</field>
     <field name="model">account.move.line</field>
     <field name="inherit_id" ref="account.view_move_line_tree"/>
+    <field name="priority">1</field> <!-- to be compatible with account_analytic_plans which removes the field analytic_account_id and has a priority of 2 -->
     <field name="arch" type="xml">
         <field name="analytic_account_id" position="attributes">
             <attribute name="invisible"></attribute>
@@ -189,6 +303,12 @@
     </field>
 </record>
 
+<!-- When you click on the "Contract" button of partner form view,
+the newly created analytic accounts should be of type contract ! -->
+<record id="account.action_open_partner_analytic_accounts" model="ir.actions.act_window">
+    <field name="context">{'search_default_partner_id': [active_id], 'default_partner_id': active_id, 'default_type': 'contract'}</field>
+</record>
+
 <record id="view_bank_statement_form" model="ir.ui.view">
     <field name="name">usability.account.bank.statement.form</field>
     <field name="model">account.bank.statement</field>
@@ -200,6 +320,65 @@
                 string="View Account Move" icon="gtk-redo"
                 attrs="{'invisible': [('journal_entry_id', '=', False)]}"/>
         </xpath>
+        <field name="company_id" position="before">
+            <field name="start_date"/>
+            <field name="end_date"/>
+        </field>
+    </field>
+</record>
+
+<record id="view_bank_statement_tree" model="ir.ui.view">
+    <field name="name">usability.account.bank.statement.tree</field>
+    <field name="model">account.bank.statement</field>
+    <field name="inherit_id" ref="account.view_bank_statement_tree"/>
+    <field name="arch" type="xml">
+        <field name="period_id" position="attributes">
+            <attribute name="invisible">1</attribute>
+        </field>
+        <field name="date" position="attributes">
+            <attribute name="invisible">1</attribute>
+        </field>
+        <field name="journal_id" position="after">
+            <field name="start_date"/>
+            <field name="end_date"/>
+        </field>
+    </field>
+</record>
+
+<record id="view_bank_statement_search" model="ir.ui.view">
+    <field name="name">usability.account.bank.statement.search</field>
+    <field name="model">account.bank.statement</field>
+    <field name="inherit_id" ref="account.view_bank_statement_search"/>
+    <field name="arch" type="xml">
+        <field name="date" position="attributes">
+            <attribute name="invisible">1</attribute>
+        </field>
+        <filter context="{'group_by': 'period_id'}" position="attributes">
+            <attribute name="invisible">1</attribute>
+        </filter>
+        <filter context="{'group_by': 'period_id'}" position="after">
+            <filter name="start_date_groupby" string="Start Date"
+                context="{'group_by': 'start_date'}"/>
+            <filter name="end_date_groupby" string="End Date"
+                context="{'group_by': 'end_date'}"/>
+        </filter>
+        <field name="date" position="after">
+            <field name="start_date"/>
+            <field name="end_date"/>
+        </field>
+    </field>
+</record>
+
+<record id="view_account_analytic_account_form" model="ir.ui.view">
+    <field name="name">analytic.analytic.account.form</field>
+    <field name="model">account.analytic.account</field>
+    <field name="inherit_id" ref="analytic.view_account_analytic_account_form"/>
+    <field name="arch" type="xml">
+        <notebook position="inside">
+            <page name="invoice_lines" string="Related Invoice Lines" attrs="{'invisible': [('type', 'not in', ('contract', 'normal'))]}">
+                <field name="invoice_line_ids" nolabel="1" context="{'show_invoice_fields': 1}"/>
+            </page>
+        </notebook>
     </field>
 </record>
 

@@ -1,24 +1,7 @@
-# -*- encoding: utf-8 -*-
-##############################################################################
-#
-#    Purchase Usability Extension module for Odoo
-#    Copyright (C) 2015 Akretion (http://www.akretion.com)
-#    @author Alexis de Lattre <alexis.delattre@akretion.com>
-#
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU Affero General Public License as
-#    published by the Free Software Foundation, either version 3 of the
-#    License, or (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU Affero General Public License for more details.
-#
-#    You should have received a copy of the GNU Affero General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-##############################################################################
+# -*- coding: utf-8 -*-
+# © 2015-2017 Akretion (http://www.akretion.com)
+# @author Alexis de Lattre <alexis.delattre@akretion.com>
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from openerp import models, fields, api
 
@@ -47,6 +30,15 @@ class PurchaseOrder(models.Model):
     partner_ref = fields.Char(track_visibility='onchange')
 
 
+class StockPicking(models.Model):
+    _inherit = 'stock.picking'
+
+    # Field added to have a clickable link from picking to PO
+    purchase_id = fields.Many2one(
+        related='move_lines.purchase_line_id.order_id', readonly=True,
+        string='Purchase Order')
+
+
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
@@ -72,3 +64,9 @@ class ResPartner(models.Model):
         compute='_purchase_stats', string='# of Purchase Order')
     supplier_invoice_count = fields.Integer(
         compute='_purchase_stats', string='# Supplier Invoices')
+
+
+class ProductTemplate(models.Model):
+    _inherit = 'product.template'
+
+    purchase_ok = fields.Boolean(track_visibility='onchange')

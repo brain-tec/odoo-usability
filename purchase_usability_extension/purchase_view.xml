@@ -68,5 +68,6 @@
     <field name="context">{'search_default_draft': True}</field>
 </record>
 
+
 </data>
 </openerp>

@@ -23,6 +23,8 @@
 from openerp import models, fields, api, _
 from openerp.tools import float_compare
 from openerp.exceptions import Warning as UserError
+import logging
+logger = logging.getLogger(__name__)
 
 
 class AccountInvoice(models.Model):
@@ -43,46 +45,8 @@ class AccountInvoice(models.Model):
     fiscal_position = fields.Many2one(track_visibility='onchange')
 
     @api.multi
-    def action_move_create(self):
-        res = super(AccountInvoice, self).action_move_create()
-        today = fields.Date.context_today(self)
-        # When empty, the invoice_date is set by action_move_create()
-        for invoice in self:
-            if invoice.date_invoice > today:
-                raise UserError(_(
-                    "You cannot validate the invoice of '%s' "
-                    " with an invoice date (%s) in the future !") % (
-                        invoice.partner_id.name_get()[0][1],
-                        invoice.date_invoice))
-            if (
-                    not invoice.internal_number and
-                    invoice.type in ('out_invoice', 'out_refund')):
-                previous_invoices = self.search([
-                    ('journal_id', '=', invoice.journal_id.id),
-                    ('date_invoice', '!=', False),
-                    ('internal_number', '!=', False),
-                    ], order='date_invoice desc', limit=1)
-                if (
-                        previous_invoices and
-                        previous_invoices[0].date_invoice >
-                        invoice.date_invoice):
-                    raise UserError(_(
-                        "You cannot validate the invoice for '%s' "
-                        "with an invoice date %s because another invoice "
-                        "number %s is dated %s in the same journal. "
-                        "In order to have a coherent "
-                        "invoice number sequence, the date of this invoice "
-                        "should the same or a later date as the "
-                        "previous one in the same journal.") % (
-                            invoice.partner_id.name_get()[0][1],
-                            invoice.date_invoice,
-                            previous_invoices[0].internal_number,
-                            previous_invoices[0].date_invoice,
-                            ))
-        return res
-
-    @api.multi
-    def onchange_payment_term_date_invoice(self, payment_term_id, date_invoice):
+    def onchange_payment_term_date_invoice(
+            self, payment_term_id, date_invoice):
         res = super(AccountInvoice, self).onchange_payment_term_date_invoice(
             payment_term_id, date_invoice)
         if res and isinstance(res, dict) and 'value' in res:
@@ -93,20 +57,41 @@ class AccountInvoice(models.Model):
     # generated from customer invoices linked to the partners' account because:
     # 1) the label of an account move line is an important field, we can't
     #    write a rubbish '/' in it !
-    # 2) the 'name' field of the account.move.line is used in the overdue letter,
-    # and '/' is not meaningful for our customer !
+    # 2) the 'name' field of the account.move.line is used in the overdue
+    #    letter and '/' is not meaningful for our customer !
     @api.multi
     def action_number(self):
         res = super(AccountInvoice, self).action_number()
         for inv in self:
-            if inv.type in ('out_invoice', 'out_refund'):
-                self._cr.execute(
-                    "UPDATE account_move_line SET name= "
-                    "CASE WHEN name='/' THEN %s "
-                    "ELSE %s||' - '||name END "
-                    "WHERE move_id=%s", (inv.number, inv.number, inv.move_id.id))
-                self.invalidate_cache()
+            self._cr.execute(
+                "UPDATE account_move_line SET name= "
+                "CASE WHEN name='/' THEN %s "
+                "ELSE %s||' - '||name END "
+                "WHERE move_id=%s", (inv.number, inv.number, inv.move_id.id))
+            self.invalidate_cache()
         return res
+
+
+class AccountInvoiceLine(models.Model):
+    _inherit = 'account.invoice.line'
+
+    # In the 'account' module, we have related stored field for:
+    # company_id, partner_id
+    currency_id = fields.Many2one(
+        related='invoice_id.currency_id', readonly=True, store=True)
+    invoice_type = fields.Selection(
+        related='invoice_id.type', store=True, readonly=True)
+    date_invoice = fields.Date(
+        related='invoice_id.date_invoice', store=True, readonly=True)
+    commercial_partner_id = fields.Many2one(
+        related='invoice_id.partner_id.commercial_partner_id',
+        store=True, readonly=True)
+    state = fields.Selection(
+        related='invoice_id.state', store=True, readonly=True,
+        string='Invoice State')
+    invoice_number = fields.Char(
+        related='invoice_id.move_id.name', store=True, readonly=True,
+        string='Invoice Number')
 
 
 class AccountFiscalYear(models.Model):
@@ -145,9 +130,35 @@ class AccountAccount(models.Model):
         else:
             return super(AccountAccount, self).name_get()
 
+    @api.model
+    def check_account_hierarchy(self):
+        '''designed to be called by a script'''
+        accounts = self.env['account.account'].search([])
+        parent_accounts = self
+        for account in accounts:
+            if account.parent_id and account.parent_id not in parent_accounts:
+                parent_accounts += account.parent_id
+        err_msg = []
+        view_user_type = self.env.ref('account.data_account_type_view')
+        for pacc in parent_accounts:
+            if pacc.type != 'view':
+                err_msg.append(_(
+                    'Parent account %s should have type=view '
+                    '(current type=%s)') % (pacc.code, pacc.type))
+            if pacc.user_type != view_user_type:
+                err_msg.append(_(
+                    'Parent account %s should have user_type=view (current '
+                    '(user_type=%s)') % (pacc.code, pacc.user_type.name))
+        if err_msg:
+            raise UserError('\n'.join(err_msg))
+
 
 class AccountAnalyticAccount(models.Model):
     _inherit = 'account.analytic.account'
+
+    invoice_line_ids = fields.One2many(
+        'account.invoice.line', 'account_analytic_id', 'Invoice Lines',
+        readonly=True)
 
     @api.multi
     def name_get(self):
@@ -165,10 +176,50 @@ class AccountAnalyticAccount(models.Model):
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
+    # When ref is too long, the PDF general ledger report becomes
+    # unreadable
+    ref = fields.Char(size=32)
+    # If you want to migrate existing data :
+    # update account_move set ref=left(ref,32) where ref is not null;
+    # update account_move_line set ref=left(ref,32) where ref is not null;
+
     @api.onchange('date')
     def date_onchange(self):
         if self.date:
             self.period_id = self.env['account.period'].find(self.date)
+
+    @api.model
+    def delete_move_no_lines(self):
+        '''designed to be called by a script'''
+        moves_no_lines = self.search([('line_id', '=', False)])
+        inv_moves_sr = self.env['account.invoice'].search_read(
+            [('move_id', '!=', False)], ['move_id'])
+        move2inv = {}  # key=move_id, value=invoice_id
+        invoice_move_no_line = {}  # key=ID, value=number
+        deleted_move_ids = []
+        for inv_move_sr in inv_moves_sr:
+            move2inv[inv_move_sr['move_id'][0]] = inv_move_sr['id']
+        for move in moves_no_lines:
+            for l in move.line_id:
+                raise UserError(_('Move %d has a line !') % move.id)
+            if move.id not in move2inv:
+                if move.state == 'posted':
+                    move.state = 'draft'
+                deleted_move_ids.append(move.id)
+                move.unlink()
+            else:
+                invoice_move_no_line[move2inv[move.id]] = move.name
+        if deleted_move_ids:
+            logger.info(
+                'Account move IDs %s have been deleted because they '
+                'had 0 lines', deleted_move_ids)
+        else:
+            logger.info('0 moves without lines found')
+        if invoice_move_no_line:
+            for inv_id, inv_number in invoice_move_no_line.iteritems():
+                logger.info(
+                    'Invoice ID %d number %s has a move with 0 lines',
+                    inv_id, inv_number)
 
 
 class AccountMoveLine(models.Model):
@@ -202,6 +253,28 @@ class AccountMoveLine(models.Model):
                 self.debit = amount_company_currency * -1
             else:
                 self.credit = amount_company_currency
+
+    analytic_account_id = fields.Many2one(
+        domain=[('type', 'not in', ('view', 'template'))])
+
+
+class AccountBankStatement(models.Model):
+    _inherit = 'account.bank.statement'
+
+    start_date = fields.Date(
+        compute='_compute_dates', string='Start Date', readonly=True,
+        store=True)
+    end_date = fields.Date(
+        compute='_compute_dates', string='End Date', readonly=True,
+        store=True)
+
+    @api.multi
+    @api.depends('line_ids.date')
+    def _compute_dates(self):
+        for st in self:
+            dates = [line.date for line in st.line_ids]
+            st.start_date = dates and min(dates) or False
+            st.end_date = dates and max(dates) or False
 
 
 class AccountBankStatementLine(models.Model):
@@ -249,6 +322,7 @@ class AccountBankStatementLine(models.Model):
         else:
             raise UserError(_(
                 'No journal entry linked to this bank statement line.'))
+
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
