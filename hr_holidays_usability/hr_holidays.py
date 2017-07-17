@@ -24,6 +24,7 @@ from openerp.osv import orm, fields
 from openerp.tools.translate import _
 from openerp.tools import DEFAULT_SERVER_DATE_FORMAT, \
     DEFAULT_SERVER_DATETIME_FORMAT
+from openerp.tools import float_compare
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import pytz
@@ -78,7 +79,7 @@ class HrHolidays(orm.Model):
         hhpo = self.pool['hr.holidays.public']
         for hol in self.browse(cr, uid, ids, context=context):
             days = 0.0
-            if hol.type == 'remove' and hol.holiday_type == 'employee':
+            if hol.type == 'remove' and hol.holiday_type == 'employee' and hol.vacation_date_from and hol.vacation_date_to:
                 if hol.holiday_status_id.vacation_compute_method == 'business':
                     business = True
                 else:
@@ -136,12 +137,16 @@ class HrHolidays(orm.Model):
                                 days -= 0.5
                         break
                     date_dt += relativedelta(days=1)
-
-            if hol.type == 'remove':
-                # read number_of_days_remove instead of number_of_days_temp
                 res[hol.id] = {
                     'number_of_days': days * -1,
                     'number_of_days_remove': days,
+                    }
+
+            elif hol.type == 'remove':
+                # When we do a leave and force qty
+                res[hol.id] = {
+                    'number_of_days': hol.number_of_days_temp * -1,
+                    'number_of_days_remove': hol.number_of_days_temp,
                     }
             else:
                 # for allocations, we read the native field number_of_days_temp
@@ -231,7 +236,7 @@ class HrHolidays(orm.Model):
     def _check_vacation_dates(self, cr, uid, ids):
         hhpo = self.pool['hr.holidays.public']
         for hol in self.browse(cr, uid, ids):
-            if hol.type == 'remove':
+            if hol.type == 'remove' and hol.vacation_date_from and hol.vacation_date_to:
                 if hol.vacation_date_from > hol.vacation_date_to:
                     raise orm.except_orm(
                         _('Error:'),
@@ -341,7 +346,8 @@ class HrHolidays(orm.Model):
                         False)[record.holiday_status_id.id]['remaining_leaves']
                     # here is the code that I modify
                     #if leaves_rest < record.number_of_days_temp:
-                    if leaves_rest < record.number_of_days * -1:
+                    #if leaves_rest < record.number_of_days * -1:
+                    if float_compare(leaves_rest, record.number_of_days * -1, precision_digits=2) < 0:
                         raise orm.except_orm(
                             _('Warning!'),
                             _('There are not enough %s allocated for '
