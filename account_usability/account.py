@@ -6,7 +6,6 @@
 from odoo import models, fields, api, _
 from odoo.tools import float_compare, float_is_zero
 from odoo.exceptions import UserError
-from itertools import groupby
 
 
 class AccountInvoice(models.Model):
@@ -33,6 +32,12 @@ class AccountInvoice(models.Model):
     # for invoice report
     has_discount = fields.Boolean(
         compute='_compute_has_discount', readonly=True)
+    # has_attachment is useful for those who use attachment to archive
+    # supplier invoices. It allows them to find supplier invoices
+    # that don't have any attachment
+    has_attachment = fields.Boolean(
+        compute='_compute_has_attachment',
+        search='_search_has_attachment', readonly=True)
 
     @api.multi
     def _compute_has_discount(self):
@@ -45,12 +50,36 @@ class AccountInvoice(models.Model):
                     break
             inv.has_discount = has_discount
 
+    def _compute_has_attachment(self):
+        iao = self.env['ir.attachment']
+        for inv in self:
+            if iao.search([
+                    ('res_model', '=', 'account.invoice'),
+                    ('res_id', '=', inv.id),
+                    ('type', '=', 'binary'),
+                    ('company_id', '=', inv.company_id.id)], limit=1):
+                inv.has_attachment = True
+            else:
+                inv.has_attachment = False
+
+    def _search_has_attachment(self, operator, value):
+        att_inv_ids = {}
+        if operator == '=':
+            search_res = self.env['ir.attachment'].search_read([
+                ('res_model', '=', 'account.invoice'),
+                ('type', '=', 'binary'),
+                ('res_id', '!=', False)], ['res_id'])
+            for att in search_res:
+                att_inv_ids[att['res_id']] = True
+        res = [('id', value and 'in' or 'not in', att_inv_ids.keys())]
+        return res
+
     # I really hate to see a "/" in the 'name' field of the account.move.line
     # generated from customer invoices linked to the partners' account because:
     # 1) the label of an account move line is an important field, we can't
     #    write a rubbish '/' in it !
-    # 2) the 'name' field of the account.move.line is used in the overdue letter,
-    # and '/' is not meaningful for our customer !
+    # 2) the 'name' field of the account.move.line is used in the overdue
+    # letter, and '/' is not meaningful for our customer !
     @api.multi
     def action_move_create(self):
         res = super(AccountInvoice, self).action_move_create()
@@ -62,6 +91,12 @@ class AccountInvoice(models.Model):
                 "WHERE move_id=%s", (inv.number, inv.number, inv.move_id.id))
             self.invalidate_cache()
         return res
+
+    def delete_lines_qty_zero(self):
+        lines = self.env['account.invoice.line'].search([
+            ('invoice_id', 'in', self.ids), ('quantity', '=', 0)])
+        lines.unlink()
+        return True
 
 
 class AccountInvoiceLine(models.Model):
@@ -98,8 +133,10 @@ class AccountJournal(models.Model):
             return res
         else:
             for journal in self:
-                currency = journal.currency_id or journal.company_id.currency_id
-                name = "[%s] %s (%s)" % (journal.code, journal.name, currency.name)
+                currency = journal.currency_id or\
+                    journal.company_id.currency_id
+                name = "[%s] %s (%s)" % (
+                    journal.code, journal.name, currency.name)
                 res.append((journal.id, name))
             return res
 
@@ -157,8 +194,8 @@ class AccountAnalyticAccount(models.Model):
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
-    default_move_line_name = fields.Char(string='Default Label',
-        states={'posted': [('readonly', True)]})
+    default_move_line_name = fields.Char(
+        string='Default Label', states={'posted': [('readonly', True)]})
     # By default, we can still modify "ref" when account move is posted
     # which seems a bit lazy for me...
     ref = fields.Char(states={'posted': [('readonly', True)]})
@@ -267,7 +304,7 @@ class AccountBankStatementLine(models.Model):
     # is caused by this.
     # Set search_reconciliation_proposition to False by default
     # TODO: re-write in v10
-    #def get_data_for_reconciliations(
+    # def get_data_for_reconciliations(
     #        self, cr, uid, ids, excluded_ids=None,
     #        search_reconciliation_proposition=False, context=None):
     #    # Make variable name shorted for PEP8 !
@@ -287,8 +324,8 @@ class AccountBankStatementLine(models.Model):
         # 2) The name of the statement line is already written in the name of
         # the move line -> not useful to have the info 2 times
         # In the end, I think it's better to just put nothing (we could write
-        # the name of the statement which has the account number, but it doesn't
-        # bring any useful info to the accountant)
+        # the name of the statement which has the account number, but it
+        # doesn't bring any useful info to the accountant)
         # The only "good" thing to do would be to have a sequence per
         # statement line and write it in this 'ref' field
         # But that would required an additionnal field on statement lines
