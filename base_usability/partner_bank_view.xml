@@ -7,7 +7,6 @@
 
 <odoo>
 
-
 <record id="view_partner_bank_tree" model="ir.ui.view">
     <field name="name">base_usability.res.partner.bank.tree</field>
     <field name="model">res.partner.bank</field>
@@ -19,6 +18,5 @@
         </field>
     </field>
 </record>
-
 
 </odoo>
