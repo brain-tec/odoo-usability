@@ -43,7 +43,6 @@ class AccountInvoice(models.Model):
         compute='_compute_has_attachment',
         search='_search_has_attachment', readonly=True)
 
-    @api.multi
     def _compute_has_discount(self):
         prec = self.env['decimal.precision'].precision_get('Discount')
         for inv in self:
@@ -76,6 +75,25 @@ class AccountInvoice(models.Model):
             for att in search_res:
                 att_inv_ids[att['res_id']] = True
         res = [('id', value and 'in' or 'not in', att_inv_ids.keys())]
+        return res
+
+    # when you have an invoice created from a lot of sale orders, the 'name'
+    # field is very large, which makes the name_get() of that invoice very big
+    # which screws-up the form view of that invoice because of the link at the
+    # top of the screen
+    # That's why we have to cut the name_get() when it's too long
+    def name_get(self):
+        old_res = super(AccountInvoice, self).name_get()
+        res = []
+        for old_re in old_res:
+            name = old_re[1]
+            if name and len(name) > 100:
+                # nice cut
+                name = u'%s ...' % ', '.join(name.split(', ')[:3])
+                # if not enough, hard cut
+                if len(name) > 120:
+                    name = u'%s ...' % old_re[1][:120]
+            res.append((old_re[0], name))
         return res
 
     # I really hate to see a "/" in the 'name' field of the account.move.line
@@ -264,6 +282,28 @@ class AccountMove(models.Model):
     # which seems a bit lazy for me...
     ref = fields.Char(states={'posted': [('readonly', True)]})
     date = fields.Date(copy=False)
+    default_account_id = fields.Many2one(
+        related='journal_id.default_debit_account_id', readonly=True)
+    default_credit = fields.Float(
+        compute='_compute_default_credit_debit', readonly=True)
+    default_debit = fields.Float(
+        compute='_compute_default_credit_debit', readonly=True)
+
+    @api.depends('line_ids.credit', 'line_ids.debit')
+    def _compute_default_credit_debit(self):
+        for move in self:
+            total_debit = total_credit = default_debit = default_credit = 0.0
+            for l in move.line_ids:
+                total_debit += l.debit
+                total_credit += l.credit
+            # I could use float_compare, but I don't think it's really needed
+            # in this context
+            if total_debit > total_credit:
+                default_credit = total_debit - total_credit
+            else:
+                default_debit = total_credit - total_debit
+            move.default_credit = default_credit
+            move.default_debit = default_debit
 
 
 class AccountMoveLine(models.Model):
