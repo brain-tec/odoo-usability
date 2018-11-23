@@ -5,6 +5,7 @@
 
 from odoo import models, fields, api, _
 from odoo.tools import float_compare, float_is_zero
+from odoo.tools.misc import formatLang
 from odoo.exceptions import UserError, ValidationError
 from odoo import SUPERUSER_ID
 import logging
@@ -252,6 +253,36 @@ class AccountAccount(models.Model):
         logger.info("END of the script 'fix bank and cash account types'")
         return True
 
+    def create_account_groups(self, level=2, name_prefix=u'Compte ', root_name='Plan comptable'):
+        '''Should be launched by a script. Make sure the account_group module is installed
+        (the account_usability module doesn't depend on it currently'''
+        # TODO: convert to multi-company
+        assert level >= 1
+        assert isinstance(level, int)
+        ago = self.env['account.group']
+        groups = ago.search([])
+        if groups:
+            raise UserError(_("Some account groups already exists"))
+        accounts = self.search([('company_id', '=', self.env.user.company_id.id)])
+        struct = {'childs': {}}
+        for account in accounts:
+            assert len(account.code) > level
+            n = 1
+            parent = struct
+            gparent = False
+            while n <= level:
+                group_code = account.code[:n]
+                if group_code not in parent['childs']:
+                    new_group = ago.create({
+                        'name': u'%s%s' % (name_prefix, group_code),
+                        'parent_id': gparent and gparent.id or False,
+                        })
+                    parent['childs'][group_code] = {'obj': new_group, 'childs': {}}
+                parent = parent['childs'][group_code]
+                gparent = parent['obj']
+                n += 1
+            account.group_id = gparent.id
+
 
 class AccountAnalyticAccount(models.Model):
     _inherit = 'account.analytic.account'
@@ -318,6 +349,13 @@ class AccountMoveLine(models.Model):
     # Update field only to add a string (there is no string in account module)
     invoice_id = fields.Many2one(string='Invoice')
     date_maturity = fields.Date(copy=False)
+    account_reconcile = fields.Boolean(
+        related='account_id.reconcile', readonly=True)
+    full_reconcile_id = fields.Many2one(string='Full Reconcile')
+    matched_debit_ids = fields.One2many(string='Partial Reconcile Debit')
+    matched_credit_ids = fields.One2many(string='Partial Reconcile Credit')
+    reconcile_string = fields.Char(
+        compute='_compute_reconcile_string', string='Reconcile', store=True)
 
     @api.onchange('credit')
     def _credit_onchange(self):
@@ -355,7 +393,6 @@ class AccountMoveLine(models.Model):
             else:
                 self.credit = amount_company_currency
 
-    @api.multi
     def show_account_move_form(self):
         self.ensure_one()
         action = self.env['ir.actions.act_window'].for_xml_id(
@@ -367,6 +404,34 @@ class AccountMoveLine(models.Model):
             'view_mode': 'form,tree',
         })
         return action
+
+    @api.depends(
+            'full_reconcile_id', 'matched_debit_ids', 'matched_credit_ids')
+    def _compute_reconcile_string(self):
+        for line in self:
+            rec_str = False
+            if line.full_reconcile_id:
+                rec_str = line.full_reconcile_id.name
+            else:
+                rec_str = ', '.join([
+                    'a%d' % pr.id for pr in line.matched_debit_ids + line.matched_credit_ids])
+            line.reconcile_string = rec_str
+
+
+class AccountPartialReconcile(models.Model):
+    _inherit = "account.partial.reconcile"
+    _rec_name = "id"
+
+    def name_get(self):
+        res = []
+        for rec in self:
+            # There is no seq for partial rec, so I simulate one with the ID
+            # Prefix for full rec: 'A' (upper case)
+            # Prefix for partial rec: 'a' (lower case)
+            amount_fmt = formatLang(self.env, rec.amount, currency_obj=rec.company_currency_id)
+            name = 'a%d (%s)' % (rec.id, amount_fmt)
+            res.append((rec.id, name))
+        return res
 
 
 class AccountBankStatement(models.Model):
