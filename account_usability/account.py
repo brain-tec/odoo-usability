@@ -409,9 +409,7 @@ class AccountMoveLine(models.Model):
         prec = self.env['decimal.precision'].precision_get('Account')
         if (
                 self.currency_id and
-                self.amount_currency and
-                float_is_zero(self.credit, precision_digits=prec) and
-                float_is_zero(self.debit, precision_digits=prec)):
+                not float_is_zero(self.amount_currency, precision_digits=prec)):
             date = self.date or None
             amount_company_currency = self.currency_id.with_context(
                 date=date).compute(
@@ -420,9 +418,9 @@ class AccountMoveLine(models.Model):
             if float_compare(
                     amount_company_currency, 0,
                     precision_digits=precision) == -1:
-                self.debit = amount_company_currency * -1
+                self.credit = amount_company_currency * -1
             else:
-                self.credit = amount_company_currency
+                self.debit = amount_company_currency
 
     def show_account_move_form(self):
         self.ensure_one()
