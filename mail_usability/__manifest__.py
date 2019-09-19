@@ -27,6 +27,7 @@ Small usability improvements on mails:
     'depends': ['mail'],
     'data': [
         'views/mail_view.xml',
+        'views/ir_model_view.xml',
         'data/mail_data.xml',
         'wizard/email_template_preview_view.xml',
         ],

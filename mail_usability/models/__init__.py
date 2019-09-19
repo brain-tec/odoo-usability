@@ -5,3 +5,4 @@ from . import tools
 from . import mail_template
 from . import mail_message
 from . import res_partner
+from . import ir_model

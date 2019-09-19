@@ -37,3 +37,17 @@ class MailThread(models.AbstractModel):
                 body=body, subject=subject, message_type=message_type,
                 subtype=subtype, parent_id=parent_id, attachments=attachments,
                 content_subtype=content_subtype, **kwargs)
+
+
+class Followers(models.Model):
+    _inherit = 'mail.followers'
+
+    @api.model
+    def create(self, vals):
+	# Do not implicitly create followers on an object
+	model = self.env['ir.model'].search([
+	    ('model', '=', vals['res_model']),
+	])[0]
+        if not model.message_follower:
+            return
+        return super(Followers, self).create(vals)
