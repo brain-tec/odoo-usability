@@ -47,7 +47,7 @@ class Followers(models.Model):
 	# Do not implicitly create followers on an object
 	model = self.env['ir.model'].search([
 	    ('model', '=', vals['res_model']),
-	])[0]
+	], limit=1)
         if not model.message_follower:
             return
         return super(Followers, self).create(vals)
