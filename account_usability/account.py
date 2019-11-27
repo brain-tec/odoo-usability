@@ -582,13 +582,13 @@ class AccountBankStatementLine(models.Model):
     def show_account_move(self):
         self.ensure_one()
         action = self.env['ir.actions.act_window'].for_xml_id(
-            'account', 'action_move_journal_line')
+            'account', 'action_move_line_form')
         if self.journal_entry_ids:
             action.update({
                 'views': False,
                 'view_id': False,
                 'view_mode': 'form,tree',
-                'res_id': self.journal_entry_ids[0].id,
+                'res_id': self.journal_entry_ids[0].move_id.id,
                 })
             return action
         else:
@@ -674,3 +674,15 @@ class AccountReconciliation(models.AbstractModel):
         account_code_domain = [('account_id.code', '=ilike', search_str + '%')]
         str_domain = expression.OR([str_domain, account_code_domain])
         return str_domain
+
+    @api.model
+    def _domain_move_lines_for_reconciliation(
+            self, st_line, aml_accounts, partner_id,
+            excluded_ids=None, search_str=False):
+        domain = super()._domain_move_lines_for_reconciliation(
+            st_line, aml_accounts, partner_id,
+            excluded_ids=excluded_ids, search_str=search_str)
+        # We want to replace a domain item by another one
+        position = domain.index(('payment_id', '<>', False))
+        domain[position] = ['journal_id', '=', st_line.journal_id.id]
+        return domain
