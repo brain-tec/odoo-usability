@@ -5,7 +5,7 @@
 
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
-from odoo.tools import float_compare, float_is_zero, float_round
+from odoo.tools import float_is_zero, float_round
 from cStringIO import StringIO
 from datetime import datetime
 import xlsxwriter
@@ -56,6 +56,11 @@ class StockValuationXlsx(models.TransientModel):
         string='Subtotals per Categories', default=True,
         states={'done': [('readonly', True)]},
         help="Show a subtotal per product category")
+    standard_price_date = fields.Selection([
+        ('past', 'Past Date or Inventory Date'),
+        ('present', 'Current'),
+        ], default='past', string='Cost Price Date',
+        states={'done': [('readonly', True)]})
     split_by_lot = fields.Boolean(
         string='Display Lots', states={'done': [('readonly', True)]})
     split_by_location = fields.Boolean(
@@ -105,30 +110,35 @@ class StockValuationXlsx(models.TransientModel):
             domain += [('categ_id', 'child_of', self.categ_ids.ids)]
         return domain
 
+    def get_product_ids(self):
+        self.ensure_one()
+        domain = self._prepare_product_domain()
+        products = self.env['product.product'].search(domain)
+        return products.ids
+
     def _prepare_product_fields(self):
         return ['uom_id', 'name', 'default_code', 'categ_id']
 
-    def compute_product_data(self, company_id, past_date=False):
+    def compute_product_data(
+            self, company_id, in_stock_product_ids, standard_price_past_date=False):
         self.ensure_one()
         logger.debug('Start compute_product_data')
         ppo = self.env['product.product']
         ppho = self.env['product.price.history']
-        domain = self._prepare_product_domain()
         fields_list = self._prepare_product_fields()
-        if not past_date:
+        if not standard_price_past_date:
             fields_list.append('standard_price')
-        products = ppo.search_read(domain, fields_list)
+        products = ppo.search_read([('id', 'in', in_stock_product_ids)], fields_list)
         product_id2data = {}
-        now = fields.Datetime.now()
         for p in products:
             logger.debug('p=%d', p['id'])
             # I don't call the native method get_history_price()
             # because it requires a browse record and it is too slow
-            if past_date:
+            if standard_price_past_date:
                 history = ppho.search_read([
                     ('company_id', '=', company_id),
                     ('product_id', '=', p['id']),
-                    ('datetime', '<=', past_date or now)],
+                    ('datetime', '<=', standard_price_past_date)],
                     ['cost'], order='datetime desc, id desc', limit=1)
                 standard_price = history and history[0]['cost'] or 0.0
             else:
@@ -186,6 +196,7 @@ class StockValuationXlsx(models.TransientModel):
             ('product_qty', '>', 0),
             ], ['product_id', 'location_id', 'prod_lot_id', 'product_qty'])
         res = []
+        in_stock_products = {}
         for l in inv_lines:
             if not float_is_zero(l['product_qty'], precision_digits=prec_qty):
                 res.append({
@@ -194,8 +205,9 @@ class StockValuationXlsx(models.TransientModel):
                     'qty': l['product_qty'],
                     'location_id': l['location_id'][0],
                     })
+                in_stock_products[l['product_id'][0]] = True
         logger.debug('End compute_data_from_inventory')
-        return res
+        return res, in_stock_products
 
     def compute_data_from_present_stock(self, company_id, product_ids, prec_qty):
         self.ensure_one()
@@ -206,6 +218,7 @@ class StockValuationXlsx(models.TransientModel):
             ('company_id', '=', company_id),
             ], ['product_id', 'lot_id', 'location_id', 'qty'])
         res = []
+        in_stock_products = {}
         for quant in quants:
             if not float_is_zero(quant['qty'], precision_digits=prec_qty):
                 res.append({
@@ -214,8 +227,9 @@ class StockValuationXlsx(models.TransientModel):
                     'location_id': quant['location_id'][0],
                     'qty': quant['qty'],
                     })
+                in_stock_products[quant['product_id'][0]] = True
         logger.debug('End compute_data_from_present_stock')
-        return res
+        return res, in_stock_products
 
     def compute_data_from_past_stock(self, product_ids, prec_qty, past_date):
         self.ensure_one()
@@ -223,17 +237,19 @@ class StockValuationXlsx(models.TransientModel):
         ppo = self.env['product.product']
         products = ppo.with_context(to_date=past_date, location_id=self.location_id.id).browse(product_ids)
         res = []
-        for p in products:
-            qty = p.qty_available
+        in_stock_products = {}
+        for product in products:
+            qty = product.qty_available
             if not float_is_zero(qty, precision_digits=prec_qty):
                 res.append({
-                    'product_id': p.id,
+                    'product_id': product.id,
                     'qty': qty,
                     'lot_id': False,
                     'location_id': False,
                     })
+                in_stock_products[product.id] = True
         logger.debug('End compute_data_from_past_stock')
-        return res
+        return res, in_stock_products
 
     def group_result(self, data, split_by_lot, split_by_location):
         logger.debug(
@@ -258,7 +274,6 @@ class StockValuationXlsx(models.TransientModel):
             uom_id2name, lot_id2data, loc_id2name):
         logger.debug('Start stringify_and_sort_result')
         res = []
-        categ_subtotal = self.categ_subtotal
         for l in data:
             product_id = l['product_id']
             qty = float_round(l['qty'], precision_digits=prec_qty)
@@ -287,7 +302,6 @@ class StockValuationXlsx(models.TransientModel):
         self.ensure_one()
         logger.debug('Start generate XLSX stock valuation report')
         splo = self.env['stock.production.lot'].with_context(active_test=False)
-        pco = self.env['product.category'].with_context(active_test=False)
         prec_qty = self.env['decimal.precision'].precision_get('Product Unit of Measure')
         prec_price = self.env['decimal.precision'].precision_get('Product Price')
         company = self.env.user.company_id
@@ -295,29 +309,34 @@ class StockValuationXlsx(models.TransientModel):
         prec_cur_rounding = company.currency_id.rounding
         self._check_config(company_id)
 
+        product_ids = self.get_product_ids()
+        if not product_ids:
+            raise UserError(_("There are no products to analyse."))
         split_by_lot = self.split_by_lot
         split_by_location = self.split_by_location
-        past_date = False
-        if self.source == 'stock' and self.stock_date_type == 'past':
-            split_by_lot = False
-            split_by_location = False
-            past_date = self.past_date
-        elif self.source == 'inventory':
-            past_date = self.inventory_id.date
-        product_id2data = self.compute_product_data(
-            company_id, past_date=past_date)
-        product_ids = product_id2data.keys()
         if self.source == 'stock':
             if self.stock_date_type == 'present':
-                data = self.compute_data_from_present_stock(
+                past_date = False
+                data, in_stock_products = self.compute_data_from_present_stock(
                     company_id, product_ids, prec_qty)
             elif self.stock_date_type == 'past':
-                data = self.compute_data_from_past_stock(
+                split_by_lot = False
+                split_by_location = False
+                past_date = self.past_date
+                data, in_stock_products = self.compute_data_from_past_stock(
                     product_ids, prec_qty, past_date)
         elif self.source == 'inventory':
-            data = self.compute_data_from_inventory(product_ids, prec_qty)
+            past_date = self.inventory_id.date
+            data, in_stock_products = self.compute_data_from_inventory(product_ids, prec_qty)
+        standard_price_past_date = past_date
+        if not (self.source == 'stock' and self.stock_date_type == 'present') and self.standard_price_date == 'present':
+            standard_price_past_date = False
+        in_stock_product_ids = in_stock_products.keys()
+        product_id2data = self.compute_product_data(
+            company_id, in_stock_product_ids,
+            standard_price_past_date=standard_price_past_date)
         data_res = self.group_result(data, split_by_lot, split_by_location)
-        categ_id2name, uom_id2name, lot_id2data, loc_id2name = self.id2name(product_ids)
+        categ_id2name, uom_id2name, lot_id2data, loc_id2name = self.id2name(in_stock_product_ids)
         res = self.stringify_and_sort_result(
             product_ids, product_id2data, data_res, prec_qty, prec_price, prec_cur_rounding,
             categ_id2name, uom_id2name, lot_id2data, loc_id2name)
@@ -339,8 +358,6 @@ class StockValuationXlsx(models.TransientModel):
             cols.pop('loc_name', None)
         if not categ_subtotal:
             cols.pop('categ_subtotal', None)
-        tmp_list = sorted(cols.items(), key=lambda x: x[1]['sequence'])
-        col_sorted = [x[0] for x in tmp_list]
 
         j = 0
         for col, col_vals in sorted(cols.items(), key=lambda x: x[1]['sequence']):
@@ -350,22 +367,33 @@ class StockValuationXlsx(models.TransientModel):
             j += 1
 
         # HEADER
+        now_dt = fields.Datetime.context_timestamp(self, datetime.now())
+        now_str = fields.Datetime.to_string(now_dt)
         if past_date:
-            # TODO take TZ into account
-            stock_time_str = self.past_date
-        else:
-            stock_time_dt = fields.Datetime.context_timestamp(self, datetime.now())
+            stock_time_utc_str = past_date
+            stock_time_utc_dt = fields.Datetime.from_string(stock_time_utc_str)
+            stock_time_dt = fields.Datetime.context_timestamp(self, stock_time_utc_dt)
             stock_time_str = fields.Datetime.to_string(stock_time_dt)
+        else:
+            stock_time_str = now_str
+        if standard_price_past_date:
+            standard_price_date_str = stock_time_str
+        else:
+            standard_price_date_str = now_str
         i = 0
         sheet.write(i, 0, 'Odoo - Stock Valuation', styles['doc_title'])
         sheet.set_row(0, 26)
         i += 1
-        sheet.write(i, 0, 'Valuation Date: %s' % stock_time_str, styles['doc_subtitle'])
+        sheet.write(i, 0, 'Inventory Date: %s' % stock_time_str, styles['doc_subtitle'])
+        i += 1
+        sheet.write(i, 0, 'Cost Price Date: %s' % standard_price_date_str, styles['doc_subtitle'])
         i += 1
         sheet.write(i, 0, 'Stock location (children included): %s' % self.location_id.complete_name, styles['doc_subtitle'])
         if self.categ_ids:
             i += 1
             sheet.write(i, 0, 'Product Categories: %s' % ', '.join([categ.display_name for categ in self.categ_ids]), styles['doc_subtitle'])
+        i += 1
+        sheet.write(i, 0, 'Generated on %s by %s' % (now_str, self.env.user.name), styles['regular_small'])
 
         # TITLE of COLS
         i += 2
@@ -387,6 +415,7 @@ class StockValuationXlsx(models.TransientModel):
         letter_price = cols['standard_price']['pos_letter']
         letter_subtotal = cols['subtotal']['pos_letter']
         crow = 0
+        lines = res
         for categ_id in categ_ids:
             ctotal = 0.0
             categ_has_line = False
@@ -394,7 +423,8 @@ class StockValuationXlsx(models.TransientModel):
                 # skip a line and save it's position as crow
                 i += 1
                 crow = i
-            for l in filter(lambda x: x['categ_id'] == categ_id, res):
+                lines = filter(lambda x: x['categ_id'] == categ_id, res)
+            for l in lines:
                 i += 1
                 total += l['subtotal']
                 ctotal += l['subtotal']
@@ -487,7 +517,7 @@ class StockValuationXlsx(models.TransientModel):
             'expiry_date': {'width': 11, 'style': 'regular_date', 'sequence': 50, 'title': _('Expiry Date'), 'type': 'date'},
             'qty': {'width': 8, 'style': 'regular', 'sequence': 60, 'title': _('Qty')},
             'uom_name': {'width': 5, 'style': 'regular_small', 'sequence': 70, 'title': _('UoM')},
-            'standard_price': {'width': 12, 'style': 'regular_price_currency', 'sequence': 80, 'title': _('Price')},
+            'standard_price': {'width': 14, 'style': 'regular_price_currency', 'sequence': 80, 'title': _('Cost Price')},
             'subtotal': {'width': 16, 'style': 'regular_currency', 'sequence': 90, 'title': _('Sub-total'), 'formula': True},
             'categ_subtotal': {'width': 16, 'style': 'regular_currency', 'sequence': 100, 'title': _('Categ Sub-total'), 'formula': True},
             'categ_name': {'width': 40, 'style': 'regular_small', 'sequence': 110, 'title': _('Product Category')},
