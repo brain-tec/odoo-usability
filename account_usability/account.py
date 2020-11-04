@@ -146,6 +146,13 @@ class AccountInvoice(models.Model):
                     attach.id, attach.name)
         logger.info('END fix customer invoice attachment filename')
 
+    @api.multi
+    def invoice_print(self):
+        # Inherit a native method without calling super()
+        # Don't mark invoice as 'sent' when you just click on 'Print Invoice'
+        self.ensure_one()
+        return self.env['report'].get_action(self, 'account.report_invoice')
+
 
 class AccountInvoiceLine(models.Model):
     _inherit = 'account.invoice.line'
@@ -597,6 +604,15 @@ class AccountBankStatementLine(models.Model):
         # But that would required an additionnal field on statement lines
         vals['ref'] = False
         return vals
+
+    def get_statement_line_for_reconciliation_widget(self):
+        # In the work interface of the bank statement, when a partner_id
+        # is selected, Odoo displays its 'name' => we prefer that it
+        # displays its 'display_name'.
+        data = super(AccountBankStatementLine, self).get_statement_line_for_reconciliation_widget()
+        if self.partner_id:
+            data['partner_name'] = self.partner_id.display_name
+        return data
 
     @api.multi
     def show_account_move(self):
