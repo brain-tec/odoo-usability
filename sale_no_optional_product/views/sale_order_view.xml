@@ -6,7 +6,7 @@
     <field name="inherit_id" ref="sale_management.sale_order_form_quote"/>
     <field name="arch" type="xml">
         <xpath expr="//field[@name='sale_order_option_ids']/.." position="attributes">
-            <attribute name="invisible">1</attribute>
+            <attribute name="attrs">{'invisible': []}</attribute>
         </xpath>
     </field>
 </record>

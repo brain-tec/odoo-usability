@@ -6,7 +6,7 @@
     <field name="inherit_id" ref="sale.view_order_form"/>
     <field name="arch" type="xml">
         <button name="preview_sale_order" position="attributes">
-            <attribute name="invisible">1</attribute>
+            <attribute name="attrs">{'invisible': []}</attribute>
         </button>
     </field>
 </record>
