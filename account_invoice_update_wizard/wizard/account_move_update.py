@@ -51,7 +51,9 @@ class AccountMoveUpdate(models.TransientModel):
             aa_tags = [(6, 0, aa_tags.ids)] if aa_tags else False
             res['line_ids'].append([0, 0, {
                 'invoice_line_id': line.id,
+                'sequence': line.sequence,
                 'name': line.name,
+                'account_id': line.account_id.id,
                 'quantity': line.quantity,
                 'price_subtotal': line.price_subtotal,
                 'analytic_account_id': line.analytic_account_id.id,
@@ -93,7 +95,7 @@ class AccountMoveUpdate(models.TransientModel):
 
     @api.model
     def _line_m2o_fields2update(self):
-        return ["analytic_account_id"]
+        return ["analytic_account_id", "account_id"]
 
     @api.model
     def _line_m2m_fields2update(self):
@@ -233,7 +235,9 @@ class AccountMoveUpdate(models.TransientModel):
 class AccountMoveLineUpdate(models.TransientModel):
     _name = 'account.move.line.update'
     _description = 'Update non-legal fields of invoice lines'
+    _order = "sequence, name"
 
+    sequence = fields.Integer()
     parent_id = fields.Many2one(
         'account.move.update', string='Wizard', ondelete='cascade')
     invoice_line_id = fields.Many2one(
@@ -251,3 +255,9 @@ class AccountMoveLineUpdate(models.TransientModel):
         'account.analytic.account', string='Analytic Account')
     analytic_tag_ids = fields.Many2many(
         'account.analytic.tag', string='Analytic Tags')
+    # Note : in france account_id is not a legal field of the invoice
+    # so we should be able to update it
+    # you need to apply a patch in account/models/account_move.py
+    # to make account_id editable see the last commit of this branch
+    # https://github.com/akretion/odoo/tree/14.0-account-should-be-editable
+    account_id = fields.Many2one("account.account")

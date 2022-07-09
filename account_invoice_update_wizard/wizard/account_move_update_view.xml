@@ -23,11 +23,16 @@
                     <field name="user_id"/>
                 </group>
                 <group name="lines">
-                    <field name="line_ids" nolabel="1">
+                    <field name="line_ids" nolabel="1" widget="section_and_note_one2many">
                         <tree editable="bottom" create="false" delete="false" edit="true">
                             <field name="invoice_line_id" invisible="1"/>
                             <field name="display_type" invisible="1"/>
                             <field name="name"/>
+                            <field name="account_id"
+                                   attrs="{
+                                    'invisible':[('display_type', '!=', False)],
+                                    'required':[('display_type', '=', False)]
+                               }"/>
                             <field name="quantity" attrs="{'invisible': [('display_type', '!=', False)]}"/>
                             <field name="price_subtotal" attrs="{'invisible': [('display_type', '!=', False)]}"/>
                             <field name="analytic_account_id" attrs="{'invisible': [('display_type', '!=', False)]}" groups="analytic.group_analytic_accounting"/>
