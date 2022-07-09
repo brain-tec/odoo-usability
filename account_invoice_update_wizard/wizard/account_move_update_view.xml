@@ -18,7 +18,8 @@
                     <field name="ref" attrs="{'invisible': [('type', 'not in', ('in_invoice', 'in_refund'))]}"/>
                     <field name="invoice_origin"/>
                     <field name="name"/>
-                    <field name="invoice_payment_term_id" widget="selection"/>
+                    <!-- update of payment term is broken -->
+                    <!-- <field name="invoice_payment_term_id" widget="selection"/>-->
                     <field name="partner_bank_id"/>
                     <field name="user_id"/>
                 </group>
