@@ -23,7 +23,6 @@ class AccountMoveUpdate(models.TransientModel):
     invoice_payment_term_id = fields.Many2one(
         'account.payment.term', string='Payment Term')
     ref = fields.Char(string='Invoice Reference')
-    name = fields.Char(string='Reference/Description')
     invoice_origin = fields.Char(string='Source Document')
     partner_bank_id = fields.Many2one(
         'res.partner.bank', string='Bank Account')
@@ -33,7 +32,7 @@ class AccountMoveUpdate(models.TransientModel):
     @api.model
     def _simple_fields2update(self):
         '''List boolean, date, datetime, char, text fields'''
-        return ['ref', 'name', 'invoice_origin']
+        return ['ref', 'invoice_origin']
 
     @api.model
     def _m2o_fields2update(self):
@@ -241,7 +240,7 @@ class AccountMoveLineUpdate(models.TransientModel):
     parent_id = fields.Many2one(
         'account.move.update', string='Wizard', ondelete='cascade')
     invoice_line_id = fields.Many2one(
-        'account.move.line', string='Invoice Line', readonly=True)
+        'account.move.line', string='Invoice Lines', readonly=True)
     name = fields.Text(string='Description', required=True)
     display_type = fields.Selection([
         ('line_section', "Section"),
