@@ -1,10 +1,10 @@
-# Copyright 2014-2020 Akretion France (http://www.akretion.com)
+# Copyright 2014-2022 Akretion France (http://www.akretion.com)
 # @author Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 {
     'name': 'Base Usability',
-    'version': '14.0.1.0.0',
+    'version': '16.0.1.0.0',
     'category': 'Partner',
     'license': 'AGPL-3',
     'summary': 'Better usability in base module',
@@ -17,8 +17,11 @@
         'views/res_partner.xml',
         'views/res_partner_bank.xml',
         'views/res_country.xml',
+        'views/res_company.xml',
+        'views/ir_config_parameter.xml',
         'views/ir_module.xml',
         'views/ir_sequence.xml',
+        'views/ir_property.xml',
         ],
     'installable': True,
 }
