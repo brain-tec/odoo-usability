@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from datetime import timedelta
+from collections import defaultdict
 import logging
 
 from odoo import api, fields, models, _
@@ -10,6 +11,7 @@ from odoo.exceptions import UserError
 from odoo.osv import expression
 from odoo.tools import float_is_zero
 from odoo.tools.misc import format_date
+from odoo.tools.safe_eval import safe_eval, time
 
 _logger = logging.getLogger(__name__)
 
@@ -36,7 +38,7 @@ class AccountMove(models.Model):
         compute="_compute_sales_dates",
         help="This information appear on invoice qweb report "
              "(you may use it for your own report)")
-        # There is a native "blocked" field (bool) on account.move.line
+    # There is a native "blocked" field (bool) on account.move.line
     # We want to have that field on invoices to improve usability
     # while keeping compatibility with the standard Odoo datamodel
     blocked = fields.Boolean(
@@ -46,6 +48,8 @@ class AccountMove(models.Model):
         string="Dispute",
         tracking=True,
     )
+    # Field search_account_id is just for search view
+    search_account_id = fields.Many2one(related='line_ids.account_id')
 
     @api.depends("line_ids", "line_ids.blocked")
     def _compute_blocked(self):
@@ -201,33 +205,14 @@ class AccountMove(models.Model):
                 move.suitable_journal_ids = self.env['account.journal'].search(domain)
 
     def button_draft(self):
-        super().button_draft()
         # Delete attached pdf invoice
-        try:
-            report_invoice = self.env['ir.actions.report']._get_report_from_name('account.report_invoice')
-        except IndexError:
-            report_invoice = False
-        if report_invoice and report_invoice.attachment:
-            for move in self.filtered(lambda x: x.move_type in ('out_invoice', 'out_refund')):
-                # The pb is that the filename is dynamic and related to move.state
-                # in v12, the feature was native and they used that kind of code:
-                # with invoice.env.do_in_draft():
-                #    invoice.number, invoice.state = invoice.move_name, 'open'
-                #    attachment = self.env.ref('account.account_invoices').retrieve_attachment(invoice)
-                # But do_in_draft() doesn't exists in v14
-                # If you know how we could do that, please update the code below
-                attachment = self.env['ir.attachment'].search([
-                    ('name', '=', self._get_invoice_attachment_name()),
-                    ('res_id', '=', move.id),
-                    ('res_model', '=', self._name),
-                    ('type', '=', 'binary'),
-                    ], limit=1)
-                if attachment:
-                    attachment.unlink()
-
-    def _get_invoice_attachment_name(self):
-        self.ensure_one()
-        return '%s.pdf' % (self.name and self.name.replace('/', '_') or 'INV')
+        for move in self.filtered(lambda x: x.move_type in ('out_invoice', 'out_refund')):
+            for report_xmlid in ('account.account_invoices', 'account.account_invoices_without_payment'):
+                report = self.env.ref(report_xmlid)
+                attach = report.retrieve_attachment(move)
+                if attach:
+                    attach.unlink()
+        super().button_draft()
 
     def _get_accounting_date(self, invoice_date, has_tax):
         # On vendor bills/refunds, we want date = invoice_date unless
