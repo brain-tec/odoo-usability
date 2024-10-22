@@ -1,4 +1,4 @@
-# Copyright 2020-2021 Akretion France (http://www.akretion.com/)
+# Copyright 2020-2024 Akretion France (http://www.akretion.com/)
 # @author Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
@@ -27,14 +27,14 @@ class StockVariationXlsx(models.TransientModel):
         'stock.warehouse', string='Warehouse', check_company=True,
         domain="[('company_id', '=', company_id)]")
     location_id = fields.Many2one(
-        'stock.location', string='Root Stock Location', required=True,
-        domain="[('usage', 'in', ('view', 'internal')), ('company_id', '=', company_id)]",
-        default=lambda self: self._default_location(), check_company=True,
+        'stock.location', string='Root Stock Location', required=True, check_company=True,
+        compute='_compute_location_id', readonly=False, precompute=True, store=True,
+        domain="[('usage', 'in', ('view', 'internal')), ('company_id', 'in', [False, company_id])]",
         help="The childen locations of the selected locations will "
         "be taken in the valuation.")
     categ_ids = fields.Many2many(
         'product.category', string='Product Category Filter',
-        help="Leave this fields empty to have a stock valuation for all your products.")
+        help="Leave this field empty to have a stock valuation for all products.")
     start_date = fields.Datetime(
         string='Start Date', required=True)
     standard_price_start_date_type = fields.Selection([
@@ -45,7 +45,7 @@ class StockVariationXlsx(models.TransientModel):
     end_date_type = fields.Selection([
         ('present', 'Present'),
         ('past', 'Past'),
-        ], string='End Date Type', default='present', required=True)
+        ], string='End Date Temporality', default='present', required=True)
     end_date = fields.Datetime(
         string='End Date', default=fields.Datetime.now)
     standard_price_end_date_type = fields.Selection([
@@ -56,17 +56,16 @@ class StockVariationXlsx(models.TransientModel):
         string='Subtotals per Categories', default=True,
         help="Show a subtotal per product category.")
 
-    @api.model
-    def _default_location(self):
-        wh = self.env.ref('stock.warehouse0')
-        return wh.lot_stock_id
+    @api.depends('warehouse_id', 'company_id')
+    def _compute_location_id(self):
+        for wiz in self:
+            wh = wiz.warehouse_id
+            if not wh:
+                wh = self.env["stock.warehouse"].search([('company_id', '=', wiz.company_id.id)], limit=1)
+            if wh:
+                wiz.location_id = wh.view_location_id.id
 
-    @api.onchange('warehouse_id')
-    def warehouse_id_change(self):
-        if self.warehouse_id:
-            self.location_id = self.warehouse_id.view_location_id.id
-
-    def _check_config(self, company_id):
+    def _check_config(self):
         self.ensure_one()
         present = fields.Datetime.now()
         if self.end_date_type == 'past':
@@ -79,18 +78,6 @@ class StockVariationXlsx(models.TransientModel):
         else:
             if self.start_date >= present:
                 raise UserError(_("The start date must be in the past."))
-        cost_method_real_count = self.env['ir.property'].sudo().search([
-            ('company_id', '=', company_id),
-            ('name', '=', 'property_cost_method'),
-            ('value_text', '=', 'real'),
-            ('type', '=', 'selection'),
-            ], count=True)
-        if cost_method_real_count:
-            raise UserError(_(
-                "There are %d properties that have "
-                "'Costing Method' = 'Real Price'. This costing "
-                "method is not supported by this module.")
-                % cost_method_real_count)
 
     def _prepare_product_domain(self):
         self.ensure_one()
@@ -119,21 +106,21 @@ class StockVariationXlsx(models.TransientModel):
         domain_quant = [('product_id', 'in', product_ids)] + domain_quant_loc
         domain_move_in = [('product_id', 'in', product_ids), ('state', '=', 'done')] + domain_move_in_loc
         domain_move_out = [('product_id', 'in', product_ids), ('state', '=', 'done')] + domain_move_out_loc
-        quants_res = dict((item['product_id'][0], item['quantity']) for item in sqo.read_group(domain_quant, ['product_id', 'quantity'], ['product_id'], orderby='id'))
+        quants_res = dict((item['product_id'][0], item['quantity']) for item in sqo._read_group(domain_quant, ['product_id', 'quantity'], ['product_id'], orderby='id'))
         domain_move_in_start_to_end = [('date', '>', start_date)] + domain_move_in
         domain_move_out_start_to_end = [('date', '>', start_date)] + domain_move_out
         if end_date_type == 'past':
 
             domain_move_in_end_to_present = [('date', '>', end_date)] + domain_move_in
             domain_move_out_end_to_present = [('date', '>', end_date)] + domain_move_out
-            moves_in_res_end_to_present = dict((item['product_id'][0], item['product_qty']) for item in smo.read_group(domain_move_in_end_to_present, ['product_id', 'product_qty'], ['product_id'], orderby='id'))
-            moves_out_res_end_to_present = dict((item['product_id'][0], item['product_qty']) for item in smo.read_group(domain_move_out_end_to_present, ['product_id', 'product_qty'], ['product_id'], orderby='id'))
+            moves_in_res_end_to_present = dict((item['product_id'][0], item['product_qty']) for item in smo._read_group(domain_move_in_end_to_present, ['product_id', 'product_qty'], ['product_id'], orderby='id'))
+            moves_out_res_end_to_present = dict((item['product_id'][0], item['product_qty']) for item in smo._read_group(domain_move_out_end_to_present, ['product_id', 'product_qty'], ['product_id'], orderby='id'))
 
             domain_move_in_start_to_end += [('date', '<', end_date)]
             domain_move_out_start_to_end += [('date', '<', end_date)]
 
-        moves_in_res_start_to_end = dict((item['product_id'][0], item['product_qty']) for item in smo.read_group(domain_move_in_start_to_end, ['product_id', 'product_qty'], ['product_id'], orderby='id'))
-        moves_out_res_start_to_end = dict((item['product_id'][0], item['product_qty']) for item in smo.read_group(domain_move_out_start_to_end, ['product_id', 'product_qty'], ['product_id'], orderby='id'))
+        moves_in_res_start_to_end = dict((item['product_id'][0], item['product_qty']) for item in smo._read_group(domain_move_in_start_to_end, ['product_id', 'product_qty'], ['product_id'], orderby='id'))
+        moves_out_res_start_to_end = dict((item['product_id'][0], item['product_qty']) for item in smo._read_group(domain_move_out_start_to_end, ['product_id', 'product_qty'], ['product_id'], orderby='id'))
 
         product_data = {}  # key = product_id , value = dict
         for product in ppo.browse(product_ids):
@@ -208,7 +195,7 @@ class StockVariationXlsx(models.TransientModel):
         company = self.company_id
         company_id = company.id
         prec_cur_rounding = company.currency_id.rounding
-        self._check_config(company_id)
+        self._check_config()
 
         product_ids = self.get_product_ids()
         if not product_ids:
@@ -343,6 +330,8 @@ class StockVariationXlsx(models.TransientModel):
                 sheet.write_formula(i, cols['end_subtotal']['pos'], end_subtotal_formula, styles[cols['end_subtotal']['style']], l['end_subtotal'])
                 for col_name, col in cols.items():
                     if not col.get('formula'):
+                        if not l[col_name]:
+                            l[col_name] = ''  # to avoid display of 31/12/1899 (dates) or '0' (char)
                         if col.get('type') == 'date' and l[col_name]:
                             l[col_name] = fields.Date.from_string(l[col_name])
                         sheet.write(i, col['pos'], l[col_name], styles[col['style']])
@@ -389,6 +378,7 @@ class StockVariationXlsx(models.TransientModel):
     def _prepare_cols(self):
         cols = {
             'default_code': {'width': 18, 'style': 'regular', 'sequence': 10, 'title': _('Product Code')},
+            'barcode': {'width': 18, 'style': 'regular', 'sequence': 15, 'title': _('Product Barcode')},
             'product_name': {'width': 40, 'style': 'regular', 'sequence': 20, 'title': _('Product Name')},
             'uom_name': {'width': 5, 'style': 'regular_small', 'sequence': 30, 'title': _('UoM')},
             'start_qty': {'width': 8, 'style': 'regular', 'sequence': 40, 'title': _('Start Qty')},
