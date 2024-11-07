@@ -8,7 +8,7 @@ from odoo import fields, models
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
-    agent = fields.Boolean()
+    agent = fields.Boolean(string="Is an agent?")
     # agent_id is only displayed on parent partner
     # on sale.order and invoice, it uses commercial_partner_id.agent_id.id
     agent_id = fields.Many2one(
