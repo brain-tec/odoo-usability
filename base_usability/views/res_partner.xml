@@ -45,6 +45,11 @@
         <field name="phone" position="after">
             <field name="mobile" optional="show" widget="phone" class="o_force_ltr"/>
         </field>
+        <field name="city" position="before">
+            <field name="street" optional="hide"/>
+            <field name="street2" optional="hide"/>
+            <field name="zip" optional="hide"/>
+        </field>
     </field>
 </record>
 
