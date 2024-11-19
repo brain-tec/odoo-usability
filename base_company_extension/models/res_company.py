@@ -15,7 +15,7 @@ class ResCompany(models.Model):
 
     def _report_company_legal_name(self):
         self.ensure_one()
-        if self.legal_type:
+        if self.legal_type and not self.name.endswith(self.legal_type):
             name = '%s %s' % (self.name, self.legal_type)
         else:
             name = self.name
