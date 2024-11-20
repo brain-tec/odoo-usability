@@ -86,6 +86,13 @@ class ResCompany(models.Model):
         # 'legal_type' added by base_company_extension
         if hasattr(self, 'legal_type') and self.legal_type:
             options['capital']['label'] = _('%s with a capital of') % self.legal_type
+        # 'fax' added by OCA/partner-contact module 'partner_fax'
+        if hasattr(self.partner_id, 'fax'):
+            options['fax'] = {
+                'value': self.partner_id.fax or False,
+                'icon': '\U0001F5B7',
+                'label': _('Fax:'),
+                }
         return options
 
     def _get_eori(self):
