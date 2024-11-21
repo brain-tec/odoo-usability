@@ -9,7 +9,8 @@ class AccountMove(models.Model):
     _inherit = 'account.move'
 
     invoice_agent_id = fields.Many2one(
-        'res.partner', domain=[('agent', '=', True)], ondelete='restrict', string="Agent",
+        'res.partner', domain=[('agent', '=', True)], string="Agent",
+        ondelete='restrict', tracking=True,
         compute='_compute_invoice_agent_id', store=True, readonly=False, precompute=True)
 
     @api.depends('partner_id', 'move_type')

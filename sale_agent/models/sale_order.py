@@ -9,7 +9,8 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     agent_id = fields.Many2one(
-        'res.partner', domain=[('agent', '=', True)], ondelete='restrict',
+        'res.partner', domain=[('agent', '=', True)],
+        ondelete='restrict', tracking=True,
         compute='_compute_agent_id', store=True, readonly=False, precompute=True)
 
     @api.depends('partner_id')
