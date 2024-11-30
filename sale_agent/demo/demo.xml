@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2020 Akretion France (http://www.akretion.com/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo noupdate="1">
+
+    <record id="agent1" model="res.partner">
+            <field name="name">Agent Bienrenseigné</field>
+            <field name="agent" eval="True"/>
+            <field name="country_id" ref="base.fr"/>
+    </record>
+
+    <record id="agent2" model="res.partner">
+            <field name="name">Agent Entregent</field>
+            <field name="agent" eval="True"/>
+            <field name="country_id" ref="base.fr"/>
+    </record>
+
+    <record id="customer1" model="res.partner">
+            <field name="name">Client Introduit</field>
+            <field name="agent_id" ref="agent1"/>
+            <field name="is_company" eval="True"/>
+            <field name="street">12 rue du bas de loyasse</field>
+            <field name="zip">69009</field>
+            <field name="city">Lyon</field>
+            <field name="country_id" ref="base.fr"/>
+    </record>
+
+</odoo>

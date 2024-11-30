@@ -1,0 +1,79 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* commission_simple_agent_purchase
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 16.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-11-29 23:33+0000\n"
+"PO-Revision-Date: 2024-11-29 23:34+0000\n"
+"Last-Translator: Alexis de Lattre <alexis.delattre@akretion.com>\n"
+"Language-Team: \n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: commission_simple_agent_purchase
+#. odoo-python
+#: code:addons/commission_simple_agent_purchase/models/commission_result.py:0
+#, python-format
+msgid ""
+"Cannot delete commission %(commission)s because it is linked to purchase "
+"order %(po)s. You must delete the purchase order first."
+msgstr ""
+"Impossible de supprimer la commission %(commission)s car elle est liée à la "
+"commande fournisseur %(po)s. Vous devez d'abord supprimer la commande "
+"fournisseur."
+
+#. module: commission_simple_agent_purchase
+#. odoo-python
+#: code:addons/commission_simple_agent_purchase/models/commission_result.py:0
+#, python-format
+msgid "Commission %s"
+msgstr "Commission %s"
+
+#. module: commission_simple_agent_purchase
+#: model:ir.model.fields,field_description:commission_simple_agent_purchase.field_res_company__commission_product_id
+#: model:ir.model.fields,field_description:commission_simple_agent_purchase.field_res_config_settings__commission_product_id
+msgid "Commission Product"
+msgstr "Produit de commission"
+
+#. module: commission_simple_agent_purchase
+#: model:ir.model,name:commission_simple_agent_purchase.model_commission_result
+msgid "Commission Result"
+msgstr "État des commissions"
+
+#. module: commission_simple_agent_purchase
+#. odoo-python
+#: code:addons/commission_simple_agent_purchase/models/commission_result.py:0
+#, python-format
+msgid "Commission product is not set on company %s."
+msgstr "Le produit de commission n'est pas défini sur la société %s."
+
+#. module: commission_simple_agent_purchase
+#: model:ir.model,name:commission_simple_agent_purchase.model_res_company
+msgid "Companies"
+msgstr "Sociétés"
+
+#. module: commission_simple_agent_purchase
+#: model:ir.model,name:commission_simple_agent_purchase.model_res_config_settings
+msgid "Config Settings"
+msgstr "Configuration"
+
+#. module: commission_simple_agent_purchase
+#: model:ir.model.fields,field_description:commission_simple_agent_purchase.field_commission_result__purchase_id
+msgid "Purchase Order"
+msgstr "Commande fournisseur"
+
+#. module: commission_simple_agent_purchase
+#. odoo-python
+#: code:addons/commission_simple_agent_purchase/models/commission_result.py:0
+#, python-format
+msgid ""
+"Purchase Order %s has already been confirmed. You should cancel it first."
+msgstr ""
+"La commande fournisseur %s a déjà été confirmée. Vous devez d'abord "
+"l'annuler."

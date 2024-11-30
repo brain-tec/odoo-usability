@@ -18,5 +18,6 @@
         "views/account_move.xml",
         "views/account_invoice_report.xml",
         ],
+    'demo': ['demo/demo.xml'],
     'installable': True,
 }
