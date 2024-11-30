@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2024 Akretion France (http://www.akretion.com)
+  @author Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl)
+-->
+
+<odoo>
+
+<record id="commission_result_form" model="ir.ui.view">
+    <field name="name">commission.result.form</field>
+    <field name="model">commission.result</field>
+    <field name="arch" type="xml">
+        <form>
+            <header>
+                <button name="draft2done" type="object" states="draft" string="Confirm" class="btn-primary"/>
+                <button name="backtodraft" type="object" states="done" string="Back to Draft" confirm="Are you sure you want to go back to draft?"/>
+                <field name="state" widget="statusbar"/>
+            </header>
+            <group name="main">
+                <group name="main-left">
+                    <field name="partner_id"/>
+                    <field name="date_range_id"/>
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                    <field name="amount_total"/>
+                    <field name="company_currency_id" invisible="1"/>
+                    <field name="company_id" invisible="1"/>
+                </group>
+                <group name="main-right">
+                    <field name="profile_id" groups="account.group_account_manager"/>
+                    <field name="assign_type"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </group>
+            </group>
+            <group name="lines" string="Commission Lines">
+                <field nolabel="1" name="line_ids" colspan="2">
+                    <tree>
+                        <field name="move_id"/>
+                        <field name="date" optional="hide"/>
+                        <field name="partner_id"/>
+                        <field name="product_id"/>
+                        <field name="product_categ_id" optional="hide"/>
+                        <field name="name" optional="hide"/>
+                        <field name="price_subtotal" optional="hide" string="Invoiced Amount"/>
+                        <field name="commission_base"/>
+                        <field name="commission_rate" string="Rate (%)"/>
+                        <field name="commission_amount" sum="1"/>
+                        <field name="commission_rule_id" optional="hide"/>
+                        <field name="company_currency_id" invisible="1"/>
+                        <field name="currency_id" invisible="1"/>
+                    </tree>
+                </field>
+            </group>
+            <div class="oe_chatter">
+                <field name="message_follower_ids" widget="mail_followers"/>
+                <field name="activity_ids" widget="mail_activity"/>
+                <field name="message_ids" widget="mail_thread"/>
+            </div>
+        </form>
+    </field>
+</record>
+
+<record id="commission_result_tree" model="ir.ui.view">
+    <field name="name">commission.result.tree</field>
+    <field name="model">commission.result</field>
+    <field name="arch" type="xml">
+        <tree>
+            <field name="date_range_id" optional="show"/>
+            <field name="date_start" optional="hide"/>
+            <field name="date_end" optional="hide"/>
+            <field name="partner_id"/>
+            <field name="profile_id" groups="account.group_account_manager"/>
+            <field name="assign_type" optional="hide" widget="badge" decoration-warning="assign_type == 'user'"/>
+            <field name="company_currency_id" invisible="1"/>
+            <field name="company_id" groups="base.group_multi_company"/>
+            <field name="amount_total" sum="1" optional="show"/>
+            <field name="state" decoration-info="state == 'draft'" decoration-success="state == 'done'" widget="badge"/>
+        </tree>
+    </field>
+</record>
+
+<record id="commission_result_search" model="ir.ui.view">
+    <field name="name">commission.result.search</field>
+    <field name="model">commission.result</field>
+    <field name="arch" type="xml">
+        <search>
+            <field name="partner_id"/>
+            <field name="date_range_id"/>
+            <separator/>
+            <filter name="draft" domain="[('state', '=', 'draft')]" string="Draft"/>
+            <filter name="done" domain="[('state', '=', 'done')]" string="Done"/>
+            <separator/>
+            <filter name="user" domain="[('assign_type', '=', 'user')]" string="Salesman"/>
+            <group name="groupby">
+                <filter name="partner_groupby" string="Salesman" context="{'group_by': 'partner_id'}"/>
+                <filter name="date_range_groupby" string="Period" context="{'group_by': 'date_range_id'}"/>
+                <filter name="assign_type_groupby" string="Assign Type" context="{'group_by': 'assign_type'}"/>
+            </group>
+        </search>
+    </field>
+</record>
+
+<record id="commission_result_action" model="ir.actions.act_window">
+    <field name="name">Commissions</field>
+    <field name="res_model">commission.result</field>
+    <field name="view_mode">tree,form</field>
+</record>
+
+<menuitem id="commission_result_menu" action="commission_result_action" parent="commission_root" sequence="10"/>
+
+
+</odoo>
