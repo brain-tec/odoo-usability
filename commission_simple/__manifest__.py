@@ -40,7 +40,7 @@ This module has been written by Alexis de Lattre from Akretion
         'views/commission_profile.xml',
         'views/commission_rule.xml',
         'views/commission_result.xml',
-#        'views/res_users.xml',
+        'views/account_move_line.xml',
         'views/res_config_settings.xml',
         'wizards/commission_compute_view.xml',
         ],
