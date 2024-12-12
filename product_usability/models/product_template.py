@@ -14,7 +14,9 @@ class ProductTemplate(models.Model):
     # in v10, that field was defined in procurement_suggest, but we will
     # probably not port procurement_suggest because it is native in v14
     seller_id = fields.Many2one(
-        'res.partner', related='seller_ids.name', store=True,
+        'res.partner',
+        compute="_compute_seller_id",
+        search="_search_seller_id",
         string='Main Supplier')
 
     # in v14, I noticed that the tracking of the fields of product.template
@@ -32,6 +34,19 @@ class ProductTemplate(models.Model):
     active = fields.Boolean(tracking=100)
     company_id = fields.Many2one(tracking=110)
     barcode_type = fields.Char(compute='_compute_template_barcode_type')
+
+
+    def _search_seller_id(self, operator, value):
+        # searching on the first line of a o2m is not that easy
+        # So we search all potential matching products
+        # Then we filter on the seller_id
+        records = self.search([("seller_ids.partner_id", operator, value)])
+        records = records.filtered_domain([("seller_id", operator, value)])
+        return [("id", "in", records.ids)]
+
+    def _compute_seller_id(self):
+        for record in self:
+            record.seller_id = fields.first(record.seller_ids).name
 
     @api.depends('product_variant_ids.barcode')
     def _compute_template_barcode_type(self):
