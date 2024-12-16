@@ -39,3 +39,23 @@ class ProductTemplate(models.Model):
                     "On product '%s' which is not a consumable, "
                     "Intrastat Type must have the same value as Type.")
                     % pt.display_name)
+
+    # inherit method from intrastat_base
+    @api.constrains("intrastat_type", "is_accessory_cost")
+    def _check_accessory_cost(self):
+        for this in self:
+            if this.is_accessory_cost and this.intrastat_type != "service":
+                raise ValidationError(
+                    _(
+                        "The option 'Is accessory cost?' should only be "
+                        "activated on 'Service' products. You have activated "
+                        "this option for the product '%(product_name)s' which is "
+                        "configured with type '%(product_type)s'."
+                    )
+                    % {
+                        "product_name": this.display_name,
+                        "product_type": this._fields["type"].convert_to_export(
+                            this.type, this
+                        ),
+                    }
+                )
