@@ -27,13 +27,13 @@ To use it, you need to do 2 or 3 things :
 
 1) Add an entry in the domain field and the object you selected:
 
-domain = fields.Selection(selection_add=[('risk.type', "Risk Type")], ondelete={"risk.type": "cascade"})
+domain = fields.Selection(selection_add=[('risk_type', "Risk Type")], ondelete={"risk_type": "cascade"})
 
 2) Add the many2one field on your object:
 
 risk_type_id = fields.Many2one(
     'dynamic.list', string="Risk Type",
-    ondelete='restrict', domain=[('domain', '=', 'risk.type')])
+    ondelete='restrict', domain=[('domain', '=', 'risk_type')])
 
 
 3) Optionally, you can add a dedicated action and a menu entry (otherwize, you can use the generic menu entry under *Settings > Technical > Dynamic Lists*:
@@ -42,8 +42,8 @@ risk_type_id = fields.Many2one(
     <field name="name">Risk Type</field>
     <field name="res_model">dynamic.list</field>
     <field name="view_mode">tree,form</field>
-    <field name="domain">[('domain', '=', 'risk.type')]</field>
-    <field name="context">{'default_domain': 'risk.type'}</field>
+    <field name="domain">[('domain', '=', 'risk_type')]</field>
+    <field name="context">{'default_domain': 'risk_type'}</field>
 </record>
 
 <menuitem id="dynamic_list_risk_type_menu" action="dynamic_list_risk_type_action"
