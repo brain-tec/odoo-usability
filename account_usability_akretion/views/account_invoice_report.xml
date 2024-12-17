@@ -14,14 +14,14 @@
     <field name="inherit_id" ref="account.account_invoice_report_view_tree"/>
     <field name="arch" type="xml">
         <field name="partner_id" position="after">
-	   <field name="commercial_partner_id" optional="hide"/>
-            	<field name="country_id" optional="hide"/>
-            <field name="industry_id" optional="hide"/>
-            <field name="fiscal_position_id" optional="hide"/>
-	</field>
+           <field name="commercial_partner_id" optional="hide"/>
+           <field name="country_id" optional="hide"/>
+           <field name="industry_id" optional="hide"/>
+           <field name="fiscal_position_id" optional="hide"/>
+        </field>
         <field name="quantity" position="after">
-		<field name="product_uom_id" groups="uom.group_uom" optional="hide"/>
-	</field>
+            <field name="product_uom_id" groups="uom.group_uom" optional="hide"/>
+        </field>
     </field>
 </record>
 
@@ -29,9 +29,15 @@
     <field name="model">account.invoice.report</field>
     <field name="inherit_id" ref="account.view_account_invoice_report_search"/>
     <field name="arch" type="xml">
-	<filter name="category_product" position="after">
-	    <filter string="Product" name="product_groupby" context="{'group_by': 'product_id', 'residual_invisible':True}"/>
-       </filter>
+        <field name="partner_id" position="after">
+            <field name="industry_id"/>
+        </field>
+        <filter name="category_product" position="after">
+            <filter string="Product" name="product_groupby" context="{'group_by': 'product_id', 'residual_invisible':True}"/>
+        </filter>
+        <filter name="partner_id" position="after">
+            <filter name="industry_groupby" string="Partner Industry" context="{'group_by': 'industry_id'}"/>
+        </filter>
    </field>
 </record>
 
