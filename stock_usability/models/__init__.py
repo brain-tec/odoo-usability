@@ -7,6 +7,7 @@ from . import stock_warehouse_orderpoint
 from . import stock_quant
 from . import stock_quant_package
 from . import stock_inventory
+from . import stock_production_lot
 from . import procurement_group
 from . import procurement_scheduler_log
 from . import product
