@@ -40,7 +40,7 @@
 </record>
 
 <record id="stock_valuation_xlsx_action" model="ir.actions.act_window">
-    <field name="name">Inventory Valuation XLSX</field>
+    <field name="name">Inventory Valuation</field>
     <field name="res_model">stock.valuation.xlsx</field>
     <field name="view_mode">form</field>
     <field name="target">new</field>

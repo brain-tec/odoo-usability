@@ -44,7 +44,7 @@
 </record>
 
 <record id="stock_variation_xlsx_action" model="ir.actions.act_window">
-    <field name="name">Inventory Variation XLSX</field>
+    <field name="name">Inventory Variation</field>
     <field name="res_model">stock.variation.xlsx</field>
     <field name="view_mode">form</field>
     <field name="target">new</field>
