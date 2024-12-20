@@ -66,12 +66,18 @@
 <!-- By default, the menu entry for stock location is only under
 Configuration > Warehouse management
 But, the view of stock location is very useful to be able to list
-of the items present on a particular stock location => so every user
-should be able to access it. So I add a menu entry under Inventory Control. -->
+the items present on a particular stock location => so every user
+should be able to access it. So I add a menu entry under Inventory Control.
+The problem is that, in addons/stock/views/stock_quant_views.xml,
+there is a menu entry XMLID stock.menu_valuation pointing to stock.quant
+with name="Locations"... so we end up having 2 different menu entries "Locations"
+pointing to different models.
+Until I find a proper solution to that, I decided to remove the menu entry
 
 <menuitem id="stock_location_menu" action="stock.action_location_form"
     parent="stock.menu_warehouse_report"
     groups="stock.group_stock_multi_locations"
     sequence="160"/>
+-->
 
 </odoo>
