@@ -6,11 +6,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-22 07:43+0000\n"
-"PO-Revision-Date: 2024-10-22 07:44+0000\n"
-"Last-Translator: Alexis de Lattre <alexis.delattre@akretion.com>\n"
+"POT-Creation-Date: 2024-12-20 15:47+0000\n"
+"PO-Revision-Date: 2024-12-20 15:47+0000\n"
+"Last-Translator: \n"
 "Language-Team: \n"
-"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
@@ -251,7 +250,7 @@ msgstr "A une date de péremption"
 #: model:ir.model.fields,field_description:stock_valuation_xlsx.field_stock_valuation_xlsx__id
 #: model:ir.model.fields,field_description:stock_valuation_xlsx.field_stock_variation_xlsx__id
 msgid "ID"
-msgstr "ID"
+msgstr ""
 
 #. module: stock_valuation_xlsx
 #. odoo-python
@@ -270,14 +269,14 @@ msgstr "Date de l'inventaire : %s"
 #. module: stock_valuation_xlsx
 #: model:ir.actions.act_window,name:stock_valuation_xlsx.stock_valuation_xlsx_action
 #: model:ir.ui.menu,name:stock_valuation_xlsx.stock_valuation_xlsx_menu
-msgid "Inventory Valuation XLSX"
-msgstr "Valorisation du stock XLSX"
+msgid "Inventory Valuation"
+msgstr "Valorisation du stock"
 
 #. module: stock_valuation_xlsx
 #: model:ir.actions.act_window,name:stock_valuation_xlsx.stock_variation_xlsx_action
 #: model:ir.ui.menu,name:stock_valuation_xlsx.stock_variation_xlsx_menu
-msgid "Inventory Variation XLSX"
-msgstr "Variation du stock XLSX"
+msgid "Inventory Variation"
+msgstr "Variation du stock"
 
 #. module: stock_valuation_xlsx
 #: model:ir.model.fields,field_description:stock_valuation_xlsx.field_stock_expiry_depreciation_rule__name
@@ -325,7 +324,7 @@ msgstr "Nom de l'emplacement"
 #: code:addons/stock_valuation_xlsx/wizard/stock_valuation_xlsx.py:0
 #, python-format
 msgid "Lot"
-msgstr "Lot"
+msgstr ""
 
 #. module: stock_valuation_xlsx
 #. odoo-python
@@ -505,6 +504,7 @@ msgstr "Emplacement de stock (enfants inclus) : %s"
 #. module: stock_valuation_xlsx
 #. odoo-python
 #: code:addons/stock_valuation_xlsx/wizard/stock_valuation_xlsx.py:0
+#: code:addons/stock_valuation_xlsx/wizard/stock_valuation_xlsx.py:0
 #, python-format
 msgid "Sub-total"
 msgstr "Sous-total"
@@ -572,8 +572,8 @@ msgstr "La date de fin doit être dans le passé."
 #: model_terms:ir.ui.view,arch_db:stock_valuation_xlsx.stock_valuation_xlsx_form
 #: model_terms:ir.ui.view,arch_db:stock_valuation_xlsx.stock_variation_xlsx_form
 msgid ""
-"The generated XLSX report has the valuation of stockable products located on "
-"the selected stock locations (and their childrens)."
+"The generated XLSX report has the valuation of stockable products located on"
+" the selected stock locations (and their childrens)."
 msgstr ""
 "Le rapport XLSX généré contient la valorisation des produits stockables "
 "situés dans les emplacements de stock sélectionnés (et leurs enfants)."
@@ -631,7 +631,7 @@ msgstr "Date de valorisation"
 #: code:addons/stock_valuation_xlsx/wizard/stock_variation_xlsx.py:0
 #, python-format
 msgid "Variation"
-msgstr "Variation"
+msgstr ""
 
 #. module: stock_valuation_xlsx
 #: model:ir.model.fields,field_description:stock_valuation_xlsx.field_stock_valuation_xlsx__warehouse_id
