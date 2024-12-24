@@ -15,5 +15,5 @@
         'views/mrp_bom.xml',
         'views/stock_warehouse.xml',
     ],
-    'installable': True,
+    'installable': False,
 }

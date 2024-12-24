@@ -29,5 +29,5 @@ from Akretion <david.beal@akretion.com>.
     "data": [
         "menu_view.xml",
     ],
-    "installable": True,
+    "installable": False,
 }

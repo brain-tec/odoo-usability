@@ -37,5 +37,5 @@ Akretion:
     "data": [
         "views/pos_payment_method.xml",
         ],
-    "installable": True,
+    "installable": False,
 }

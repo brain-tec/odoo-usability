@@ -44,5 +44,5 @@ This module has been written by Alexis de Lattre from Akretion
         'views/res_config_settings.xml',
         'wizards/commission_compute_view.xml',
         ],
-    'installable': True,
+    'installable': False,
 }

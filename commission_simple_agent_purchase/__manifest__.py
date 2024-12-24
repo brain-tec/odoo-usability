@@ -18,5 +18,5 @@
         'views/commission_result.xml',
         'wizards/res_config_settings.xml',
         ],
-    'installable': True,
+    'installable': False,
 }

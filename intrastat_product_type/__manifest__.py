@@ -12,5 +12,5 @@
     'website': 'https://github.com/akretion/odoo-usability',
     'depends': ['intrastat_product', 'l10n_fr_intrastat_service'],
     'data': ['views/product.xml'],
-    'installable': True,
+    'installable': False,
 }

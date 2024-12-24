@@ -23,5 +23,5 @@
         'views/ir_sequence.xml',
         'views/ir_property.xml',
         ],
-    'installable': True,
+    'installable': False,
 }
