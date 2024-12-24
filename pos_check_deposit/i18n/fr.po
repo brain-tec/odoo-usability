@@ -1,0 +1,50 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* pos_check_deposit
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-12-24 10:27+0000\n"
+"PO-Revision-Date: 2024-12-24 10:27+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: pos_check_deposit
+#: model:ir.model.fields,field_description:pos_check_deposit.field_pos_payment_method__identify_customer
+msgid "Identify Customer"
+msgstr "Identifier le client"
+
+#. module: pos_check_deposit
+#. odoo-python
+#: code:addons/pos_check_deposit/models/pos_payment_method.py:0
+msgid ""
+"On payment method '%s' the option 'Identify Customer' is enabled, so the "
+"option 'Split Transactions' must be enabled too."
+msgstr ""
+"Pour le mode de paiement '%s', l'option 'Identifier le client' est activée, "
+"l'option 'Fractionner les transactions' doit donc l'être également."
+
+#. module: pos_check_deposit
+#: model:ir.model,name:pos_check_deposit.model_pos_payment_method
+msgid "Point of Sale Payment Methods"
+msgstr "Modes de paiement du point de vente"
+
+#. module: pos_check_deposit
+#: model:ir.model.fields,field_description:pos_check_deposit.field_pos_payment_method__split_transactions
+msgid "Split Transactions"
+msgstr "Fractionner les transactions"
+
+#. module: pos_check_deposit
+#: model:ir.model.fields,help:pos_check_deposit.field_pos_payment_method__split_transactions
+msgid ""
+"Splits the journal entries for each transaction. It could slow down the "
+"closing process."
+msgstr ""
+"Découpe les pièces comptables par transaction. Ceci peut ralentir le processus de "
+"fermeture."
