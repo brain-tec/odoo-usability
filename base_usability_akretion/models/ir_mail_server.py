@@ -1,4 +1,4 @@
-# Copyright 2015-2022 Akretion France (http://www.akretion.com/)
+# Copyright 2015-2024 Akretion France (https://www.akretion.com/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
@@ -19,7 +19,7 @@ class IrMailServer(models.Model):
             smtp_debug=False, smtp_session=None):
         # Start copy from native method
         smtp_from, smtp_to_list, message = self._prepare_email_message(
-            message, smtp_session)
+            message, smtp)
         # End copy from native method
         logger.info(
             "Sending email from '%s' to '%s' Cc '%s' Bcc '%s' "

@@ -2,7 +2,7 @@
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import api, fields, models, SUPERUSER_ID
+from odoo import api, fields, models
 import logging
 from odoo.tools.misc import format_datetime
 
@@ -14,11 +14,9 @@ class ResUsers(models.Model):
 
     @api.model
     def _script_partners_linked_to_users_no_company(self):
-        if self.env.user.id != SUPERUSER_ID:
-            self = self.sudo()
         logger.info(
             'START to set company_id=False on partners related to users')
-        users = self.with_context(active_test=False).search([])
+        users = self.sudo().with_context(active_test=False).search([])
         for user in users:
             if user.partner_id.company_id:
                 user.partner_id.write({'company_id': False})

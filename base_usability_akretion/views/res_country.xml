@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2015-2022 Akretion France (http://www.akretion.com/)
+  Copyright 2015-2024 Akretion France (https://www.akretion.com/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
@@ -21,18 +21,20 @@
     </field>
 </record>
 
-<record id="res_country_search" model="ir.ui.view">
+<record id="view_country_search" model="ir.ui.view">
     <field name="name">base_usability.res.country.search</field>
     <field name="model">res.country</field>
+    <field name="inherit_id" ref="base.view_country_search"/>
     <field name="arch" type="xml">
-        <search>
-            <field name="name" filter_domain="['|', ('name', 'ilike', self), ('code', '=', self)]" string="Name or Code"/>
+        <field name="name" position="after">
             <field name="code"/>
             <field name="currency_id"/>
+        </field>
+        <field name="phone_code" position="after">
             <group string="Group By" name="groupby">
                 <filter name="currency_groupby" string="Currency" context="{'group_by': 'currency_id'}"/>
             </group>
-        </search>
+        </field>
     </field>
 </record>
 

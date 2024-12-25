@@ -5,7 +5,7 @@
 
 {
     'name': 'Partner Tree Default - Base',
-    'version': '16.0.1.0.0',
+    'version': '18.0.1.0.0',
     'category': 'Partner',
     'license': 'AGPL-3',
     'summary': 'Tree view by default instead of kanban for partners',
@@ -18,8 +18,8 @@ With this module, when you select a *Customer* or *Vendors* menu entry, you will
 This module has been written by Alexis de Lattre <alexis.delattre@akretion.com> from Akretion.
     """,
     'author': 'Akretion',
-    'website': 'http://www.akretion.com',
+    'website': 'https://github.com/akretion/odoo-usability',
     'depends': ['base'],
     'data': ['views/res_partner.xml'],
-    'installable': False,
+    'installable': True,
 }

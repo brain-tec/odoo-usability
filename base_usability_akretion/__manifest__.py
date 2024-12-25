@@ -4,7 +4,7 @@
 
 {
     'name': 'Base Usability',
-    'version': '16.0.1.0.0',
+    'version': '18.0.1.0.0',
     'category': 'Partner',
     'license': 'AGPL-3',
     'summary': 'Better usability in base module',
@@ -21,7 +21,6 @@
         'views/ir_config_parameter.xml',
         'views/ir_module.xml',
         'views/ir_sequence.xml',
-        'views/ir_property.xml',
         ],
-    'installable': False,
+    'installable': True,
 }

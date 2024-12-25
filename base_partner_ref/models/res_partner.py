@@ -23,51 +23,24 @@ class ResPartner(models.Model):
     def _compute_display_name(self):
         super()._compute_display_name()
 
-    def _get_name(self):
-        partner = self
-        name = partner.name or ''
-
+    def _get_complete_name(self):
+        self.ensure_one() 
+        displayed_types = self._complete_name_displayed_types
+        type_description = dict(self._fields['type']._description_selection(self.env))
+        name = self.name or ''
         # START modif of native method
-        if partner.ref:
-            name = "[%s] %s" % (partner.ref, name)
+        if self.ref:
+            name = "[%s] %s" % (self.ref, name)
         # END modif of native method
-        if partner.company_name or partner.parent_id:
-            if not name and partner.type in ['invoice', 'delivery', 'other']:
-                name = dict(self.fields_get(
-                    ['type'])['type']['selection'])[partner.type]
-            if not partner.is_company:
-                # START modif of native name_get() method
-                company_name = partner.commercial_company_name or\
-                    partner.sudo().parent_id.name
-                if partner.parent_id.ref:
-                    company_name = "[%s] %s" % (partner.parent_id.ref, company_name)
-                name = "%s, %s" % (company_name, name)
-                # END modif of native name_get() method
-        if self._context.get('show_address_only'):
-            name = partner._display_address(without_company=True)
-        if self._context.get('show_address'):
-            name = name + "\n" + partner._display_address(without_company=True)
-        name = re.sub(r'\s+\n', '\n', name)
-        if self._context.get('partner_show_db_id'):
-            name = "%s (%s)" % (name, partner.id)
-        if self._context.get('address_inline'):
-            splitted_names = name.split("\n")
-            name = ", ".join([n for n in splitted_names if n.strip()])
-        if self._context.get('show_email') and partner.email:
-            name = "%s <%s>" % (name, partner.email)
-        if self._context.get('html_format'):
-            name = name.replace('\n', '<br/>')
-        if self._context.get('show_vat') and partner.vat:
-            name = "%s ‒ %s" % (name, partner.vat)
+        if self.company_name or self.parent_id:
+            if not name and self.type in displayed_types:
+                name = type_description[self.type]
+            if not self.is_company:
+                name = f"{self.commercial_company_name or self.sudo().parent_id.name}, {name}"
+                # START modif of native method
+                if self.parent_id.ref:
+                    name = f"[{self.parent_id.ref}] {name}"
+                # END modif of native method
         return name.strip()
 
-    @api.model
-    def name_search(self, name='', args=None, operator='ilike', limit=100):
-        if args is None:
-            args = []
-        if name and operator == 'ilike':
-            recs = self.search([('ref', '=', name)] + args, limit=limit)
-            if recs:
-                rec_childs = self.search([('id', 'child_of', recs.ids)])
-                return rec_childs.name_get()
-        return super().name_search(name=name, args=args, operator=operator, limit=limit)
+    # native _rec_names_search contains "ref", so no need to inherit name_search()
