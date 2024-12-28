@@ -1,10 +1,10 @@
-# Copyright 2014-2021 Akretion France (http://www.akretion.com/)
+# Copyright 2014-2024 Akretion France (https://www.akretion.com/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 {
     "name": "POS Usability",
-    "version": "16.0.1.0.0",
+    "version": "18.0.1.0.0",
     "category": "Point of sale",
     "license": "AGPL-3",
     "summary": "Misc usability improvement for point of sale",
@@ -24,16 +24,15 @@ Akretion:
 
     """,
     "author": "Akretion",
-    "website": "http://www.akretion.com",
+    "website": "https://github.com/akretion/odoo-usability",
     "depends": ["point_of_sale"],
     "data": [
-        "report/pos.xml",
+        # "report/pos.xml",  # TODO mig if needed
         "views/report_pos_order.xml",
         "views/pos_category.xml",
         "views/pos_session.xml",
         "views/pos_payment_method.xml",
         "views/pos_order.xml",
-        "views/product.xml",
         ],
-    "installable": False,
+    "installable": True,
 }
