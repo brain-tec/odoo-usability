@@ -14,11 +14,8 @@
         <field name="inherit_id" ref="product.product_template_search_view" />
         <field name="arch" type="xml">
             <field name="categ_id" position="after">
-                <field name="seller_ids" string="Supplier" filter_domain="[('seller_ids.partner_id', 'ilike', self)]"/>
+                <field name="seller_id" string="Main Supplier"/>
             </field>
-            <filter name="type" position="attributes">
-                <attribute name="context">{'group_by': 'detailed_type'}</attribute>
-            </filter>
         </field>
     </record>
 
@@ -30,7 +27,7 @@
         <field name="arch" type="xml">
             <field name="barcode" position="after">
                 <!-- barcode is False when the template has several variants anyway -->
-                <field name="barcode_type" attrs="{'invisible': [('barcode', '=', False)]}"/>
+                <field name="barcode_type" invisible="not barcode"/>
             </field>
         </field>
     </record>

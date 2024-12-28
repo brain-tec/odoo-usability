@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2015-2022 Akretion (http://www.akretion.com/)
+  Copyright 2015-2024 Akretion (https://www.akretion.com/)
   @author Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
@@ -13,10 +13,16 @@
         <field name="inherit_id" ref="product.product_product_tree_view"/>
         <field name="arch" type="xml">
             <field name="lst_price" position="after">
-                <field name="currency_id" invisible="1"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="cost_currency_id" column_invisible="1"/>
             </field>
             <field name="lst_price" position="attributes">
                 <attribute name="widget">monetary</attribute>
+                <attribute name="options">{'currency_field': 'currency_id'}</attribute>
+            </field>
+            <field name="standard_price" position="attributes">
+                <attribute name="widget">monetary</attribute>
+                <attribute name="options">{'currency_field': 'cost_currency_id'}</attribute>
             </field>
         </field>
     </record>
@@ -27,7 +33,7 @@
         <field name="inherit_id" ref="product.product_normal_form_view"/>
         <field name="arch" type="xml">
             <field name="barcode" position="after">
-                <field name="barcode_type" attrs="{'invisible': [('barcode', '=', False)]}"/>
+                <field name="barcode_type" invisible="not barcode"/>
             </field>
         </field>
     </record>
