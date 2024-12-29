@@ -24,19 +24,17 @@ class PurchaseOrder(models.Model):
         for order in self:
             order.delivery_partner_id = order.dest_address_id
 
-    # Re-write native name_get() to use amount_untaxed instead of amount_total
-    @api.depends('name', 'partner_ref', 'amount_untaxed')
-    def name_get(self):
-        result = []
+    # Re-write native _compute_display_name to use amount_untaxed instead of amount_total
+    @api.depends('name', 'partner_ref', 'amount_total', 'currency_id')
+    @api.depends_context('show_total_amount')
+    def _compute_display_name(self):
         for po in self:
             name = po.name
             if po.partner_ref:
                 name += ' (' + po.partner_ref + ')'
             if self.env.context.get('show_total_amount') and po.amount_untaxed:
-                name += ': ' + format_amount(
-                    self.env, po.amount_untaxed, po.currency_id)
-            result.append((po.id, name))
-        return result
+                name += ': ' + formatLang(self.env, po.amount_untaxed, currency_obj=po.currency_id)
+            po.display_name = name
 
     # for report
     def py3o_lines_layout(self):

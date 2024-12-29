@@ -13,16 +13,13 @@
     <field name="model">purchase.order</field>
     <field name="inherit_id" ref="purchase.purchase_order_form"/>
     <field name="arch" type="xml">
-        <button name="action_rfq_send" states="purchase" position="after">
-            <button name="%(purchase.action_report_purchase_order)d" states="purchase,done" string="Print" type="action"/>
+        <button name="action_rfq_send" type="object" context="{'send_rfq':False}" position="after">
+            <button name="%(purchase.action_report_purchase_order)d" invisible="state not in ('purchase', 'done')" string="Print" type="action"/>
         </button>
-        <field name="fiscal_position_id" position="attributes">
-            <attribute name="widget">selection</attribute>
-        </field>
         <button name="button_cancel" type="object" position="attributes">
             <attribute name="confirm">Are you sure you want to cancel this purchase order?</attribute>
         </button>
-        <xpath expr="//field[@name='order_line']/tree//field[@name='product_id']" position="after">
+        <xpath expr="//field[@name='order_line']/list//field[@name='product_id']" position="after">
             <field name="product_supplier_code" optional="hide"/>
             <field name="product_barcode" optional="hide"/>
         </xpath>
