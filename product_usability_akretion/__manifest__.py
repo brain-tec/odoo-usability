@@ -5,7 +5,7 @@
 
 {
     'name': 'Product Usability',
-    'version': '16.0.1.0.0',
+    'version': '18.0.1.0.0',
     'category': 'Product',
     'license': 'AGPL-3',
     'summary': 'Small usability enhancements to the product module',
@@ -28,13 +28,12 @@ This module has been written by Alexis de Lattre from Akretion <alexis.delattre@
     'depends': ['product'],
     "external_dependencies": {"python": ["stdnum"]},
     'data': [
-        'views/product_supplierinfo_view.xml',
-        'views/product_pricelist_view.xml',
+        'views/product_supplierinfo.xml',
+        'views/product_pricelist.xml',
         'views/product_pricelist_item.xml',
-        'views/product_template_view.xml',
+        'views/product_template.xml',
         'views/product_product.xml',
         'views/product_config_menu.xml',
-        'views/product_category_view.xml',
     ],
-    'installable': False,
+    'installable': True,
 }
