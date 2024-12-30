@@ -13,6 +13,7 @@ class PurchaseOrder(models.Model):
     currency_id = fields.Many2one(tracking=True)
     payment_term_id = fields.Many2one(tracking=True)
     fiscal_position_id = fields.Many2one(tracking=True)
+    incoterm_id = fields.Many2one(tracking=True)
     partner_ref = fields.Char(tracking=True)
     # the field 'delivery_partner_id' is used in report
     # the compute method of that field is inherited in purchase_stock_usability
@@ -69,7 +70,7 @@ class PurchaseOrder(models.Model):
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
 
-    # for optional display in tree view
+    # for optional display in list view
     product_barcode = fields.Char(
         related='product_id.barcode', string="Product Barcode")
     product_supplier_code = fields.Char(
