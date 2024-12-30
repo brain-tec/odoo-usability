@@ -1,4 +1,4 @@
-# Copyright 2014-2022 Akretion (http://www.akretion.com)
+# Copyright 2014-2024 Akretion (https://www.akretion.com)
 # @author Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
@@ -26,5 +26,6 @@ class StockMove(models.Model):
                     "data-oe-id=%d>%s</a> qty %s %s <b>unreserved</b>")
                     % (product.id, product.display_name,
                        move.product_qty, product.uom_id.name))
+                # fields 'product_qty' has digits=0... strange. So I can't use formatLang()
                 # Copied from do_unreserved of stock.picking
                 picking.package_level_ids.filtered(lambda p: not p.move_ids).unlink()

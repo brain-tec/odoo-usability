@@ -13,21 +13,18 @@
     <field name="model">product.template</field>
     <field name="inherit_id" ref="stock.view_stock_product_template_tree" />
     <field name="arch" type="xml">
-        <field name="responsible_id" position="attributes">
-            <attribute name="optional">hide</attribute>
-    	</field>
-	<field name="virtual_available" position="before">
-	    <field name="incoming_qty" optional="hide" sum="1"/>
-	    <field name="outgoing_qty" optional="hide" sum="1"/>
-	    <!-- we would like to also have free_qty, as on product.product, but this field doesn't exist on product.template -->
-	</field>
-	<!-- we have sum=1 on product.product qty fields, but not on product.template...so I add it on product.template -->
-	<field name="virtual_available" position="attributes">
-		<attribute name="sum">1</attribute>
-	</field>
-	<field name="qty_available" position="attributes">
-		<attribute name="sum">1</attribute>
-	</field>
+        <field name="virtual_available" position="before">
+            <field name="incoming_qty" optional="hide" sum="1"/>
+            <field name="outgoing_qty" optional="hide" sum="1"/>
+        <!-- we would like to also have free_qty, as on product.product, but this field doesn't exist on product.template -->
+        </field>
+        <!-- we have sum=1 on product.product qty fields, but not on product.template...so I add it on product.template -->
+        <field name="virtual_available" position="attributes">
+            <attribute name="sum">1</attribute>
+        </field>
+        <field name="qty_available" position="attributes">
+            <attribute name="sum">1</attribute>
+        </field>
     </field>
 </record>
 
@@ -37,13 +34,17 @@
     <field name="inherit_id" ref="stock.product_template_form_view_procurement_button"/>
     <field name="arch" type="xml">
         <button name="action_view_stock_move_lines" position="before">
-            <button string="Stock Moves"
+            <button
                 type="object"
                 name= "action_view_stock_move"
-                attrs="{'invisible': [('type', 'not in', ('product', 'consu'))]}"
+                invisible="type != 'consu'"
                 groups="stock.group_stock_user"
                 class="oe_stat_button" icon="fa-exchange"
-                />
+                >
+                <div class="o_stat_info">
+                    <span class="o_stat_text">Stock Moves</span>
+                </div>
+            </button>
         </button>
     </field>
 </record>
@@ -57,7 +58,7 @@
             <button string="Stock Moves"
                 type="object"
                 name= "action_view_stock_move"
-                attrs="{'invisible': [('type', 'not in', ('product', 'consu'))]}"
+                invisible="type != 'consu'"
                 groups="stock.group_stock_user"
                 class="oe_stat_button" icon="fa-exchange"
                 />
