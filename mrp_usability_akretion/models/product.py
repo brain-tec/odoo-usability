@@ -1,4 +1,4 @@
-# Copyright 2020-2022 Akretion France (http://www.akretion.com/)
+# Copyright 2020-2024 Akretion France (https://www.akretion.com/)
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
 from odoo import models
@@ -19,7 +19,7 @@ class ProductTemplate(models.Model):
                 {
                     "context": {"default_product_tmpl_id": self.id},
                     "views": False,
-                    "view_mode": "form,tree",
+                    "view_mode": "form,list,kanban",
                     "res_id": bom.id,
                 }
             )
@@ -39,7 +39,7 @@ class ProductProduct(models.Model):
             action.update(
                 {
                     "views": False,
-                    "view_mode": "form,tree",
+                    "view_mode": "form,list,kanban",
                     "res_id": bom_target_ids[0].id,
                 }
             )

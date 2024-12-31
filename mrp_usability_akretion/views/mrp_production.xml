@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2016-2022 Akretion (http://www.akretion.com/)
+  Copyright 2016-2024 Akretion France (https://www.akretion.com/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
@@ -15,8 +15,8 @@
     <field name="arch" type="xml">
         <field name="user_id" position="before">
             <!-- I can't use position="move" because it would match another field in an embedded tree view -->
-            <field name="location_src_id" groups="stock.group_stock_multi_locations" options="{'no_create': True}" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-            <field name="location_dest_id" groups="stock.group_stock_multi_locations" options="{'no_create': True}" attrs="{'readonly': [('state', 'in', ('done', 'cancel'))]}"/>
+            <field name="location_src_id" groups="stock.group_stock_multi_locations" options="{'no_create': True}" readonly="state != 'draft'"/>
+            <field name="location_dest_id" groups="stock.group_stock_multi_locations" options="{'no_create': True}" readonly="state in ('done', 'cancel')"/>
         </field>
         <!-- It is important to remove the original field location_dest_id
             and not just set it as invisible because it cancels the changes -->
@@ -24,13 +24,6 @@
         <xpath expr="//page[@name='miscellaneous']/group/group/field[@name='location_src_id']" position="attributes">
             <attribute name="invisible">1</attribute>
         </xpath>
-        <xpath expr="//page[@name='miscellaneous']/group/group/field[@name='date_deadline']" position="after">
-            <field name="date_start"/>
-            <field name="date_finished"/>
-        </xpath>
-        <button name="action_cancel" type="object" attrs="{'invisible': ['|', '|', ('id', '=', False), ('state', 'in', ('done', 'cancel')), ('confirm_cancel', '=', True)]}" position="attributes">
-            <attribute name="confirm">Are you sure you want to cancel this manufacturing order?</attribute>
-        </button>
     </field>
 </record>
 
