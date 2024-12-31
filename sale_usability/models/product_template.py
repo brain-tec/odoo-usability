@@ -12,4 +12,3 @@ class ProductTemplate(models.Model):
     expense_policy = fields.Selection(tracking=True)
     invoice_policy = fields.Selection(tracking=True)
     sale_line_warn = fields.Selection(tracking=True)
-    expense_policy = fields.Selection(tracking=True)
