@@ -11,7 +11,6 @@ class SaleOrder(models.Model):
 
     date_order = fields.Datetime(tracking=True)
     client_order_ref = fields.Char(tracking=True)
-    # for partner_id, the 'sale' module sets track_visibility='always'
     amount_tax = fields.Monetary(tracking=True)
     partner_shipping_id = fields.Many2one(tracking=True)
     partner_invoice_id = fields.Many2one(tracking=True)
