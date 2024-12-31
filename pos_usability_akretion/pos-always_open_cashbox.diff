@@ -1,15 +1,18 @@
-diff --git a/addons/point_of_sale/static/src/js/Screens/PaymentScreen/PaymentScreen.js b/addons/point_of_sale/static/src/js/Screens/PaymentScreen/PaymentScreen.js
-index e8ddb4d173c..684be2484a2 100644
---- a/addons/point_of_sale/static/src/js/Screens/PaymentScreen/PaymentScreen.js
-+++ b/addons/point_of_sale/static/src/js/Screens/PaymentScreen/PaymentScreen.js
-@@ -190,7 +190,9 @@ odoo.define('point_of_sale.PaymentScreen', function (require) {
-             }
+diff --git a/addons/point_of_sale/static/src/app/screens/payment_screen/payment_screen.js b/addons/point_of_sale/static/src/app/screens/payment_screen/payment_screen.js
+index 39d3b66cc63..d1e97b0c3d9 100644
+--- a/addons/point_of_sale/static/src/app/screens/payment_screen/payment_screen.js
++++ b/addons/point_of_sale/static/src/app/screens/payment_screen/payment_screen.js
+@@ -271,9 +271,10 @@ export class PaymentScreen extends Component {
          }
-         async _finalizeValidation() {
--            if ((this.currentOrder.is_paid_with_cash() || this.currentOrder.get_change()) && this.env.pos.config.iface_cashdrawer && this.env.proxy && this.env.proxy.printer) {
-+            //if ((this.currentOrder.is_paid_with_cash() || this.currentOrder.get_change()) && this.env.pos.config.iface_cashdrawer && this.env.proxy && this.env.proxy.printer) {
-+            // Always open cashbox (by default, Odoo only opens cashbox for cash payments)
-+            if (this.env.pos.config.iface_cashdrawer && this.env.proxy && this.env.proxy.printer) {
-                 this.env.proxy.printer.open_cashbox();
-             }
+     }
+     async _finalizeValidation() {
+-        if (this.currentOrder.is_paid_with_cash() || this.currentOrder.get_change()) {
+-            this.hardwareProxy.openCashbox();
+-        }
++        // Always open cashbox (by default, Odoo only opens cashbox for cash payments)
++        // if (this.currentOrder.is_paid_with_cash() || this.currentOrder.get_change()) {
++        this.hardwareProxy.openCashbox();
++        // }
  
+         this.currentOrder.date_order = serializeDateTime(luxon.DateTime.now());
+         for (const line of this.paymentLines) {
