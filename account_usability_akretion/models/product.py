@@ -4,6 +4,9 @@
 
 from odoo import api, fields, models, _
 
+# CODE DISABLED FOR THE MOMENT. I need to decide if I want to drop it
+# because native code is enough and if I want to re-enable it
+
 
 class ProductTemplate(models.Model):
     _inherit = 'product.template'

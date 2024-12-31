@@ -13,7 +13,7 @@ class ResCompany(models.Model):
     # But there are several problems with this native field:
     # - it is copied on the 'narration' field of account.move => we don't want that
     # - the text block is very small on the form view of res.config.settings
-    # So I decided to have our own field "fixed_invoice_terms"
+    # So I decided to have our own field "static_invoice_terms"
     # The native field can still be used when you need to customise some
     # terms and conditions on each invoice (not very common, but...)
     # To underline this different with the native field, I prefix it with 'static_'
