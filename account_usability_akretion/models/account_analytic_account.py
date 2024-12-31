@@ -1,21 +1,20 @@
-# Copyright 2015-2022 Akretion (http://www.akretion.com)
+# Copyright 2015-2024 Akretion France (https://www.akretion.com)
 # @author Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import models
+from odoo import api, models
 
 
 class AccountAnalyticAccount(models.Model):
     _inherit = 'account.analytic.account'
 
-    def name_get(self):
+    @api.depends_context('analytic_account_show_code_only')
+    def _compute_display_name(self):
         if self._context.get('analytic_account_show_code_only'):
-            res = []
-            for record in self:
-                res.append((record.id, record.code or record.name))
-            return res
+            for rec in self:
+                rec.display_name = rec.code or rec.name
         else:
-            return super().name_get()
+            return super()._compute_display_name()
 
     _sql_constraints = [(
         'code_company_unique',

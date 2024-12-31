@@ -1,10 +1,9 @@
-# Copyright 2018-2022 Akretion France (https://akretion.com/)
+# Copyright 2018-2024 Akretion France (https://akretion.com/)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import api, fields, models, _
-from dateutil.relativedelta import relativedelta
-from odoo.exceptions import UserError
+from datetime import timedelta
 
 
 class AccountMoveReversal(models.TransientModel):
@@ -17,15 +16,9 @@ class AccountMoveReversal(models.TransientModel):
         for wizard in self:
             moves = wizard.move_ids or self.env["account.move"].browse(self._context['active_ids'])
             reversed_moves = self.env["account.move"].search([('reversed_entry_id', 'in', moves.ids)])
-            warning = ""
-            for already_reversed_move in reversed_moves.reversed_entry_id:
-                if warning:
-                    warning += "\n"
-                reversed_by = " ; ".join(already_reversed_move.reversal_move_id.mapped("display_name"))
-                move_detail = _("%s reversed by %s") % (already_reversed_move.display_name, reversed_by)
-                warning += move_detail
-            wizard.already_reversed_warning = warning or False
-
+            # in v18, display_name contains "MISC/2024/0008 (Reversal of: MISC/2024/0007)"
+            warning = "\n".join([m.display_name for m in reversed_moves])
+            wizard.already_reversed_warning = warning
 
     # Set default reversal date to original move + 1 day
     # and raise error if original move has already been reversed
@@ -36,5 +29,5 @@ class AccountMoveReversal(models.TransientModel):
         amo = self.env['account.move']
         moves = amo.browse(self._context['active_ids'])
         if len(moves) == 1:
-            res['date'] = moves.date + relativedelta(days=1)
+            res['date'] = moves.date + timedelta(1)
         return res

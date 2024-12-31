@@ -7,6 +7,10 @@
 
 <odoo>
 
+        <!-- in v18, attachments are disabled by default
+                TODO  see what's the editor idea about it
+        in the meantime, this field is disabled in manifest -->
+
 <record id="account.account_invoices" model="ir.actions.report">
     <!-- Attach only on customer invoices/refunds -->
     <field name="attachment">(object.move_type in ('out_invoice', 'out_refund')) and (object.state == 'posted') and ((object.name or 'INV').replace('/','_')+'.pdf')</field>

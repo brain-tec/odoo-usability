@@ -1,4 +1,4 @@
-# Copyright 2015-2022 Akretion (http://www.akretion.com)
+# Copyright 2015-2024 Akretion (https://www.akretion.com)
 # @author Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
@@ -56,7 +56,7 @@ class AccountGroupGenerate(models.TransientModel):
         action = {
             'type': 'ir.actions.act_window',
             'name': _('Account Groups'),
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'res_model': 'account.group',
             }
         return action

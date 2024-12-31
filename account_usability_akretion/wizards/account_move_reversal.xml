@@ -9,10 +9,9 @@
             <div
                 class="alert alert-warning"
                 role="alert"
-                attrs="{'invisible': [('already_reversed_warning', '=', False)]}"
+                invisible="not already_reversed_warning"
             >
-                You are about to reverse entries that have already been reversed or partially reversed (refund). Make sure it is intented.
-                Already reversed entries are the following : 
+                You are about to reverse entries that have already been reversed:
                 <field
                     name="already_reversed_warning"
                 /> 

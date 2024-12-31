@@ -1,9 +1,11 @@
-# Copyright 2014-2022 Akretion (http://www.akretion.com)
+# Copyright 2014-2024 Akretion (https://www.akretion.com)
 # @author Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import fields, models, _
+from odoo.tools.misc import formatLang
 from odoo.exceptions import UserError
+from markupsafe import Markup
 import logging
 
 logger = logging.getLogger(__name__)
@@ -12,7 +14,7 @@ logger = logging.getLogger(__name__)
 class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'
 
-    # for optional display in tree view
+    # for optional display in list view
     product_barcode = fields.Char(
         related='product_id.barcode', string="Product Barcode")
 
@@ -27,11 +29,13 @@ class StockMoveLine(models.Model):
             picking = moveline.move_id.picking_id
             if picking:
                 product = moveline.product_id
+                product_link = Markup(
+                    "<a href=# data-oe-model=product.product data-oe-id=%s>%s</a>" % (product.id, product.display_name))
                 picking.message_post(body=_(
-                    "Product <a href=# data-oe-model=product.product "
-                    "data-oe-id=%d>%s</a> qty %s %s <b>unreserved</b>")
-                    % (product.id, product.display_name,
-                       moveline.reserved_qty, product.uom_id.name))
+                    "Product %(product_link)s qty %(qty)s %(uom)s unreserved",
+                    product_link=product_link,
+                    qty=formatLang(self.env, moveline.quantity, dp='Product Unit of Measure'),
+                    uom=product.uom_id.name))
                 # Copied from do_unreserved of stock.picking
                 picking.package_level_ids.filtered(lambda p: not p.move_ids).unlink()
             moveline.unlink()

@@ -1,4 +1,4 @@
-# Copyright 2014-2022 Akretion (http://www.akretion.com)
+# Copyright 2014-2024 Akretion (https://www.akretion.com)
 # @author Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
@@ -17,7 +17,7 @@ class StockQuant(models.Model):
             "stock.stock_move_line_action")
         action['domain'] = [
             ('state', 'not in', ('draft', 'done', 'cancel')),
-            ('reserved_uom_qty', '!=', 0),
+            ('quantity', '!=', 0),
             ('product_id', '=', self.product_id.id),
             ('location_id', '=', self.location_id.id),
             ('lot_id', '=', self.lot_id.id or False),

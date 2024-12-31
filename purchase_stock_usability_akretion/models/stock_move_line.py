@@ -1,4 +1,4 @@
-# Copyright 2023 Akretion France (http://www.akretion.com)
+# Copyright 2023-2024 Akretion France (https://www.akretion.com)
 # @author Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
@@ -8,7 +8,7 @@ from odoo import fields, models
 class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'
 
-    # for optional display in tree view
+    # for optional display in list view
     product_supplier_code = fields.Char(
         compute='_compute_product_supplier_code', string="Vendor Product Code")
 

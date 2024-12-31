@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2018-2024 Akretion (http://www.akretion.com/)
+  Copyright 2018-2024 Akretion (https://www.akretion.com/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
@@ -15,7 +15,6 @@
     <field name="arch" type="xml">
         <field name="partner_id" position="after">
            <field name="commercial_partner_id" optional="hide"/>
-           <field name="country_id" optional="hide"/>
            <field name="industry_id" optional="hide"/>
            <field name="fiscal_position_id" optional="hide"/>
         </field>
@@ -41,6 +40,7 @@
    </field>
 </record>
 
+<!-- pivot in first position instead of graph -->
 <record id="account.action_account_invoice_report_all_supp" model="ir.actions.act_window">
     <field name="view_mode">pivot,graph</field>
 </record>

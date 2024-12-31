@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2014-2020 Akretion (http://www.akretion.com/)
+  Copyright 2014-2024 Akretion (https://www.akretion.com/)
   @author Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
@@ -14,52 +14,40 @@
     <field name="inherit_id" ref="stock.view_picking_form" />
     <field name="arch" type="xml">
         <field name="backorder_id" position="attributes">
-            <attribute name="attrs">{}</attribute>
+            <attribute name="invisible">0</attribute>
         </field>
         <field name="partner_id" position="attributes">
             <attribute name="context">{'show_address': 1}</attribute>
-            <attribute name="options">{'always_reload': True}</attribute>
         </field>
-        <button name="action_cancel" type="object" position="attributes">
-            <attribute name="confirm">Are you sure you want to cancel this picking?</attribute>
-        </button>
         <!-- STOCK MOVE -->
         <!-- This sum is useful to check the 'number of items' to transfer... -->
-        <xpath expr="//field[@name='move_ids_without_package']/tree/field[@name='product_uom_qty']" position="attributes">
+        <xpath expr="//field[@name='move_ids_without_package']/list/field[@name='product_uom_qty']" position="attributes">
             <attribute name="sum">1</attribute>
         </xpath>
-        <xpath expr="//field[@name='move_ids_without_package']/tree/field[@name='quantity_done']" position="attributes">
+        <xpath expr="//field[@name='move_ids_without_package']/list/field[@name='quantity']" position="attributes">
             <attribute name="sum">1</attribute>
         </xpath>
-        <xpath expr="//field[@name='move_ids_without_package']/tree/field[@name='location_id']" position="replace"/>
-        <xpath expr="//field[@name='move_ids_without_package']/tree/field[@name='location_dest_id']" position="replace"/>
-        <xpath expr="//field[@name='move_ids_without_package']/tree/field[@name='name']" position="replace"/>
-        <xpath expr="//field[@name='move_ids_without_package']/tree/field[@name='product_id']" position="after">
+        <xpath expr="//field[@name='move_ids_without_package']/list/field[@name='location_id']" position="replace"/>
+        <xpath expr="//field[@name='move_ids_without_package']/list/field[@name='location_dest_id']" position="replace"/>
+        <xpath expr="//field[@name='move_ids_without_package']/list/field[@name='name']" position="replace"/>
+        <xpath expr="//field[@name='move_ids_without_package']/list/field[@name='product_id']" position="after">
             <field name="product_barcode" optional="hide"/>
             <field name="name" optional="hide"/>
             <field name="location_id" groups="stock.group_stock_multi_locations" optional="show" domain="[('id', 'child_of', 'parent.location_id')]"  options="{'no_create': True}"/>
             <field name="location_dest_id" groups="stock.group_stock_multi_locations" optional="show" domain="[('id', 'child_of', 'parent.location_dest_id')]"  options="{'no_create': True}"/>
         </xpath>
-        <xpath expr="//field[@name='move_ids_without_package']/tree/button[@name='action_assign_serial']" position="after">
+        <xpath expr="//field[@name='move_ids_without_package']/list" position="inside">
             <button type="object" name="button_do_unreserve" string="Unreserve"
                 groups="stock.group_stock_user"
-                states="partially_available,assigned"
+                invisible="state not in ('partially_available', 'assigned')"
                 icon="fa-ban"/>
         </xpath>
-        <xpath expr="//field[@name='move_ids_without_package']/form//field[@name='product_uom']" position="after">
-            <field name="location_id" groups="stock.group_stock_multi_locations" domain="[('id', 'child_of', 'parent.location_id')]"  options="{'no_create': True}"/>
-            <field name="location_dest_id" groups="stock.group_stock_multi_locations" domain="[('id', 'child_of', 'parent.location_dest_id')]"  options="{'no_create': True}"/>
-        </xpath>
         <xpath expr="//sheet/group/group/field[@name='location_id' and @groups='stock.group_stock_multi_locations']" position="attributes">
-            <attribute name="attrs">{}</attribute>
+            <attribute name="invisible">0</attribute>
         </xpath>
         <xpath expr="//sheet/group/group/field[@name='location_dest_id' and @groups='stock.group_stock_multi_locations']" position="attributes">
-            <attribute name="attrs">{}</attribute>
+            <attribute name="invisible">0</attribute>
         </xpath>
-        <group name="other_infos" position="inside">
-            <!-- the field picking_type_id is shown at the top of the form view when hide_picking_type = False, which depend on a context key. I want to always show it in the last tab -->
-            <field name="picking_type_id" readonly="1"/>
-        </group>
     </field>
 </record>
 
@@ -71,14 +59,9 @@
         <filter name="picking_type" position="after">
             <filter string="Partner" name="partner_groupby" context="{'group_by': 'partner_id'}"/>
         </filter>
-        <filter name="origin" position="replace"/>
         <filter name="expected_date" position="after">
             <filter name="date_done_groupby" string="Date Done"
-                context="{'group_by': 'date_done:day'}"/>
-        </filter>
-        <filter name="expected_date" position="attributes">
-            <!-- group per day -->
-            <attribute name="context">{'group_by': 'scheduled_date:day'}</attribute>
+                context="{'group_by': 'date_done'}"/>
         </filter>
     </field>
 </record>
@@ -87,34 +70,46 @@
     <field name="name">stock_usability.picking_pivot</field>
     <field name="model">stock.picking</field>
     <field name="arch" type="xml">
-        <pivot string="Transfers">
+        <pivot>
             <field name="date_done" type="row" interval="month"/>
         </pivot>
     </field>
 </record>
 
 <record id="stock.action_picking_tree_all" model="ir.actions.act_window">
-    <field name="view_mode">tree,kanban,form,calendar,pivot</field> <!-- add pivot -->
+    <field name="view_mode">list,kanban,form,calendar,pivot</field> <!-- add pivot -->
 </record>
 
-<record id="stock.stock_picking_action_picking_type" model="ir.actions.act_window">
-    <field name="view_mode">tree,kanban,form,calendar,pivot</field> <!-- add pivot -->
+<record id="stock.action_picking_tree_incoming" model="ir.actions.act_window">
+    <field name="view_mode">list,kanban,form,calendar,activity,pivot</field> <!-- add pivot -->
+</record>
+
+<record id="stock.action_picking_tree_outgoing" model="ir.actions.act_window">
+    <field name="view_mode">list,kanban,form,calendar,activity,pivot</field> <!-- add pivot -->
+</record>
+
+<record id="stock.action_picking_tree_internal" model="ir.actions.act_window">
+    <field name="view_mode">list,kanban,form,calendar,pivot</field> <!-- add pivot -->
 </record>
 
 <record id="stock.action_picking_tree_ready" model="ir.actions.act_window">
-    <field name="view_mode">tree,kanban,form,calendar,pivot</field> <!-- add pivot -->
+    <field name="view_mode">list,kanban,form,calendar,pivot</field> <!-- add pivot -->
+</record>
+
+<record id="stock.action_picking_tree_graph" model="ir.actions.act_window">
+    <field name="view_mode">list,kanban,form,calendar,pivot</field> <!-- add pivot -->
 </record>
 
 <record id="stock.action_picking_tree_waiting" model="ir.actions.act_window">
-    <field name="view_mode">tree,kanban,form,calendar,pivot</field> <!-- add pivot -->
+    <field name="view_mode">list,kanban,form,calendar,pivot</field> <!-- add pivot -->
 </record>
 
 <record id="stock.action_picking_tree_late" model="ir.actions.act_window">
-    <field name="view_mode">tree,kanban,form,calendar,pivot</field> <!-- add pivot -->
+    <field name="view_mode">list,kanban,form,calendar,pivot</field> <!-- add pivot -->
 </record>
 
 <record id="stock.action_picking_tree_backorder" model="ir.actions.act_window">
-    <field name="view_mode">tree,kanban,form,calendar,pivot</field> <!-- add pivot -->
+    <field name="view_mode">list,kanban,form,calendar,pivot</field> <!-- add pivot -->
 </record>
 
 </odoo>

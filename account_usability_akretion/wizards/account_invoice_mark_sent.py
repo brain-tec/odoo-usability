@@ -1,4 +1,4 @@
-# Copyright 2017-2022 Akretion France (https://akretion.com/en)
+# Copyright 2017-2024 Akretion France (https://akretion.com/en)
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
@@ -12,7 +12,7 @@ class AccountInvoiceMarkSent(models.TransientModel):
     _description = 'Mark invoices as sent'
 
     def run(self):
-        assert self.env.context.get('active_model') == 'account.move',\
+        assert self.env.context.get('active_model') == 'account.move', \
             'Source model must be invoices'
         assert self.env.context.get('active_ids'), 'No invoices selected'
         invoices = self.env['account.move'].search([
