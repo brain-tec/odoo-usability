@@ -1,8 +1,8 @@
-# Copyright 2015-2020 Akretion France (http://www.akretion.com)
+# Copyright 2015-2024 Akretion France (https://www.akretion.com)
 # @author Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import api, fields, models
+from odoo import fields, models
 from odoo.tools import float_compare, float_round
 
 
@@ -22,7 +22,7 @@ class SaleOrder(models.Model):
             'Product Unit of Measure')
         for line in self.order_line:
             if (
-                    line.product_id.type in ('product', 'consu') and
+                    line.product_id.type == 'consu' and
                     float_compare(
                         line.product_uom_qty, line.qty_delivered,
                         precision_digits=prec) > 0):
