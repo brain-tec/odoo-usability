@@ -1,4 +1,4 @@
-# Copyright 2021-2022 Akretion (http://www.akretion.com)
+# Copyright 2021-2024 Akretion France (https://www.akretion.com)
 # @author Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
@@ -18,3 +18,4 @@ class MrpBom(models.Model):
     ready_to_produce = fields.Selection(tracking=90)
     picking_type_id = fields.Many2one(tracking=60)
     consumption = fields.Selection(tracking=40)
+    produce_delay = fields.Integer(tracking=100)

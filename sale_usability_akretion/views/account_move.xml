@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2019-2022 Akretion France (http://www.akretion.com/)
+  Copyright 2019-2024 Akretion France (https://www.akretion.com/)
   @author: Alexis de Lattre <alexis.delattre@akretion.com>
   License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 -->
@@ -13,7 +13,7 @@
     <field name="inherit_id" ref="account.view_move_form"/>
     <field name="arch" type="xml">
         <xpath expr="//field[@name='invoice_line_ids']/form//field[@name='analytic_distribution']" position="after">
-            <field name="sale_line_ids" widget="many2many_tags" attrs="{'invisible': [('sale_line_ids', '=', [])]}"/>
+            <field name="sale_line_ids" widget="many2many_tags" invisible="not sale_line_ids"/>
         </xpath>
     </field>
 </record>
