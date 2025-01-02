@@ -19,7 +19,7 @@
                 <field name="crossdock_route_id"/>
                 <field name="reception_route_id"/>
                 <field name="delivery_route_id"/>
-                <field name="resupply_route_ids"/>
+                <field name="resupply_route_ids" widget="many2many_tags"/>
             </group>
         </xpath>
     </field>
