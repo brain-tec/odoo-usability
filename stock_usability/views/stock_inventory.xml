@@ -18,6 +18,16 @@
         <field name="prefill_counted_quantity" position="attributes">
             <attribute name="attrs">{}</attribute>
         </field>
+        <button name="action_validate" type="object" position="attributes">
+            <attribute name="confirm">Do you confirm the validation of the inventory?</attribute>
+        </button>
+        <button name="action_validate" class="oe_highlight" position="attributes">
+            <attribute name="confirm">Do you confirm the validation of the inventory?</attribute>
+        </button>
+        <!-- I would like to have the same confirm pop-up for the button
+             "Validate Inventory" on the tree view of the inventory lines,
+              but it's a special JS widget, so it's more complex to implement
+        -->
     </field>
 </record>
  
