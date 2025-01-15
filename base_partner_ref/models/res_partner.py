@@ -29,7 +29,7 @@ class ResPartner(models.Model):
         type_description = dict(self._fields['type']._description_selection(self.env))
         name = self.name or ''
         # START modif of native method
-        if self.ref:
+        if not self._context.get('show_address') and self.ref:
             name = "[%s] %s" % (self.ref, name)
         # END modif of native method
         if self.company_name or self.parent_id:
@@ -38,7 +38,7 @@ class ResPartner(models.Model):
             if not self.is_company:
                 name = f"{self.commercial_company_name or self.sudo().parent_id.name}, {name}"
                 # START modif of native method
-                if self.parent_id.ref:
+                if not self._context.get('show_address') and self.parent_id.ref:
                     name = f"[{self.parent_id.ref}] {name}"
                 # END modif of native method
         return name.strip()
