@@ -1,4 +1,4 @@
-# Copyright (C) 2015-2019 Akretion (http://www.akretion.com)
+# Copyright 2015-2025 Akretion France (https://www.akretion.com)
 # @author Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
@@ -14,33 +14,32 @@ class SaleOrderLine(models.Model):
         related='order_id.company_id.currency_id',
         store=True, string='Company Currency')
     standard_price_company_currency = fields.Float(
-        string='Cost Price in Company Currency', readonly=True,
-        digits="Product Price",
-        help="Cost price in company currency in the unit of measure "
+        compute='_compute_margin', store=True, digits="Product Price",
+        string='Unit Cost in Company Currency',
+        help="Unit cost in company currency in the unit of measure "
         "of the sale order line")
     standard_price_sale_currency = fields.Float(
-        string='Cost Price in Sale Currency',
-        compute='_compute_margin', store=True,
-        digits="Product Price",
-        help="Cost price in sale currency in the unit of measure "
+        compute='_compute_margin', store=True, digits="Product Price",
+        string='Unit Cost in Sale Currency',
+        help="Unit cost in sale currency in the unit of measure "
         "of the sale order line")
     margin_sale_currency = fields.Monetary(
-        string='Margin in Sale Currency', store=True,
-        compute='_compute_margin', currency_field='currency_id')
+        compute='_compute_margin', store=True, currency_field='currency_id',
+        string='Margin in Sale Currency')
     margin_company_currency = fields.Monetary(
-        string='Margin in Company Currency', store=True,
-        compute='_compute_margin', currency_field='company_currency_id')
+        compute='_compute_margin', store=True, currency_field='company_currency_id',
+        string='Margin in Company Currency')
     margin_rate = fields.Float(
-        string="Margin Rate", store=True,
-        compute='_compute_margin',
-        digits=(16, 2), help="Margin rate in percentage of the sale price")
+        compute='_compute_margin', store=True, digits=(16, 2),
+        string="Margin Rate", help="Margin rate in percentage of the sale price")
 
     @api.depends(
-        'standard_price_company_currency', 'order_id.pricelist_id.currency_id',
-        'order_id.date_order', 'product_uom_qty', 'price_subtotal',
+        'product_id', 'product_uom', 'display_type', 'product_uom_qty', 'price_subtotal',
+        'order_id.pricelist_id.currency_id', 'order_id.date_order',
         'order_id.company_id')
     def _compute_margin(self):
         for line in self:
+            standard_price_comp_cur = 0.0
             standard_price_sale_cur = 0.0
             margin_sale_cur = 0.0
             margin_comp_cur = 0.0
@@ -48,60 +47,31 @@ class SaleOrderLine(models.Model):
             order_cur = line.order_id.pricelist_id.currency_id
             company = line.order_id.company_id
             company_cur = company.currency_id
-            if order_cur and company_cur:
+            if (
+                    not line.display_type and
+                    line.product_id and
+                    line.product_uom and
+                    order_cur and
+                    company_cur):
+                standard_price_comp_cur = line.product_id.with_company(company.id).standard_price
+                if line.product_uom != line.product_id.uom_id:
+                    standard_price_comp_cur = line.product_id.uom_id._compute_price(
+                        standard_price_comp_cur, line.product_uom)
                 date = line.order_id.date_order
-                standard_price_sale_cur =\
-                    company_cur._convert(
-                        line.standard_price_company_currency, order_cur,
-                        company, date)
+                standard_price_sale_cur = company_cur._convert(
+                    standard_price_comp_cur, order_cur, company, date)
                 margin_sale_cur =\
                     line.price_subtotal\
-                    - line.product_uom_qty * standard_price_sale_cur
+                    - (line.product_uom_qty * standard_price_sale_cur)
                 margin_comp_cur = order_cur._convert(
                     margin_sale_cur, company_cur, company, date)
                 if line.price_subtotal:
                     margin_rate = 100 * margin_sale_cur / line.price_subtotal
+            line.standard_price_company_currency = standard_price_comp_cur
             line.standard_price_sale_currency = standard_price_sale_cur
             line.margin_sale_currency = margin_sale_cur
             line.margin_company_currency = margin_comp_cur
             line.margin_rate = margin_rate
-
-    # We want to copy standard_price on sale order line
-    @api.model_create_multi
-    def create(self, vals_list):
-        for vals in vals_list:
-            if vals.get('product_id'):
-                pp = self.env['product.product'].browse(vals['product_id'])
-                std_price = pp.standard_price
-                sale_uom_id = vals.get('product_uom')
-                if sale_uom_id and sale_uom_id != pp.uom_id.id:
-                    sale_uom = self.env['uom.uom'].browse(sale_uom_id)
-                    # convert from product UoM to sale UoM
-                    std_price = pp.uom_id._compute_price(
-                        pp.standard_price, sale_uom)
-                vals['standard_price_company_currency'] = std_price
-        return super().create(vals_list)
-
-    def write(self, vals):
-        if not vals:
-            vals = {}
-        if 'product_id' in vals or 'product_uom' in vals:
-            for sol in self:
-                # product_uom and product_id are required fields
-                if 'product_id' in vals:
-                    pp = self.env['product.product'].browse(vals['product_id'])
-                else:
-                    pp = sol.product_id
-                if 'product_uom' in vals:
-                    sale_uom = self.env['uom.uom'].browse(
-                        vals['product_uom'])
-                else:
-                    sale_uom = sol.product_uom
-                std_price = pp.standard_price
-                if sale_uom != pp.uom_id:
-                    std_price = pp.uom_id._compute_price(std_price, sale_uom)
-                sol.write({'standard_price_company_currency': std_price})
-        return super().write(vals)
 
 
 class SaleOrder(models.Model):
@@ -109,23 +79,20 @@ class SaleOrder(models.Model):
 
     # Also defined in bi_sale_company_currency
     company_currency_id = fields.Many2one(
-        related='company_id.currency_id', store=True,
-        string="Company Currency")
+        related='company_id.currency_id', store=True, string="Company Currency")
     margin_sale_currency = fields.Monetary(
-        string='Margin in Sale Currency',
-        currency_field='currency_id',
-        compute='_compute_margin', store=True)
+        compute='_compute_margin', store=True, currency_field='currency_id',
+        string='Margin in Sale Currency')
     margin_company_currency = fields.Monetary(
-        string='Margin in Company Currency',
-        currency_field='company_currency_id',
-        compute='_compute_margin', store=True)
+        compute='_compute_margin', store=True, currency_field='company_currency_id',
+        string='Margin in Company Currency')
 
     @api.depends(
         'order_line.margin_sale_currency',
         'order_line.margin_company_currency')
     def _compute_margin(self):
         rg_res = self.env['sale.order.line'].read_group(
-            [('order_id', 'in', self.ids)],
+            [('order_id', 'in', self.ids), ('display_type', '=', False)],
             ['order_id', 'margin_sale_currency:sum', 'margin_company_currency:sum'],
             ['order_id'])
         mapped_data = dict([
