@@ -10,15 +10,16 @@ class AccountMoveLine(models.Model):
 
     standard_price_company_currency = fields.Float(
         compute='_compute_margin', store=True, digits='Product Price',
-        string='Unit Cost Price in Company Currency',
-        help="Unit Cost price in company currency in the unit of measure "
+        string='Unit Cost in Company Currency',
+        help="Unit Cost in company currency in the unit of measure "
         "of the invoice line (which may be different from the unit "
         "of measure of the product).")
     standard_price_invoice_currency = fields.Float(
         compute='_compute_margin', store=True, digits='Product Price',
-        string='Unit Cost Price in Invoice Currency',
-        help="Unit Cost price in invoice currency in the unit of measure "
-        "of the invoice line.")
+        string='Unit Cost in Invoice Currency',
+        help="Unit Cost in invoice currency in the unit of measure "
+        "of the invoice line (which may be different from the unit "
+        "of measure of the product).")
     margin_invoice_currency = fields.Monetary(
         compute='_compute_margin', store=True,
         string='Margin in Invoice Currency', currency_field='currency_id')

@@ -1,0 +1,98 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* account_invoice_margin
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 16.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-01-16 16:24+0000\n"
+"PO-Revision-Date: 2025-01-16 16:24+0000\n"
+"Last-Translator: Alexis de Lattre <alexis.delattre@akretion.com>\n"
+"Language-Team: \n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: account_invoice_margin
+#: model:ir.model,name:account_invoice_margin.model_account_invoice_report
+msgid "Invoices Statistics"
+msgstr "Statistiques des factures"
+
+#. module: account_invoice_margin
+#: model:ir.model,name:account_invoice_margin.model_account_move
+msgid "Journal Entry"
+msgstr "Pièce comptable"
+
+#. module: account_invoice_margin
+#: model:ir.model,name:account_invoice_margin.model_account_move_line
+msgid "Journal Item"
+msgstr "Écriture comptable"
+
+#. module: account_invoice_margin
+#: model:ir.model.fields,field_description:account_invoice_margin.field_account_invoice_report__margin
+#: model_terms:ir.ui.view,arch_db:account_invoice_margin.view_invoice_tree
+#: model_terms:ir.ui.view,arch_db:account_invoice_margin.view_move_form
+msgid "Margin"
+msgstr "Marge"
+
+#. module: account_invoice_margin
+#: model_terms:ir.ui.view,arch_db:account_invoice_margin.view_move_form
+msgid "Margin %"
+msgstr "Marge %"
+
+#. module: account_invoice_margin
+#: model:ir.model.fields,field_description:account_invoice_margin.field_account_move_line__margin_rate
+msgid "Margin Rate"
+msgstr "Taux de marge"
+
+#. module: account_invoice_margin
+#: model:ir.model.fields,field_description:account_invoice_margin.field_account_bank_statement_line__margin_company_currency
+#: model:ir.model.fields,field_description:account_invoice_margin.field_account_move__margin_company_currency
+#: model:ir.model.fields,field_description:account_invoice_margin.field_account_move_line__margin_company_currency
+#: model:ir.model.fields,field_description:account_invoice_margin.field_account_payment__margin_company_currency
+msgid "Margin in Company Currency"
+msgstr "Marge dans la devise de la société"
+
+#. module: account_invoice_margin
+#: model:ir.model.fields,field_description:account_invoice_margin.field_account_bank_statement_line__margin_invoice_currency
+#: model:ir.model.fields,field_description:account_invoice_margin.field_account_move__margin_invoice_currency
+#: model:ir.model.fields,field_description:account_invoice_margin.field_account_move_line__margin_invoice_currency
+#: model:ir.model.fields,field_description:account_invoice_margin.field_account_payment__margin_invoice_currency
+msgid "Margin in Invoice Currency"
+msgstr "Marge dans la devise de la facture"
+
+#. module: account_invoice_margin
+#: model:ir.model.fields,help:account_invoice_margin.field_account_move_line__margin_rate
+msgid "Margin rate in percentage of the sale price"
+msgstr "Taux de marge en pourcentage du prix de vente"
+
+#. module: account_invoice_margin
+#: model:ir.model.fields,field_description:account_invoice_margin.field_account_move_line__standard_price_company_currency
+msgid "Unit Cost in Company Currency"
+msgstr "Coût unitaire dans la devise de la société"
+
+#. module: account_invoice_margin
+#: model:ir.model.fields,field_description:account_invoice_margin.field_account_move_line__standard_price_invoice_currency
+msgid "Unit Cost in Invoice Currency"
+msgstr "Coût unitaire dans la devise de la facture"
+
+#. module: account_invoice_margin
+#: model:ir.model.fields,help:account_invoice_margin.field_account_move_line__standard_price_company_currency
+msgid ""
+"Unit Cost in company currency in the unit of measure of the invoice line "
+"(which may be different from the unit of measure of the product)."
+msgstr ""
+"Coût unitaire dans la devise de la société dans l'unité de mesure de la "
+"ligne de facture (qui peut être différente de l'unité de mesure du produit)."
+
+#. module: account_invoice_margin
+#: model:ir.model.fields,help:account_invoice_margin.field_account_move_line__standard_price_invoice_currency
+msgid ""
+"Unit Cost in invoice currency in the unit of measure of the invoice line "
+"(which may be different from the unit of measure of the product)."
+msgstr ""
+"Coût unitaire dans la devise de la facture dans l'unité de mesure "
+"de la ligne de la facture (qui peut être différente de l'unité de mesure du produit)."

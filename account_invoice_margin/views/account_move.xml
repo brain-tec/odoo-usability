@@ -23,7 +23,7 @@
         <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='price_total']" position="after">
             <field name="standard_price_invoice_currency" optional="hide" attrs="{'column_invisible': [('parent.move_type', 'not in', ('out_invoice', 'out_refund'))]}"/>
             <field name="margin_invoice_currency" optional="hide" attrs="{'column_invisible': [('parent.move_type', 'not in', ('out_invoice', 'out_refund'))]}" string="Margin"/>
-            <field name="margin_rate" optional="hide" string="Margin Rate %" attrs="{'column_invisible': [('parent.move_type', 'not in', ('out_invoice', 'out_refund'))]}"/>
+            <field name="margin_rate" optional="hide" string="Margin %" attrs="{'column_invisible': [('parent.move_type', 'not in', ('out_invoice', 'out_refund'))]}"/>
         </xpath>
         <xpath expr="//field[@name='invoice_line_ids']/form//field[@name='price_total']/.." position="inside">
             <field name="standard_price_company_currency"
