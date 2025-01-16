@@ -1,4 +1,4 @@
-# Copyright 2015-2021 Akretion France (http://www.akretion.com)
+# Copyright 2015-2025 Akretion France (https://www.akretion.com)
 # @author Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
@@ -9,115 +9,69 @@ class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
 
     standard_price_company_currency = fields.Float(
-        string='Unit Cost Price in Company Currency', readonly=True,
-        digits='Product Price',
+        compute='_compute_margin', store=True, digits='Product Price',
+        string='Unit Cost Price in Company Currency',
         help="Unit Cost price in company currency in the unit of measure "
         "of the invoice line (which may be different from the unit "
         "of measure of the product).")
     standard_price_invoice_currency = fields.Float(
-        string='Unit Cost Price in Invoice Currency',
         compute='_compute_margin', store=True, digits='Product Price',
+        string='Unit Cost Price in Invoice Currency',
         help="Unit Cost price in invoice currency in the unit of measure "
         "of the invoice line.")
     margin_invoice_currency = fields.Monetary(
-        string='Margin in Invoice Currency', store=True,
-        compute='_compute_margin', currency_field='currency_id')
+        compute='_compute_margin', store=True,
+        string='Margin in Invoice Currency', currency_field='currency_id')
     margin_company_currency = fields.Monetary(
-        string='Margin in Company Currency', store=True,
-        compute='_compute_margin', currency_field='company_currency_id')
+        compute='_compute_margin', store=True,
+        string='Margin in Company Currency',
+        currency_field='company_currency_id')
     margin_rate = fields.Float(
         string="Margin Rate", readonly=True, store=True,
         compute='_compute_margin',
         digits=(16, 2), help="Margin rate in percentage of the sale price")
 
     @api.depends(
-        'standard_price_company_currency', 'move_id.currency_id',
-        'move_id.move_type', 'move_id.company_id',
-        'move_id.invoice_date', 'quantity', 'price_subtotal')
+        'product_id', 'product_uom_id', 'display_type', 'quantity', 'price_subtotal',
+        'move_id.currency_id', 'move_id.move_type', 'move_id.company_id', 'move_id.date')
     def _compute_margin(self):
         for ml in self:
+            standard_price_comp_cur = 0.0
             standard_price_inv_cur = 0.0
             margin_inv_cur = 0.0
             margin_comp_cur = 0.0
             margin_rate = 0.0
-            move = ml.move_id
-            if move.move_type and move.move_type in ('out_invoice', 'out_refund'):
-                # it works in _get_current_rate
-                # even if we set date = False in context
-                # standard_price_inv_cur is in the UoM of the invoice line
-                date = move.date or fields.Date.context_today(self)
+            if (
+                    ml.display_type == 'product' and
+                    ml.product_id and
+                    ml.move_type in ('out_invoice', 'out_refund')):
+                move = ml.move_id
+                date = move.date
                 company = move.company_id
                 company_currency = company.currency_id
-                standard_price_inv_cur =\
-                    company_currency._convert(
-                        ml.standard_price_company_currency,
-                        ml.currency_id, company, date)
+                move_currency = move.currency_id
+                standard_price_comp_cur = ml.product_id.with_company(company.id).standard_price
+                if ml.product_uom_id and ml.product_uom_id != ml.product_id.uom_id:
+                    standard_price_comp_cur = ml.product_id.uom_id._compute_price(
+                        standard_price_comp_cur, ml.product_uom_id)
+                standard_price_inv_cur = company_currency._convert(
+                    standard_price_comp_cur, move_currency, company, date)
                 margin_inv_cur =\
-                    ml.price_subtotal - ml.quantity * standard_price_inv_cur
-                margin_comp_cur = move.currency_id._convert(
+                    ml.price_subtotal - (ml.quantity * standard_price_inv_cur)
+                margin_comp_cur = move_currency._convert(
                     margin_inv_cur, company_currency, company, date)
                 if ml.price_subtotal:
                     margin_rate = 100 * margin_inv_cur / ml.price_subtotal
                 # for a refund, margin should be negative
                 # but margin rate should stay positive
-                if move.move_type == 'out_refund':
+                if ml.move_type == 'out_refund':
                     margin_inv_cur *= -1
                     margin_comp_cur *= -1
+            ml.standard_price_company_currency = standard_price_comp_cur
             ml.standard_price_invoice_currency = standard_price_inv_cur
             ml.margin_invoice_currency = margin_inv_cur
             ml.margin_company_currency = margin_comp_cur
             ml.margin_rate = margin_rate
-
-    # We want to copy standard_price on invoice line for customer
-    # invoice/refunds. We can't do that via on_change of product_id,
-    # because it is not always played when invoice is created from code
-    # => we inherit write/create
-    # We write standard_price_company_currency even on supplier invoice/refunds
-    # because we don't have access to the 'type' of the invoice
-    @api.model_create_multi
-    def create(self, vals_list):
-        for vals in vals_list:
-            if vals.get('product_id') and not vals.get('display_type'):
-                pp = self.env['product.product'].browse(vals['product_id'])
-                std_price = pp.standard_price
-                inv_uom_id = vals.get('product_uom_id')
-                if inv_uom_id and inv_uom_id != pp.uom_id.id:
-                    inv_uom = self.env['uom.uom'].browse(inv_uom_id)
-                    std_price = pp.uom_id._compute_price(
-                        std_price, inv_uom)
-                vals['standard_price_company_currency'] = std_price
-        return super().create(vals_list)
-
-    def write(self, vals):
-        if not vals:
-            vals = {}
-        if 'product_id' in vals or 'product_uom_id' in vals:
-            for il in self:
-                if 'product_id' in vals:
-                    if vals.get('product_id'):
-                        pp = self.env['product.product'].browse(
-                            vals['product_id'])
-                    else:
-                        pp = False
-                else:
-                    pp = il.product_id or False
-                # uom_id is NOT a required field
-                if 'product_uom_id' in vals:
-                    if vals.get('product_uom_id'):
-                        inv_uom = self.env['uom.uom'].browse(
-                            vals['product_uom_id'])
-                    else:
-                        inv_uom = False
-                else:
-                    inv_uom = il.uom_id or False
-                std_price = 0.0
-                if pp:
-                    std_price = pp.standard_price
-                    if inv_uom and inv_uom != pp.uom_id:
-                        std_price = pp.uom_id._compute_price(
-                            std_price, inv_uom)
-                il.write({'standard_price_company_currency': std_price})
-        return super().write(vals)
 
 
 class AccountMove(models.Model):
@@ -140,8 +94,7 @@ class AccountMove(models.Model):
         rg_res = self.env['account.move.line'].read_group(
             [
                 ('move_id', 'in', self.ids),
-                ('display_type', '=', False),
-                ('exclude_from_invoice_tab', '=', False),
+                ('display_type', '=', 'product'),
                 ('move_id.move_type', 'in', ('out_invoice', 'out_refund')),
             ],
             ['move_id', 'margin_invoice_currency:sum', 'margin_company_currency:sum'],
