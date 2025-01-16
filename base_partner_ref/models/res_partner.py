@@ -28,7 +28,7 @@ class ResPartner(models.Model):
         name = partner.name or ''
 
         # START modif of native method
-        if partner.ref:
+        if not self._context.get('show_address') and partner.ref:
             name = "[%s] %s" % (partner.ref, name)
         # END modif of native method
         if partner.company_name or partner.parent_id:
@@ -39,7 +39,7 @@ class ResPartner(models.Model):
                 # START modif of native name_get() method
                 company_name = partner.commercial_company_name or\
                     partner.sudo().parent_id.name
-                if partner.parent_id.ref:
+                if not self._context.get('show_address') and partner.parent_id.ref:
                     company_name = "[%s] %s" % (partner.parent_id.ref, company_name)
                 name = "%s, %s" % (company_name, name)
                 # END modif of native name_get() method
