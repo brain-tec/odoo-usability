@@ -65,4 +65,9 @@
     </field>
 </record>
 
+<record id="stock.action_product_stock_view" model="ir.actions.act_window">
+    <!-- native: [('detailed_type', '=', 'product')] -->
+    <field name="domain">[('type', '=', 'product')]</field>
+</record>
+
 </odoo>
