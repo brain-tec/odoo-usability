@@ -54,6 +54,9 @@
         <field name="user_id" position="before">
             <field name="in_date" optional="hide"/>
         </field>
+        <field name="user_id" position="attributes">
+            <attribute name="optional">hide</attribute>
+        </field>
     </field>
 </record>
 
