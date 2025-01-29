@@ -11,6 +11,8 @@ class PosOrder(models.Model):
     # field displayed in pos.order list view
     payments_char = fields.Char(
         string="Payment Methods", compute="_compute_payments_char", store=True)
+    # Used to search on products in pos.order search view
+    product_id = fields.Many2one(related='lines.product_id')
 
     @api.depends('payment_ids')
     def _compute_payments_char(self):
