@@ -28,6 +28,9 @@
             <attribute name="sum">1</attribute>
             <attribute name="optional">show</attribute>
         </field>
+        <field name="company_id" position="before">
+            <field name="in_date" optional="hide"/>
+        </field>
     </field>
 </record>
 
@@ -47,6 +50,12 @@
         <field name="available_quantity" position="attributes">
             <attribute name="sum">1</attribute>
             <attribute name="optional">show</attribute>
+        </field>
+        <field name="user_id" position="before">
+            <field name="in_date" optional="hide"/>
+        </field>
+        <field name="user_id" position="attributes">
+            <attribute name="optional">hide</attribute>
         </field>
     </field>
 </record>
@@ -79,6 +88,7 @@
                 <field name="reserved_quantity" string="Reserved" sum="1" optional="show"/>
                 <button type="object" name="action_stock_move_lines_reserved" string="Reservations" attrs="{'invisible': [('reserved_quantity', '=', 0)]}"/>
                 <field name="available_quantity" string="Available" sum="1" optional="show"/>
+                <field name="in_date" optional="hide"/>
                 <field name="company_id" groups="base.group_multi_company"/>
             </tree>
     </field>
