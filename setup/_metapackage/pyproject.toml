@@ -1,0 +1,25 @@
+[project]
+name = "odoo-addons-akretion-odoo-usability"
+version = "18.0.20250130.0"
+dependencies = [
+    "odoo-addon-account_usability_akretion==18.0.*",
+    "odoo-addon-base_partner_ref==18.0.*",
+    "odoo-addon-base_usability_akretion==18.0.*",
+    "odoo-addon-mrp_usability_akretion==18.0.*",
+    "odoo-addon-partner_tree_default_account==18.0.*",
+    "odoo-addon-partner_tree_default_base==18.0.*",
+    "odoo-addon-partner_tree_default_contacts==18.0.*",
+    "odoo-addon-pos_check_deposit==18.0.*",
+    "odoo-addon-pos_usability_akretion==18.0.*",
+    "odoo-addon-product_usability_akretion==18.0.*",
+    "odoo-addon-purchase_stock_usability_akretion==18.0.*",
+    "odoo-addon-purchase_usability_akretion==18.0.*",
+    "odoo-addon-sale_stock_usability_akretion==18.0.*",
+    "odoo-addon-sale_usability_akretion==18.0.*",
+    "odoo-addon-stock_usability_akretion==18.0.*",
+]
+classifiers=[
+    "Programming Language :: Python",
+    "Framework :: Odoo",
+    "Framework :: Odoo :: 18.0",
+]
