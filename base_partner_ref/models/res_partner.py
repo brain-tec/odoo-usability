@@ -4,13 +4,14 @@
 
 from odoo import api, fields, models
 import re
+import logging
+logger = logging.getLogger(__name__)
 
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
     ref = fields.Char(copy=False)  # To avoid blocking duplicate
-    invalidate_display_name = fields.Boolean()
 
     _sql_constraints = [(
         'ref_unique',
@@ -19,7 +20,7 @@ class ResPartner(models.Model):
         )]
 
     # add 'ref' in depends
-    @api.depends('ref', 'invalidate_display_name')
+    @api.depends('ref')
     def _compute_display_name(self):
         super()._compute_display_name()
 
@@ -71,3 +72,12 @@ class ResPartner(models.Model):
                 rec_childs = self.search([('id', 'child_of', recs.ids)])
                 return rec_childs.name_get()
         return super().name_search(name=name, args=args, operator=operator, limit=limit)
+
+    @api.model
+    def _script_invalidate_display_name(self):
+        """Script designed to regenerate the display_name"""
+        logger.info('Start script to invalidate display_name')
+        partners = self.with_context(active_test=False).search([])
+        logger.info('Calling _compute_display_name on %d partners', len(partners))
+        partners._compute_display_name()
+        logger.info('End of the script to invalidate display_name')
