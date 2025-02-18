@@ -40,7 +40,7 @@ class ProductTemplate(models.Model):
         # searching on the first line of a o2m is not that easy
         # So we search all potential matching products
         # Then we filter on the seller_id
-        records = self.search([("seller_ids.partner_id", operator, value)])
+        records = self.search([("seller_ids.name", operator, value)])
         records = records.filtered_domain([("seller_id", operator, value)])
         return [("id", "in", records.ids)]
 
