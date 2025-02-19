@@ -9,7 +9,7 @@ class AccountJournal(models.Model):
     _inherit = 'account.journal'
 
     hide_bank_statement_balance = fields.Boolean(
-        string='Hide and Disable Bank Statement Balance',
+        string='Hide and Disable Bank Statement Balance', default=True,
         help="When this option is enabled, the start and end balance is "
         "not displayed on the bank statement form view, and the check of "
         "the end balance vs the real end balance is disabled. When you enable "
@@ -55,3 +55,12 @@ class AccountJournal(models.Model):
             'search_default_posted': True,
             }
         return action
+
+    # field used in journal dashboard for bank journals
+    # compute account_balance like in v14, using accounting and
+    # NOT bank statement balance_start/balance_end
+    def _compute_current_statement_balance(self):
+        query_result = self._get_journal_dashboard_bank_running_balance()
+        for journal in self:
+            journal.has_statement_lines = query_result.get(journal.id)[0]
+            journal.current_statement_balance = journal._get_journal_bank_account_balance()[0]
