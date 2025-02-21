@@ -18,6 +18,8 @@ class StockPicking(models.Model):
     picking_type_id = fields.Many2one(tracking=True)
     move_type = fields.Selection(tracking=True)
     is_locked = fields.Boolean(tracking=True)
+    # origin should be editable even when state = done
+    origin = fields.Char(states={}, tracking=True)
 
     def do_unreserve(self):
         res = super().do_unreserve()
