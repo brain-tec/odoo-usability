@@ -15,7 +15,7 @@
         'views/mrp_production.xml',
         'views/product_template.xml',
         'views/stock_move_line.xml',
-    #    'report/mrp_report.xml'  # TODO
+        'report/mrp_report.xml'
     ],
     'installable': True,
 }
