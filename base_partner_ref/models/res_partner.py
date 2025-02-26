@@ -3,29 +3,27 @@
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from openerp.osv import orm, fields
-from openerp import api
+from openerp import models, fields, api
 
 
-class ResPartner(orm.Model):
+class ResPartner(models.Model):
     _inherit = 'res.partner'
 
+    display_name = fields.Char(compute="_compute_display_name", store=True, string="Name")
     # copy=False on 'ref' is already in base_usability
-    _columns = {
-        # in v8, display_name is stored field
-        # so, when we inherit name_get() and use additionnal fields, we
-        # have to update the code for invalidation
-        'display_name': fields.char(store={
-            'res.partner': (lambda self, cr, uid, ids, context=None: self.search(cr, uid, [('id', 'child_of', ids)], context=dict(active_test=False)),
-                ['parent_id', 'is_company', 'name', 'ref'], 10)
-        }),
-    }
 
     _sql_constraints = [(
         'ref_unique',
         'unique(ref)',
         'A partner already exists with this internal reference!'
         )]
+
+    # inspired by _display_name_compute from base module
+    @api.multi
+    @api.depends('parent_id', 'is_company', 'name', 'ref')
+    def _compute_display_name(self):
+        for partner in self:
+            partner.display_name = partner.with_context(show_address=False, show_address_only=False, show_email=False).name_get()[0][1]
 
     def name_get(self, cr, uid, ids, context=None):
         if context is None:
@@ -45,8 +43,8 @@ class ResPartner(orm.Model):
                 name = self._display_address(cr, uid, record, without_company=True, context=context)
             if context.get('show_address'):
                 name = name + "\n" + self._display_address(cr, uid, record, without_company=True, context=context)
-            name = name.replace('\n\n','\n')
-            name = name.replace('\n\n','\n')
+            name = name.replace('\n\n', '\n')
+            name = name.replace('\n\n', '\n')
             if context.get('show_email') and record.email:
                 name = "%s <%s>" % (name, record.email)
             res.append((record.id, name))
