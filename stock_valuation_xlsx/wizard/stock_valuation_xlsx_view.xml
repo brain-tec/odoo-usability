@@ -27,8 +27,8 @@
                 <field name="standard_price_date" attrs="{'invisible': [('stock_date_type', '=', 'present')]}" widget="radio"/>
                 <field name="categ_subtotal" />
                 <field name="has_expiry_date" invisible="1"/>
-                <field name="split_by_lot" attrs="{'invisible': [('stock_date_type', '=', 'past')]}" groups="stock.group_production_lot"/>
                 <field name="split_by_location" attrs="{'invisible': [('stock_date_type', '=', 'past')]}"/>
+                <field name="split_by_lot" attrs="{'invisible': [('stock_date_type', '=', 'past')]}" groups="stock.group_production_lot"/>
                 <field name="apply_depreciation" groups="stock.group_production_lot" attrs="{'invisible': ['|', '|', ('split_by_lot', '=', False), ('has_expiry_date', '=', False), ('stock_date_type', '=', 'past')]}"/>
             </group>
             <footer>
