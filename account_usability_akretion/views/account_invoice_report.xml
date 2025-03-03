@@ -34,6 +34,7 @@
         </field>
         <filter name="category_product" position="after">
             <filter string="Product" name="product_groupby" context="{'group_by': 'product_id', 'residual_invisible':True}"/>
+            <filter name="invoice_refund_groupby" string="Invoice/Refund" context="{'group_by': 'move_type'}"/>
         </filter>
         <filter name="partner_id" position="after">
             <filter name="industry_groupby" string="Partner Industry" context="{'group_by': 'industry_id'}"/>
