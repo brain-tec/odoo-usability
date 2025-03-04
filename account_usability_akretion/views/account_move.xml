@@ -81,6 +81,11 @@
     <field name="model">account.move</field>
     <field name="inherit_id" ref="account.view_account_invoice_filter"/>
     <field name="arch" type="xml">
+        <filter name="invoice_date" position="before">
+            <filter name="invoice" string="Invoices" domain="[('move_type', 'in', ('out_invoice', 'in_invoice'))]"/>
+            <filter name="refund" string="Refunds" domain="[('move_type', 'in', ('out_refund', 'in_refund'))]"/>
+            <separator/>
+        </filter>
         <filter name="due_date" position="after">
             <separator/>
              <filter name="to_send" string="To Send" domain="[('is_move_sent', '=', False), ('state', '=', 'posted'), ('move_type', 'in', ('out_invoice', 'out_refund'))]"/>
