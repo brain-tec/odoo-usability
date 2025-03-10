@@ -14,11 +14,10 @@ class StockPicking(models.Model):
     def _report_delivery_prices(self):
         self.ensure_one()
         assert self.state == 'done'
-        if not self.partner_id:
-            raise UserError(_("Partner is not set on picking %s.") % self.display_name)
+        partner = self.partner_id or self.company_id.partner_id
         weight_uom_categ_id = self.env.ref('uom.product_uom_categ_kgm').id
         kg_uom = self.env.ref('uom.product_uom_kgm')
-        partner_pricelist = self.partner_id.property_product_pricelist
+        partner_pricelist = partner.property_product_pricelist
         currency = self.sale_id.currency_id or partner_pricelist.currency_id
         total_amount = 0.0
         total_weight_kg = 0.0
@@ -60,7 +59,7 @@ class StockPicking(models.Model):
                             "is in currency %(partner_pricelist_currency)s.",
                             sale_pricelist_currency=self.sale_id.currency_id.name,
                             partner_pricelist_name=partner_pricelist.name,
-                            partner=self.partner_id.display_name,
+                            partner=partner.display_name,
                             partner_pricelist_currency=partner_pricelist.currency_id.name))
                     logger.info(
                         'For move line %s, got price %s from partner pricelist %s',
