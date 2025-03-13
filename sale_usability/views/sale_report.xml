@@ -59,4 +59,27 @@
     <field name="view_mode">pivot,graph</field>
 </record>
 
+
+<!-- Add entry in the "More" drop down list in product list view -->
+<record id="product_product_sale_report_action" model="ir.actions.act_window">
+    <field name="name">Sales Statistics</field>
+    <field name="res_model">sale.report</field>
+    <field name="view_mode">pivot</field>
+    <field name="domain">[('product_id', 'in', active_ids)]</field>
+    <field name="context">{'search_default_Product': 1}</field>
+    <field name="binding_model_id" ref="product.model_product_product" />
+    <field name="binding_view_types">list</field>
+</record>
+
+<record id="product_template_sale_report_action" model="ir.actions.act_window">
+    <field name="name">Sales Statistics</field>
+    <field name="res_model">sale.report</field>
+    <field name="view_mode">pivot</field>
+    <field name="domain">[('product_tmpl_id', 'in', active_ids)]</field>
+    <field name="context">{'search_default_Product': 1}</field>
+    <field name="binding_model_id" ref="product.model_product_template" />
+    <field name="binding_view_types">list</field>
+</record>
+
+
 </odoo>
