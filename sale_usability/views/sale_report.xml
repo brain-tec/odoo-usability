@@ -66,7 +66,7 @@
     <field name="res_model">sale.report</field>
     <field name="view_mode">pivot</field>
     <field name="domain">[('product_id', 'in', active_ids)]</field>
-    <field name="context">{'search_default_Product': 1}</field>
+    <field name="context">{'search_default_Product': 1, 'pivot_measures': ['product_uom_qty']}</field>
     <field name="binding_model_id" ref="product.model_product_product" />
     <field name="binding_view_types">list</field>
 </record>
@@ -76,7 +76,7 @@
     <field name="res_model">sale.report</field>
     <field name="view_mode">pivot</field>
     <field name="domain">[('product_tmpl_id', 'in', active_ids)]</field>
-    <field name="context">{'search_default_Product': 1}</field>
+    <field name="context">{'search_default_Product': 1, 'pivot_measures': ['product_uom_qty']}</field>
     <field name="binding_model_id" ref="product.model_product_template" />
     <field name="binding_view_types">list</field>
 </record>
