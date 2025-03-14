@@ -27,5 +27,14 @@
     <field name="view_mode">pivot,graph</field>  <!-- invert native order -->
 </record>
 
+<record id="view_report_pos_order_pivot" model="ir.ui.view">
+    <field name="name">usability.report.pos.order.pivot</field>
+    <field name="model">report.pos.order</field>
+    <field name="inherit_id" ref="point_of_sale.view_report_pos_order_pivot"/>
+    <field name="arch" type="xml">
+        <!-- Remove order_id from default measures -->
+        <field name="order_id" type="measure" position="replace"/>
+    </field>
+</record>
 
 </odoo>
