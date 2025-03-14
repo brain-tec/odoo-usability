@@ -12,7 +12,9 @@ class StockPicking(models.Model):
     # The problem is date asc
 
     partner_id = fields.Many2one(tracking=True)
-    picking_type_id = fields.Many2one(tracking=True)
+    # we need an index on picking_type_id because we very often open pickings
+    # from the stock dashboard, so it is filtered on picking_type_id
+    picking_type_id = fields.Many2one(tracking=True, index=True)
     move_type = fields.Selection(tracking=True)
     is_locked = fields.Boolean(tracking=True)
 
