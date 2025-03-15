@@ -1,0 +1,640 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* commission_simple
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 16.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-11-29 23:38+0000\n"
+"PO-Revision-Date: 2024-11-29 23:38+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: commission_simple
+#: model:ir.model.constraint,message:commission_simple.constraint_commission_result_salesman_period_company_unique
+msgid ""
+"A commission result already exists for this salesman/agent for the same "
+"period."
+msgstr ""
+"Un état des commissions existe déjà pour ce vendeur/agent pour la même "
+"période."
+
+#. module: commission_simple
+#. odoo-python
+#: code:addons/commission_simple/models/commission_profile.py:0
+#, python-format
+msgid "A salesman must be selected when the assignment type is 'Salesman'."
+msgstr ""
+"Un vendeur doit être sélectionné lorsque le type d'affectation est "
+"\"Vendeur\"."
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__message_needaction
+msgid "Action Needed"
+msgstr "Action requise"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_profile__active
+#: model:ir.model.fields,field_description:commission_simple.field_commission_rule__active
+msgid "Active"
+msgstr "Actif"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__activity_ids
+msgid "Activities"
+msgstr "Activités"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "Style d'affichage de l'activité-alerte"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__activity_state
+msgid "Activity State"
+msgstr "État de l'activité"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "Îcone du type d'activité"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_rule__applied_on
+msgid "Apply On"
+msgstr "Conditions"
+
+#. module: commission_simple
+#: model_terms:ir.ui.view,arch_db:commission_simple.commission_profile_form
+#: model_terms:ir.ui.view,arch_db:commission_simple.commission_rule_search
+msgid "Archived"
+msgstr "Archivé"
+
+#. module: commission_simple
+#: model_terms:ir.ui.view,arch_db:commission_simple.commission_result_form
+msgid "Are you sure you want to go back to draft?"
+msgstr "Êtes-vous sûr de vouloir revenir à l'état brouillon ?"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__assign_type
+#: model_terms:ir.ui.view,arch_db:commission_simple.commission_result_search
+msgid "Assign Type"
+msgstr "Type d'affectation"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_profile__assign_ids
+#: model_terms:ir.ui.view,arch_db:commission_simple.commission_profile_form
+msgid "Assignments"
+msgstr "Assignations"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__message_attachment_count
+msgid "Attachment Count"
+msgstr "Nombre de pièces jointes"
+
+#. module: commission_simple
+#: model_terms:ir.ui.view,arch_db:commission_simple.commission_result_form
+msgid "Back to Draft"
+msgstr "Remettre en brouillon"
+
+#. module: commission_simple
+#: model_terms:ir.ui.view,arch_db:commission_simple.commission_compute_form
+msgid "Cancel"
+msgstr "Annuler"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_account_move_line__commission_amount
+msgid "Commission Amount"
+msgstr "Montant de la commission"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_account_move_line__commission_base
+#: model:ir.model.fields,field_description:commission_simple.field_commission_rule__base
+msgid "Commission Base"
+msgstr "Base de la commission"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__line_ids
+#: model_terms:ir.ui.view,arch_db:commission_simple.commission_result_form
+msgid "Commission Lines"
+msgstr "Lignes commission"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_compute__date_range_type_id
+#: model:ir.model.fields,field_description:commission_simple.field_res_company__commission_date_range_type_id
+#: model:ir.model.fields,field_description:commission_simple.field_res_config_settings__commission_date_range_type_id
+msgid "Commission Periodicity"
+msgstr "Périodicité de commission"
+
+#. module: commission_simple
+#: model:ir.model,name:commission_simple.model_commission_profile
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__profile_id
+msgid "Commission Profile"
+msgstr "Profil de commission"
+
+#. module: commission_simple
+#: model:ir.model,name:commission_simple.model_commission_profile_assignment
+msgid "Commission Profile Assignment"
+msgstr "Affectation du profil de commission"
+
+#. module: commission_simple
+#: model:ir.actions.act_window,name:commission_simple.commission_profile_action
+#: model:ir.ui.menu,name:commission_simple.commission_profile_menu
+msgid "Commission Profiles"
+msgstr "Profils de commission"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_account_move_line__commission_rate
+#: model:ir.model.fields,field_description:commission_simple.field_commission_rule__rate
+msgid "Commission Rate"
+msgstr "Taux de commission"
+
+#. module: commission_simple
+#: model:ir.model,name:commission_simple.model_commission_result
+#: model:ir.model.fields,field_description:commission_simple.field_account_move_line__commission_result_id
+msgid "Commission Result"
+msgstr "État des commissions"
+
+#. module: commission_simple
+#: model:ir.model,name:commission_simple.model_commission_rule
+msgid "Commission Rule"
+msgstr "Règle de commission"
+
+#. module: commission_simple
+#: model:ir.actions.act_window,name:commission_simple.commission_rule_action
+#: model:ir.model.fields,field_description:commission_simple.field_commission_profile__rule_ids
+#: model:ir.ui.menu,name:commission_simple.commission_rule_menu
+msgid "Commission Rules"
+msgstr "Règles de commission"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__amount_total
+msgid "Commission Total"
+msgstr "Total des commissions"
+
+#. module: commission_simple
+#: model:ir.actions.act_window,name:commission_simple.commission_result_action
+#: model:ir.ui.menu,name:commission_simple.commission_config_root
+#: model:ir.ui.menu,name:commission_simple.commission_result_menu
+#: model:ir.ui.menu,name:commission_simple.commission_root
+#: model_terms:ir.ui.view,arch_db:commission_simple.res_config_settings_view_form
+msgid "Commissions"
+msgstr ""
+
+#. module: commission_simple
+#. odoo-python
+#: code:addons/commission_simple/wizards/commission_compute.py:0
+#, python-format
+msgid "Commissions already exist for %(period)s in company %(company)s."
+msgstr ""
+"Des commissions existent déjà pour %(period)s dans la société %(company)s."
+
+#. module: commission_simple
+#: model:ir.model,name:commission_simple.model_res_company
+msgid "Companies"
+msgstr "Sociétés"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_compute__company_id
+#: model:ir.model.fields,field_description:commission_simple.field_commission_profile__company_id
+#: model:ir.model.fields,field_description:commission_simple.field_commission_profile_assignment__company_id
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__company_id
+#: model:ir.model.fields,field_description:commission_simple.field_commission_rule__company_id
+msgid "Company"
+msgstr "Société"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__company_currency_id
+msgid "Company Currency"
+msgstr "Devise de la société"
+
+#. module: commission_simple
+#: model_terms:ir.ui.view,arch_db:commission_simple.commission_compute_form
+#: model_terms:ir.ui.view,arch_db:commission_simple.commission_rule_form
+msgid "Compute"
+msgstr "Calculer"
+
+#. module: commission_simple
+#: model:ir.actions.act_window,name:commission_simple.commission_compute_action
+#: model:ir.model,name:commission_simple.model_commission_compute
+#: model:ir.ui.menu,name:commission_simple.commission_compute_menu
+msgid "Compute Commissions"
+msgstr "Calculer les commissions"
+
+#. module: commission_simple
+#: model:ir.model,name:commission_simple.model_res_config_settings
+msgid "Config Settings"
+msgstr "Configuration"
+
+#. module: commission_simple
+#: model_terms:ir.ui.view,arch_db:commission_simple.commission_result_form
+msgid "Confirm"
+msgstr "Confirmer"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_compute__create_uid
+#: model:ir.model.fields,field_description:commission_simple.field_commission_profile__create_uid
+#: model:ir.model.fields,field_description:commission_simple.field_commission_profile_assignment__create_uid
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__create_uid
+#: model:ir.model.fields,field_description:commission_simple.field_commission_rule__create_uid
+msgid "Created by"
+msgstr "Créé par"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_compute__create_date
+#: model:ir.model.fields,field_description:commission_simple.field_commission_profile__create_date
+#: model:ir.model.fields,field_description:commission_simple.field_commission_profile_assignment__create_date
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__create_date
+#: model:ir.model.fields,field_description:commission_simple.field_commission_rule__create_date
+msgid "Created on"
+msgstr "Créé le"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_rule__partner_ids
+msgid "Customers"
+msgstr "Clients"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_compute__display_name
+#: model:ir.model.fields,field_description:commission_simple.field_commission_profile__display_name
+#: model:ir.model.fields,field_description:commission_simple.field_commission_profile_assignment__display_name
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__display_name
+#: model:ir.model.fields,field_description:commission_simple.field_commission_rule__display_name
+msgid "Display Name"
+msgstr "Nom affiché"
+
+#. module: commission_simple
+#: model:ir.model.fields.selection,name:commission_simple.selection__commission_result__state__done
+#: model_terms:ir.ui.view,arch_db:commission_simple.commission_result_search
+msgid "Done"
+msgstr "Validé"
+
+#. module: commission_simple
+#: model:ir.model.fields.selection,name:commission_simple.selection__commission_result__state__draft
+#: model_terms:ir.ui.view,arch_db:commission_simple.commission_result_search
+msgid "Draft"
+msgstr "Brouillon"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_rule__date_end
+msgid "End Date"
+msgstr "Date de fin"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_compute__date_end
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__date_end
+msgid "End date"
+msgstr "Date de fin"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__message_follower_ids
+msgid "Followers"
+msgstr "Abonnés"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Abonnés (partenaires)"
+
+#. module: commission_simple
+#: model:ir.model.fields,help:commission_simple.field_commission_result__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "Îcone font-awesome, par exemple fa-task"
+
+#. module: commission_simple
+#: model:ir.model.fields.selection,name:commission_simple.selection__commission_rule__applied_on__4_global
+msgid "Global"
+msgstr ""
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__has_message
+msgid "Has Message"
+msgstr "A un message"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_compute__id
+#: model:ir.model.fields,field_description:commission_simple.field_commission_profile__id
+#: model:ir.model.fields,field_description:commission_simple.field_commission_profile_assignment__id
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__id
+#: model:ir.model.fields,field_description:commission_simple.field_commission_rule__id
+msgid "ID"
+msgstr ""
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__activity_exception_icon
+msgid "Icon"
+msgstr "Îcone"
+
+#. module: commission_simple
+#: model:ir.model.fields,help:commission_simple.field_commission_result__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "Îcone pour indiquer une activité-alerte"
+
+#. module: commission_simple
+#: model:ir.model.fields,help:commission_simple.field_commission_result__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Si activé, de nouveaux messages nécessitent votre attention."
+
+#. module: commission_simple
+#: model:ir.model.fields,help:commission_simple.field_commission_result__message_has_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Si activé, des messages ont une erreur d'envoi."
+
+#. module: commission_simple
+#: model:ir.model.fields.selection,name:commission_simple.selection__commission_profile__trigger_type__in_payment
+msgid "In Payment and Paid"
+msgstr "En paiement et payé"
+
+#. module: commission_simple
+#: model:ir.model.fields.selection,name:commission_simple.selection__commission_profile__trigger_type__invoice
+msgid "Invoiced"
+msgstr "Facturé"
+
+#. module: commission_simple
+#: model:ir.model.fields.selection,name:commission_simple.selection__commission_rule__base__invoiced
+#: model_terms:ir.ui.view,arch_db:commission_simple.commission_result_form
+msgid "Invoiced Amount"
+msgstr "Montant facturé"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__message_is_follower
+msgid "Is Follower"
+msgstr "Est abonné"
+
+#. module: commission_simple
+#: model:ir.model,name:commission_simple.model_account_move_line
+msgid "Journal Item"
+msgstr "Écriture comptable"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_compute____last_update
+#: model:ir.model.fields,field_description:commission_simple.field_commission_profile____last_update
+#: model:ir.model.fields,field_description:commission_simple.field_commission_profile_assignment____last_update
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result____last_update
+#: model:ir.model.fields,field_description:commission_simple.field_commission_rule____last_update
+msgid "Last Modified on"
+msgstr "Dernière modification le"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_compute__write_uid
+#: model:ir.model.fields,field_description:commission_simple.field_commission_profile__write_uid
+#: model:ir.model.fields,field_description:commission_simple.field_commission_profile_assignment__write_uid
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__write_uid
+#: model:ir.model.fields,field_description:commission_simple.field_commission_rule__write_uid
+msgid "Last Updated by"
+msgstr "Dernière mise à jour par"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_compute__write_date
+#: model:ir.model.fields,field_description:commission_simple.field_commission_profile__write_date
+#: model:ir.model.fields,field_description:commission_simple.field_commission_profile_assignment__write_date
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__write_date
+#: model:ir.model.fields,field_description:commission_simple.field_commission_rule__write_date
+msgid "Last Updated on"
+msgstr "Dernière mise à jour le"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__message_main_attachment_id
+msgid "Main Attachment"
+msgstr "Pièce jointe principale"
+
+#. module: commission_simple
+#: model:ir.model.fields.selection,name:commission_simple.selection__commission_rule__base__margin
+msgid "Margin"
+msgstr "Marge"
+
+#. module: commission_simple
+#: model_terms:ir.ui.view,arch_db:commission_simple.commission_rule_form
+msgid "Match"
+msgstr ""
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_account_move_line__commission_rule_id
+msgid "Matched Commission Rule"
+msgstr "Règle de commission associée"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__message_has_error
+msgid "Message Delivery error"
+msgstr "Erreur d'envoi du message"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__message_ids
+msgid "Messages"
+msgstr ""
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "Date butoir de l'activité"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_profile__name
+msgid "Name of the Profile"
+msgstr "Nom du profil"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr "Prochaine activité du calendrier"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "Date butoir de l'activité suivante"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__activity_summary
+msgid "Next Activity Summary"
+msgstr "Résumé de l'activité suivante"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__activity_type_id
+msgid "Next Activity Type"
+msgstr "Type de l'activité suivante"
+
+#. module: commission_simple
+#. odoo-python
+#: code:addons/commission_simple/wizards/commission_compute.py:0
+#, python-format
+msgid "No commissions generated."
+msgstr "Aucune commission n'a été générée."
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Nombre d'actions"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__message_has_error_counter
+msgid "Number of errors"
+msgstr "Nombre d'erreurs"
+
+#. module: commission_simple
+#: model:ir.model.fields,help:commission_simple.field_commission_result__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Nombre de messages nécessitant une action"
+
+#. module: commission_simple
+#: model:ir.model.fields,help:commission_simple.field_commission_result__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Nombre de messages en échec d'envoi"
+
+#. module: commission_simple
+#: model:ir.model.fields.selection,name:commission_simple.selection__commission_profile__trigger_type__paid
+msgid "Paid"
+msgstr "Payé"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_compute__date_range_id
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__date_range_id
+#: model_terms:ir.ui.view,arch_db:commission_simple.commission_result_search
+msgid "Period"
+msgstr "Période"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_rule__product_categ_ids
+#: model:ir.model.fields.selection,name:commission_simple.selection__commission_rule__applied_on__3_product_category
+msgid "Product Categories"
+msgstr "Catégories de produits"
+
+#. module: commission_simple
+#: model:ir.model.fields.selection,name:commission_simple.selection__commission_rule__applied_on__1_customer_product_category
+msgid "Product Categories and Customers"
+msgstr "Catégories de produits et clients"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_account_move_line__product_categ_id
+msgid "Product Category"
+msgstr "Catégorie de produit"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_rule__product_ids
+#: model:ir.model.fields.selection,name:commission_simple.selection__commission_rule__applied_on__2_product
+msgid "Products"
+msgstr "Produits"
+
+#. module: commission_simple
+#: model:ir.model.fields.selection,name:commission_simple.selection__commission_rule__applied_on__0_customer_product
+msgid "Products and Customers"
+msgstr "Produits et clients"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_profile_assignment__profile_id
+#: model:ir.model.fields,field_description:commission_simple.field_commission_rule__profile_id
+#: model_terms:ir.ui.view,arch_db:commission_simple.commission_rule_search
+msgid "Profile"
+msgstr "Profil"
+
+#. module: commission_simple
+#: model_terms:ir.ui.view,arch_db:commission_simple.commission_result_form
+#: model_terms:ir.ui.view,arch_db:commission_simple.commission_rule_tree
+msgid "Rate (%)"
+msgstr "Taux (%)"
+
+#. module: commission_simple
+#: model:ir.model.constraint,message:commission_simple.constraint_commission_rule_rate_positive
+msgid "Rate must be positive !"
+msgstr "Le taux doit être positif !"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__activity_user_id
+msgid "Responsible User"
+msgstr "Utilisateur responsable"
+
+#. module: commission_simple
+#: model_terms:ir.ui.view,arch_db:commission_simple.commission_profile_form
+msgid "Rules"
+msgstr "Règles"
+
+#. module: commission_simple
+#. odoo-python
+#: code:addons/commission_simple/models/commission_profile.py:0
+#: model:ir.model.fields,field_description:commission_simple.field_commission_profile_assignment__user_id
+#: model_terms:ir.ui.view,arch_db:commission_simple.commission_result_search
+#, python-format
+msgid "Salesman"
+msgstr "Vendeur"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__partner_id
+msgid "Salesman/Agent"
+msgstr "Vendeur/Agent"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_profile__sequence
+msgid "Sequence"
+msgstr "Séquence"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_rule__date_start
+msgid "Start Date"
+msgstr "Date de début"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_compute__date_start
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__date_start
+msgid "Start date"
+msgstr "Date de début"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__state
+msgid "State"
+msgstr "État"
+
+#. module: commission_simple
+#: model:ir.model.fields,help:commission_simple.field_commission_result__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"Statut basé sur les activités\n"
+"En retard : La date d'échéance est déjà dépassée\n"
+"Aujourd'hui : La date de l'activité est aujourd'hui\n"
+"Planifié : Activités futures."
+
+#. module: commission_simple
+#: model:ir.model.constraint,message:commission_simple.constraint_commission_profile_assignment_company_user_uniq
+msgid "This salesman already has an assignment in this company."
+msgstr "Ce vendeur a déjà une assignation dans cette société."
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_profile__trigger_type
+msgid "Trigger"
+msgstr "Déclencheur"
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_profile_assignment__assign_type
+msgid "Type"
+msgstr ""
+
+#. module: commission_simple
+#: model:ir.model.fields,help:commission_simple.field_commission_result__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "Type de l'activité-alerte sur l'enregistrement."
+
+#. module: commission_simple
+#: model:ir.model.fields,field_description:commission_simple.field_commission_result__website_message_ids
+msgid "Website Messages"
+msgstr "Messages du site Web"
+
+#. module: commission_simple
+#: model:ir.model.fields,help:commission_simple.field_commission_result__website_message_ids
+msgid "Website communication history"
+msgstr "Historique des échanges sur le site Web"
+
+#. module: commission_simple
+#. odoo-python
+#: code:addons/commission_simple/models/commission_result.py:0
+#, python-format
+msgid "You cannot delete commission result %s because it is in done state."
+msgstr ""
+"Vous ne pouvez pas supprimer l'état de commission %s parce qu'il est à "
+"l'état \"validé\"."

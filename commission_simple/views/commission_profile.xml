@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2019-2024 Akretion France (http://www.akretion.com)
+  @author Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl)
+-->
+
+<odoo>
+
+<menuitem id="commission_root" name="Commissions" parent="account.menu_finance" sequence="11"/>
+<menuitem id="commission_config_root" name="Commissions" parent="account.menu_finance_configuration" sequence="110"/>
+
+<record id="commission_profile_form" model="ir.ui.view">
+    <field name="name">commission.profile.form</field>
+    <field name="model">commission.profile</field>
+    <field name="arch" type="xml">
+        <form>
+            <sheet>
+                <widget name="web_ribbon" title="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
+                <group name="main">
+                    <group name="main-left">
+                        <field name="name"/>
+                        <field name="active" invisible="1"/>
+                        <field name="trigger_type" widget="radio"/>
+                    </group>
+                    <group name="main-right">
+                        <field name="company_id" invisible="1"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
+                </group>
+                <notebook>
+                    <page name="assignments" string="Assignments">
+                        <field name="assign_ids">
+                            <tree editable="bottom">
+                                <field name="assign_type"/>
+                                <field name="user_id" attrs="{'required': [('assign_type', '=', 'user')], 'readonly': [('assign_type', '!=', 'user')]}"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                                <field name="company_id" invisible="1"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page name="rules" string="Rules">
+                        <field name="rule_ids"/>
+                    </page>
+                </notebook>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<record id="commission_profile_tree" model="ir.ui.view">
+    <field name="name">commission.profile.tree</field>
+    <field name="model">commission.profile</field>
+    <field name="arch" type="xml">
+        <tree>
+            <field name="sequence" widget="handle"/>
+            <field name="name" decoration-bf="1"/>
+            <field name="trigger_type" optional="show"/>
+            <field name="company_id" groups="base.group_multi_company"/>
+        </tree>
+    </field>
+</record>
+
+<record id="commission_profile_action" model="ir.actions.act_window">
+    <field name="name">Commission Profiles</field>
+    <field name="res_model">commission.profile</field>
+    <field name="view_mode">tree,form</field>
+</record>
+
+<menuitem id="commission_profile_menu" action="commission_profile_action" parent="commission_config_root" sequence="18"/>
+
+
+</odoo>
