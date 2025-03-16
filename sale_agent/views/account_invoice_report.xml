@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Copyright 2024-2025 Akretion France (http://www.akretion.com/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+<odoo>
+    <record id="view_account_invoice_report_search" model="ir.ui.view">
+        <field name="name">agent.account.invoice.report.search</field>
+        <field name="model">account.invoice.report</field>
+        <field name="inherit_id" ref="account.view_account_invoice_report_search" />
+        <field name="arch" type="xml">
+            <field name="invoice_user_id" position="after">
+                <field name="invoice_agent_id" />
+            </field>
+            <filter name="user" position="after">
+                <filter string="Agent" name="invoice_agent_groupby" context="{'group_by': 'invoice_agent_id'}" />
+            </filter>
+        </field>
+    </record>
+</odoo>
