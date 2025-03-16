@@ -30,8 +30,6 @@ This module has been written by Alexis de Lattre from Akretion
     'depends': [
         'account',
         'date_range',
-        # this uses some related fields on account.move.line
-#        'account_usability_akretion',
         ],
     'data': [
         'security/ir.model.access.csv',

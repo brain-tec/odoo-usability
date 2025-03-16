@@ -65,7 +65,7 @@
     <field name="name">commission.result.tree</field>
     <field name="model">commission.result</field>
     <field name="arch" type="xml">
-        <tree>
+        <tree decoration-info="state == 'draft'">
             <field name="date_range_id" optional="show"/>
             <field name="date_start" optional="hide"/>
             <field name="date_end" optional="hide"/>
