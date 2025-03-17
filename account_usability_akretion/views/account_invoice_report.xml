@@ -36,12 +36,18 @@
             <filter string="Product" name="product_groupby" context="{'group_by': 'product_id', 'residual_invisible':True}"/>
             <filter name="invoice_refund_groupby" string="Invoice/Refund" context="{'group_by': 'move_type'}"/>
         </filter>
+        <!-- group by on commercial_partner_id by default -->
+        <filter name="partner_id" position="attributes">
+            <attribute name="invisible">1</attribute>
+        </filter>
         <filter name="partner_id" position="after">
+            <filter name="commercial_partner_groupby" string="Commercial Partner" context="{'group_by': 'commercial_partner_id'}"/>
             <filter name="industry_groupby" string="Partner Industry" context="{'group_by': 'industry_id'}"/>
         </filter>
    </field>
 </record>
 
+<!-- Switch order: pivot in 1st position -->
 <record id="account.action_account_invoice_report_all_supp" model="ir.actions.act_window">
     <field name="view_mode">pivot,graph</field>
 </record>
