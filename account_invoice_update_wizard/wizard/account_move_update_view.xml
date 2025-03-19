@@ -15,8 +15,8 @@
                     <field name="move_type" invisible="1"/>
                     <field name="company_id" invisible="1"/>
                     <field name="partner_id" invisible="1"/>
-                    <field string="Bill Reference" attrs="{'invisible': [('move_type', 'not in', ('in_invoice', 'in_refund'))]}" name="ref"/>
-                    <field string="Customer Reference" attrs="{'invisible': [('move_type', 'not in', ('out_invoice', 'out_refund'))]}" name="ref"/>
+                    <field string="Bill Reference" invisible="move_type not in ('in_invoice', 'in_refund')" name="ref"/>
+                    <field string="Customer Reference" invisible="{move_type not in ('out_invoice', 'out_refund')" name="ref"/>
                     <field name="invoice_origin"/>
                     <field name="invoice_payment_term_id" widget="selection"/>
                     <field name="partner_bank_id"/>
@@ -29,10 +29,11 @@
                             <field name="display_type" invisible="1"/>
                             <field name="currency_id" invisible="1"/>
                             <field name="name"/>
-                            <field name="quantity" attrs="{'invisible': [('display_type', '!=', False)]}"/>
-                            <field name="price_subtotal" attrs="{'invisible': [('display_type', '!=', False)]}"/>
+                            <field name="quantity" invisible="display_type != 'product'"/>
+                            <field name="price_subtotal" invisible="display_type != 'product'"/>
+                            <!-- TODO
                             <field name="analytic_account_id" attrs="{'invisible': [('display_type', '!=', False)]}" groups="analytic.group_analytic_accounting"/>
-                            <field name="analytic_tag_ids" attrs="{'invisible': [('display_type', '!=', False)]}" groups="analytic.group_analytic_tags" widget="many2many_tags"/>
+                            <field name="analytic_tag_ids" attrs="{'invisible': [('display_type', '!=', False)]}" groups="analytic.group_analytic_tags" widget="many2many_tags"/>-->
                     </tree>
                     </field>
                 </group>
