@@ -76,6 +76,7 @@ class CommissionProfileAssignment(models.Model):
         self.ensure_one()
         domain = [
             ('display_type', '=', False),
+            ('exclude_from_invoice_tab', '=', False),
             ('move_id.move_type', 'in', ('out_invoice', 'out_refund')),
             ('date', '<=', date_range.date_end),
             ('company_id', '=', self.company_id.id),
