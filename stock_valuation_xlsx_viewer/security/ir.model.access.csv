@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_stock_expiry_depreciation_rule_read,Read access on stock.expiry.depreciation.rule to stock user,stock_valuation_xlsx.model_stock_expiry_depreciation_rule,stock_viewer.group_stock_viewer,1,0,0,0
+access_stock_valuation_xlsx,stock.valuation.xlsx wizard,stock_valuation_xlsx.model_stock_valuation_xlsx,stock_viewer.group_stock_viewer,1,1,1,0
+access_stock_variation_xlsx,stock.variation.xlsx wizard,stock_valuation_xlsx.model_stock_variation_xlsx,stock_viewer.group_stock_viewer,1,1,1,0
