@@ -22,6 +22,7 @@
         'views/account_journal.xml',
         'views/account_move.xml',
         'views/account_move_line.xml',
+        'views/account_payment.xml',
         'views/account_analytic_line.xml',
         'views/account_menu.xml',
         'views/account_tax.xml',
