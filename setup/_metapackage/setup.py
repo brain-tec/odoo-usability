@@ -87,6 +87,7 @@ setuptools.setup(
         'odoo14-addon-stock_reception_usability',
         'odoo14-addon-stock_usability',
         'odoo14-addon-stock_valuation_xlsx',
+        'odoo14-addon-stock_valuation_xlsx_viewer',
         'odoo14-addon-web_tab_title',
     ],
     classifiers=[

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2025 Akretion France (https://www.akretion.com/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+
+<record id="stock.menu_warehouse_report" model="ir.ui.menu">
+    <field name="groups_id" eval="[(4, ref('stock_viewer.group_stock_viewer'))]"/>
+</record>
+
+
+</odoo>
