@@ -1,8 +1,8 @@
 diff --git a/addons/point_of_sale/models/pos_session.py b/addons/point_of_sale/models/pos_session.py
-index 31e39105612..fe74620369a 100644
+index f0656aa85c9..9a0838030f1 100644
 --- a/addons/point_of_sale/models/pos_session.py
 +++ b/addons/point_of_sale/models/pos_session.py
-@@ -928,8 +928,13 @@ class PosSession(models.Model):
+@@ -955,8 +955,13 @@ class PosSession(models.Model):
          if not payment_method.journal_id:
              return self.env['account.move.line']
          outstanding_account = payment_method.outstanding_account_id or self.company_id.account_journal_payment_debit_account_id
@@ -18,7 +18,7 @@ index 31e39105612..fe74620369a 100644
  
          if float_compare(amounts['amount'], 0, precision_rounding=self.currency_id.rounding) < 0:
              # revert the accounts because account.payment doesn't accept negative amount.
-@@ -937,7 +942,7 @@ class PosSession(models.Model):
+@@ -964,7 +969,7 @@ class PosSession(models.Model):
  
          account_payment = self.env['account.payment'].create({
              'amount': abs(amounts['amount']),
@@ -27,18 +27,18 @@ index 31e39105612..fe74620369a 100644
              'journal_id': payment_method.journal_id.id,
              'force_outstanding_account_id': outstanding_account.id,
              'destination_account_id': destination_account.id,
-@@ -1097,8 +1102,8 @@ class PosSession(models.Model):
-                 lines.filtered(lambda line: not line.reconciled).reconcile()
+@@ -1124,8 +1129,8 @@ class PosSession(models.Model):
+                 lines.filtered(lambda line: not line.reconciled).with_context(no_cash_basis=True).reconcile()
  
          for payment, lines in payment_to_receivable_lines.items():
 -            if payment.partner_id.property_account_receivable_id.reconcile:
--                lines.filtered(lambda line: not line.reconciled).reconcile()
+-                lines.filtered(lambda line: not line.reconciled).with_context(no_cash_basis=True).reconcile()
 +            # HACK for pos_check_deposit
-+            lines.filtered(lambda line: line.account_id.reconcile and not line.reconciled).reconcile()
++            lines.filtered(lambda line: line.account_id.reconcile and not line.reconciled).with_context(no_cash_basis=True).reconcile()
  
          # Reconcile invoice payments' receivable lines. But we only do when the account is reconcilable.
          # Though `account_default_pos_receivable_account_id` should be of type receivable, there is currently
-@@ -1176,15 +1181,17 @@ class PosSession(models.Model):
+@@ -1198,15 +1203,17 @@ class PosSession(models.Model):
                  return self._credit_amounts(partial_args, amount, amount_converted)
  
      def _get_split_receivable_vals(self, payment, amount, amount_converted):
@@ -64,10 +64,10 @@ index 31e39105612..fe74620369a 100644
          }
          return self._debit_amounts(partial_vals, amount, amount_converted)
 diff --git a/addons/point_of_sale/static/src/js/Screens/PaymentScreen/PaymentScreen.js b/addons/point_of_sale/static/src/js/Screens/PaymentScreen/PaymentScreen.js
-index b9a237eb34c..62ad67e9517 100644
+index 47ae691680c..30a3cd25628 100644
 --- a/addons/point_of_sale/static/src/js/Screens/PaymentScreen/PaymentScreen.js
 +++ b/addons/point_of_sale/static/src/js/Screens/PaymentScreen/PaymentScreen.js
-@@ -288,7 +288,8 @@ odoo.define('point_of_sale.PaymentScreen', function (require) {
+@@ -371,7 +371,8 @@ odoo.define('point_of_sale.PaymentScreen', function (require) {
                  return false;
              }
  
