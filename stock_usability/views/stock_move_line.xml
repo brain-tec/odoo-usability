@@ -47,4 +47,14 @@
     </field>
 </record>
 
+<record id="stock_move_line_view_search" model="ir.ui.view">
+    <field name="model">stock.move.line</field>
+    <field name="inherit_id" ref="stock.stock_move_line_view_search"/>
+    <field name="arch" type="xml">
+        <field name="picking_id" position="before">
+            <field name="picking_type_id"/>
+        </field>
+    </field>
+</record>
+
 </odoo>
