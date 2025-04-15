@@ -32,7 +32,6 @@
          ### MISC
         'base_usability',  # akretion/odoo-usability
         'mail_usability',  # akretion/odoo-usability
-        'base_technical_features',  # akretion/odoo-usability
         'eradicate_quick_create',  # akretion/odoo-usability
         'base_company_extension',  # akretion/odoo-usability
         # password_security will be enabled when the move to ir.config_parameter
