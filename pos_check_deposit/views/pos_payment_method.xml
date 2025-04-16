@@ -14,6 +14,9 @@
         <field name="split_transactions" position="after">
             <field name="identify_customer" attrs="{'invisible': [('split_transactions', '=', False)]}"/>
         </field>
+        <field name="receivable_account_id" position="attributes">
+            <attribute name="attrs">{'invisible': [('identify_customer', '=', True)]}</attribute>
+        </field>
     </field>
 </record>
 
@@ -23,6 +26,9 @@
     <field name="arch" type="xml">
         <field name="split_transactions" position="after">
             <field name="identify_customer" attrs="{'invisible': [('split_transactions', '=', False)]}" optional="hide"/>
+        </field>
+        <field name="receivable_account_id" position="attributes">
+            <attribute name="attrs">{'invisible': [('identify_customer', '=', True)]}</attribute>
         </field>
     </field>
 </record>
