@@ -12,6 +12,7 @@
     'website': 'https://github.com/akretion/odoo-usability',
     'depends': [
         ### MISC
+        'date_range_account',  # OCA/server-ux
         'account_usability_akretion',  # akretion/odoo-usability
         'account_usability',  # OCA/account-financial-tools
         'l10n_fr_siret_lookup',  # OCA/l10n-france
@@ -55,6 +56,8 @@
         'product_net_weight',  # OCA/product-attribute
         'l10n_fr_intrastat_service',  # OCA/l10n-france
         'l10n_fr_das2',  # OCA/l10n-france
+        # ANALYTIC
+        #'account_analytic_distribution_manual',  # OCA/account-analytic
         ### INVOICE IMPORT
         #'account_invoice_download_ovh',  # OCA/edi
         #'account_invoice_download_scaleway',  # OCA/edi
