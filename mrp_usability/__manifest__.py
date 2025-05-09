@@ -12,6 +12,7 @@
     'website': 'http://www.akretion.com',
     'depends': ['mrp'],
     'data': [
+        'security/ir.model.access.csv',
         'views/mrp_production.xml',
         'views/product_template.xml',
         'views/stock_move_line.xml',

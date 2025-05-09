@@ -27,6 +27,7 @@ Akretion:
     "website": "http://www.akretion.com",
     "depends": ["point_of_sale"],
     "data": [
+        "security/ir.model.access.csv",
         "report/pos.xml",
         "views/report_pos_order.xml",
         "views/pos_category.xml",
