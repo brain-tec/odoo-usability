@@ -57,6 +57,7 @@ setuptools.setup(
         'odoo14-addon-product_usability',
         'odoo14-addon-project_usability',
         'odoo14-addon-purchase_product_tree_default',
+        'odoo14-addon-purchase_stock_partner_default_picking_type',
         'odoo14-addon-purchase_stock_usability',
         'odoo14-addon-purchase_usability',
         'odoo14-addon-sale_agent',
