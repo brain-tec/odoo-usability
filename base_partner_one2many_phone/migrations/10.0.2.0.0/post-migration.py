@@ -24,6 +24,9 @@ def migrate(cr, version):
         env = api.Environment(cr, SUPERUSER_ID, {})
         rppo = env['res.partner.phone']
 
+        # ondelete='cascade' was missing in previous versions
+        cr.execute('DELETE FROM res_partner_phone WHERE partner_id is null')
+
         wdict = {}  # key = partnerID, values = {id: {'type': '1_home', 'phone': '+33'}}
         for rec in rppo.search_read([('type', '!=', False)], ['type', 'phone', 'partner_id', 'note']):
             if rec['partner_id'][0] not in wdict:
