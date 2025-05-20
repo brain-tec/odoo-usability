@@ -9,12 +9,12 @@ from odoo import api, models, fields
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
-    # restore v8 native field
-    # https://github.com/odoo/odoo/blob/8.0/addons/product/product.py#L592
-    # in v10, that field was defined in procurement_suggest, but we will
-    # probably not port procurement_suggest because it is native in v14
+    # seller_id cannot be stored, because its value may be different
+    # from one company to another
     seller_id = fields.Many2one(
-        'res.partner', related='seller_ids.partner_id', store=True,
+        'res.partner',
+        compute="_compute_seller_id",
+        search="_search_seller_id",
         string='Main Supplier')
 
     # in v14, I noticed that the tracking of the fields of product.template
@@ -34,6 +34,18 @@ class ProductTemplate(models.Model):
     active = fields.Boolean(tracking=100)
     company_id = fields.Many2one(tracking=110)
     barcode_type = fields.Char(compute='_compute_template_barcode_type')
+
+    def _search_seller_id(self, operator, value):
+        # searching on the first line of a o2m is not that easy
+        # So we search all potential matching products
+        # Then we filter on the seller_id
+        records = self.search([("seller_ids.partner_id", operator, value)])
+        records = records.filtered_domain([("seller_id", operator, value)])
+        return [("id", "in", records.ids)]
+
+    def _compute_seller_id(self):
+        for template in self:
+            template.seller_id = fields.first(template.seller_ids).partner_id
 
     # precompute=True doesn't work on product.template
     # (works fine on product.product), probably because we don't depend
