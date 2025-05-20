@@ -14,7 +14,7 @@
         <field name="inherit_id" ref="product.product_template_search_view" />
         <field name="arch" type="xml">
             <field name="categ_id" position="after">
-                <field name="seller_id" string="Main Supplier"/>
+                <field name="seller_id" domain="[('parent_id', '=', False)]"/>
             </field>
         </field>
     </record>
