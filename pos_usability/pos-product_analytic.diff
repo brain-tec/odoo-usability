@@ -1,0 +1,44 @@
+diff --git a/addons/point_of_sale/models/pos_session.py b/addons/point_of_sale/models/pos_session.py
+index f0656aa85c9..393962e061e 100644
+--- a/addons/point_of_sale/models/pos_session.py
++++ b/addons/point_of_sale/models/pos_session.py
+@@ -753,6 +753,7 @@ class PosSession(models.Model):
+                     sale_key = (
+                         # account
+                         line['income_account_id'],
++                        line['income_analytic_account_id'],
+                         # sign
+                         -1 if line['amount'] < 0 else 1,
+                         # for taxes
+@@ -1175,9 +1176,14 @@ class PosSession(models.Model):
+         tax_data = tax_ids.compute_all(price_unit=price, quantity=abs(order_line.qty), currency=self.currency_id, is_refund=is_refund, fixed_multiplicator=sign, include_caba_tags=True)
+         date_order = order_line.order_id.date_order
+         taxes = [{'date_order': date_order, **tax} for tax in tax_data['taxes']]
++        # _get_product_analytic_accounts() is a method of the OCA module product_analytic
++        # from https://github.com/OCA/account-analytic
++        income_analytic_account = order_line.product_id.product_tmpl_id.with_company(
++            order_line.company_id)._get_product_analytic_accounts()['income']
+         return {
+             'date_order': order_line.order_id.date_order,
+             'income_account_id': get_income_account(order_line).id,
++            'income_analytic_account_id': income_analytic_account and income_analytic_account.id or False,
+             'amount': order_line.price_subtotal,
+             'taxes': taxes,
+             'base_tags': tuple(tax_data['base_tags']),
+@@ -1228,7 +1234,7 @@ class PosSession(models.Model):
+         return self._credit_amounts(partial_vals, amount, amount_converted)
+ 
+     def _get_sale_vals(self, key, amount, amount_converted):
+-        account_id, sign, tax_keys, base_tag_ids = key
++        account_id, analytic_account_id, sign, tax_keys, base_tag_ids = key
+         tax_ids = set(tax[0] for tax in tax_keys)
+         applied_taxes = self.env['account.tax'].browse(tax_ids)
+         title = _('Sales') if sign == 1 else _('Refund')
+@@ -1238,6 +1244,7 @@ class PosSession(models.Model):
+         partial_vals = {
+             'name': name,
+             'account_id': account_id,
++            'analytic_distribution': {analytic_account_id: 100},
+             'move_id': self.move_id.id,
+             'tax_ids': [(6, 0, tax_ids)],
+             'tax_tag_ids': [(6, 0, base_tag_ids)],

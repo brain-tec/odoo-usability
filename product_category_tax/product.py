@@ -1,8 +1,8 @@
-# Copyright 2015-2020 Akretion (http://www.akretion.com)
+# Copyright 2015-2025 Akretion France (https://www.akretion.com)
 # @author Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models, Command, _
 from odoo.exceptions import ValidationError
 
 
@@ -24,8 +24,8 @@ class ProductCategTaxMixin(models.AbstractModel):
         #   of replacing the taxes... and I want to REPLACE the taxes
         #   So I have to use the awful syntax (6, 0, [IDs])
         # values are sent to ('taxes_id' and 'supplier_taxes_id')
-        return ([(6, 0, categ.sale_tax_ids.ids)],
-                [(6, 0, categ.purchase_tax_ids.ids)])
+        return ([Command.set(categ.sale_tax_ids.ids)],
+                [Command.set(categ.purchase_tax_ids.ids)])
 
     @api.model
     def write_or_create(self, vals):
@@ -34,10 +34,11 @@ class ProductCategTaxMixin(models.AbstractModel):
             vals['taxes_id'], vals['supplier_taxes_id'] =\
                 self.apply_tax_from_category(categ)
 
-    @api.model
-    def create(self, vals):
-        self.write_or_create(vals)
-        return super().create(vals)
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            self.write_or_create(vals)
+        return super().create(vals_list)
 
     def write(self, vals):
         self.write_or_create(vals)
@@ -48,12 +49,10 @@ class ProductTemplate(models.Model):
     _inherit = ['product.template', 'product.categ.tax.mixin']
     _name = 'product.template'
 
-    @api.constrains('taxes_id', 'supplier_taxes_id')
+    @api.constrains('taxes_id', 'supplier_taxes_id', 'categ_id')
     def _check_tax_categ(self):
-        # self.name != 'Pay Debt' is a stupid hack to avoid blocking the
-        # installation of the module 'pos_debt_notebook'
         for pt in self:
-            if pt.categ_id:   # and self.name != 'Pay Debt':
+            if pt.categ_id:
                 if pt.categ_id.sale_tax_ids.ids != pt.taxes_id.ids:
                     raise ValidationError(_(
                         "The sale taxes configured on the product '%s' "
