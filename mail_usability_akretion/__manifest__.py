@@ -5,7 +5,7 @@
 
 {
     'name': 'Mail Usability',
-    'version': '16.0.1.0.0',
+    'version': '18.0.1.0.0',
     'category': 'Productivity/Discuss',
     'license': 'AGPL-3',
     'summary': 'Usability improvements on mails',
@@ -20,13 +20,8 @@ Small usability improvements on mails:
 * remove 'sent by' in notification footer (TODO mig v14)
     """,
     'author': 'Akretion',
-    'website': 'http://www.akretion.com',
+    'website': 'https://github.com/akretion/odoo-usability',
     'depends': ['mail'],
-    'data': [
-        #'views/mail_view.xml',
-        #'data/mail_data.xml',
-        #'wizard/email_template_preview_view.xml',
-        #'wizard/mail_compose_message_view.xml',
-        ],
-    'installable': False,
+    'data': [],
+    'installable': True,
 }
