@@ -9,8 +9,7 @@ class ResPartner(models.Model):
     _inherit = 'res.partner'
 
     # tracking=True is handled in the 'mail' module, so it's better
-    # to have this in mail_usability than in base_usability
-    name = fields.Char(tracking=True)
+    # to have this in mail_usability than in base_usability_akretion
     ref = fields.Char(tracking=True)
     lang = fields.Selection(tracking=True)
     street = fields.Char(tracking=True)
