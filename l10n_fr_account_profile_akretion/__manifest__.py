@@ -18,6 +18,7 @@
         'l10n_fr_siret_lookup',  # OCA/l10n-france
         'account_payment_partner',  # OCA/bank-payment
         'account_lock',  # addons officiels
+        'account_lock_date_update',  # OCA/account-financial-tools
         'account_move_name_sequence',  # OCA/account-financial-tools
         'account_move_csv_import',  # akretion/account-move-import
         'account_move_line_reconcile_manual',  # OCA/account-reconcile
