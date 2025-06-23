@@ -55,7 +55,7 @@
         <tree>
             <field name="sequence" widget="handle"/>
             <field name="name" decoration-bf="1"/>
-            <field name="trigger_type" optional="show"/>
+            <field name="trigger_type" optional="show" widget="badge" decoration-info="trigger_type == 'invoice'" decoration-success="trigger_type == 'paid'" decoration-warning="trigger_type == 'in_payment'"/>
             <field name="company_id" groups="base.group_multi_company"/>
         </tree>
     </field>

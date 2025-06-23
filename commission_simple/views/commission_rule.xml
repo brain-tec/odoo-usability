@@ -43,11 +43,12 @@
     <field name="arch" type="xml">
         <tree>
             <field name="profile_id" invisible="not context.get('commission_rule_main_view')"/>
-            <field name="applied_on"/>
-            <field name="date_start"/>
-            <field name="date_end"/>
+            <field name="applied_on" widget="badge" decoration-danger="applied_on == '0_customer_product'" decoration-warning="applied_on == '1_customer_product_category'" decoration-info="applied_on == '2_product'" decoration-success="applied_on == '3_product_category'"/>
+            <field name="apply_description"/>
+            <field name="date_start" optional="show"/>
+            <field name="date_end" optional="show"/>
             <field name="rate" string="Rate (%)"/>
-            <field name="base"/>
+            <field name="base" widget="badge" decoration-success="base == 'invoiced'" decoration-warning="base == 'margin'"/>
         </tree>
     </field>
 </record>
