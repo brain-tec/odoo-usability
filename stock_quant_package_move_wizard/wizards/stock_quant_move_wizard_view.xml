@@ -35,7 +35,8 @@
                 </field>
             </group>
             <footer>
-                <button name="run" string="Move" type="object" class="btn-primary" />
+                <button name="run" string="Move and Show Picking" type="object" class="btn-primary" context="{'run_show_picking': True}" />
+                <button name="run" string="Move" type="object" />
                 <button string="Cancel" special="cancel" />
             </footer>
         </form>
