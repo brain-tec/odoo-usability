@@ -100,6 +100,11 @@ class StockQuant(models.Model):
             "location_dest_id": dest_location.id,
             "origin": origin,
         }
+        source_loc_ids = set()
+        for quant in self:
+            source_loc_ids.add(quant.location_id.id)
+        if len(source_loc_ids) == 1:
+            vals['location_id'] = list(source_loc_ids)[0]
         return vals
 
     def move_full_quant_to(self, dest_location, picking_type=False, origin=False):
