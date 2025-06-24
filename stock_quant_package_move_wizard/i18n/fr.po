@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-13 21:59+0000\n"
-"PO-Revision-Date: 2023-02-13 21:59+0000\n"
+"POT-Creation-Date: 2025-06-23 09:19+0000\n"
+"PO-Revision-Date: 2025-06-23 09:19+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -110,6 +110,11 @@ msgid "Move"
 msgstr "Déplacer"
 
 #. module: stock_quant_package_move_wizard
+#: model_terms:ir.ui.view,arch_db:stock_quant_package_move_wizard.stock_quant_move_wizard_form
+msgid "Move and Show Picking"
+msgstr "Déplacer et afficher le bon de transfert"
+
+#. module: stock_quant_package_move_wizard
 #: model:ir.actions.act_window,name:stock_quant_package_move_wizard.stock_quant_move_wizard_action
 msgid "Move to Another Location"
 msgstr "Déplacer vers un autre emplacement"
@@ -137,7 +142,7 @@ msgstr "Qté à déplacer"
 #. module: stock_quant_package_move_wizard
 #: model:ir.model.fields,field_description:stock_quant_package_move_wizard.field_stock_quant_move_wizard_line__quant_id
 msgid "Quant"
-msgstr "Quant"
+msgstr ""
 
 #. module: stock_quant_package_move_wizard
 #: model:ir.model.fields,field_description:stock_quant_package_move_wizard.field_stock_quant_move_wizard_line__wizard_id
@@ -154,7 +159,7 @@ msgstr ""
 #. module: stock_quant_package_move_wizard
 #: model:ir.model,name:stock_quant_package_move_wizard.model_stock_quant
 msgid "Quants"
-msgstr "Quants"
+msgstr ""
 
 #. module: stock_quant_package_move_wizard
 #: model:ir.model.fields,field_description:stock_quant_package_move_wizard.field_stock_quant_move_wizard__origin
@@ -196,7 +201,8 @@ msgid ""
 "%(product_name)s to %(dest_location)s, but it is already on that location!"
 msgstr ""
 "Vous essayez de déplacer %(qty)s %(uom)s d'un quant de l'article "
-"%(product_name)s vers %(dest_location)s, mais il est déjà sur cet emplacement !"
+"%(product_name)s vers %(dest_location)s, mais il est déjà sur cet "
+"emplacement !"
 
 #. module: stock_quant_package_move_wizard
 #. odoo-python

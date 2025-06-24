@@ -10,6 +10,9 @@ class StockQuant(models.Model):
 
     product_barcode = fields.Char(
         related='product_id.barcode', string="Product Barcode")
+    # product_categ_id is a native related field, but it lacks store=True
+    # to allow groupby
+    product_categ_id = fields.Many2one(store=True)
 
     def action_stock_move_lines_reserved(self):
         self.ensure_one()

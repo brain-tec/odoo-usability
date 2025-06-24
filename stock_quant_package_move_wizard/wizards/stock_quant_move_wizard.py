@@ -60,22 +60,9 @@ class StockQuantMoveWizard(models.TransientModel):
 
     def run(self):
         self.ensure_one()
-        picking_id = False
-        if self.picking_type_id:
-            picking_vals = self.env["stock.quant"]._prepare_move_to_stock_picking(
-                self.location_dest_id, self.picking_type_id, origin=self.origin
-            )
-            picking_id = self.env["stock.picking"].create(picking_vals).id
-        smo = self.env["stock.move"]
-        for line in self.line_ids:
-            quant = line.quant_id
-            assert not quant.package_id
-            vals = quant._prepare_move_to_stock_move(
-                line.quantity, self.location_dest_id, picking_id, origin=self.origin
-            )
-            new_move = smo.create(vals)
-            new_move._action_done()
-            assert new_move.state == "done"
+        res = self.line_ids.quant_id.move_full_quant_to(
+            self.location_dest_id, self.picking_type_id, origin=self.origin)
+        picking_id = res['picking_id']
         action = {}
         if picking_id and self._context.get("run_show_picking"):
             action = self.env["ir.actions.actions"]._for_xml_id(
