@@ -21,7 +21,7 @@
         # REMOVE or FIX BAD NATIVE STUFF
         'disable_odoo_online',  # OCA/server-brand
         'remove_odoo_enterprise',  # OCA/server-brand
-        'mail_debrand',   # OCA/social
+        'mail_debrand',   # OCA/mail
         'partner_disable_gravatar',  # OCA/partner-contact
         'base_technical_features',  # OCA/server-ux
         ### WEB
