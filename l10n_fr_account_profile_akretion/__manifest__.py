@@ -16,10 +16,11 @@
         'account_usability_akretion',  # akretion/odoo-usability
         'account_usability',  # OCA/account-financial-tools
         'l10n_fr_siret_lookup',  # OCA/l10n-france
-        'account_payment_base_oca',  # OCA/bank-payment
+        'account_payment_base_oca',  # OCA/bank-payment-alternative
         'account_move_name_sequence',  # OCA/account-financial-tools
+        'account_lock_date_update',  # OCA/account-financial-tools
         'account_move_csv_import',  # akretion/account-move-import
-        #'account_move_line_reconcile_manual',  # OCA/account-reconcile
+        'account_move_line_reconcile_manual',  # OCA/account-reconcile
         ### INVOICING
         'account_invoice_fiscal_position_update',  # OCA/account-invoicing
         'account_fiscal_position_vat_check',  # OCA/account-financial-tools
@@ -46,7 +47,7 @@
         ### OVERDUE
         'account_invoice_overdue_warn',  # OCA/credit-control
         #'account_invoice_overdue_warn_sale',  # OCA/credit-control
-        #'account_invoice_overdue_reminder',  # OCA/credit-control
+        'account_invoice_overdue_reminder',  # OCA/credit-control
         ### FRENCH DECLARATIONS
         'l10n_fr_account_vat_return_teledec',  # OCA/l10n-france
         'l10n_fr_account_vat_return_einvoice_generate',  # OCA/l10n-france
@@ -61,15 +62,12 @@
         #'account_invoice_download_ovh',  # OCA/edi
         #'account_invoice_download_scaleway',  # OCA/edi
         ### PAYMENT ORDERS and DEBIT ORDERS
-        # It is recommended to use the code of the following PRs that work together:
-        # https://github.com/OCA/bank-payment/pull/1174 (all modules of OCA/bank-payment)
-        # https://github.com/OCA/l10n-france/pull/560 (account_banking_fr_lcr)
-        # https://github.com/OCA/l10n-france/pull/490 (l10n_fr_account_banking_pain_base)
         #'partner_bank_acc_type_constraint',  # OCA/partner-contact
-        #'account_banking_sepa_credit_transfer',  # OCA/bank-payment
-        #'account_banking_sepa_direct_debit',  # OCA/bank-payment
-        #'account_banking_fr_lcr',  # OCA/l10n-france
-        #'l10n_fr_account_banking_pain_base',  # OCA/l10n-france
+        #'account_payment_base_oca_sale',  # OCA/bank-payment-alternative
+        #'account_payment_sepa_credit_transfer',  # OCA/bank-payment-alternative
+        #'account_payment_sepa_direct_debit',  # OCA/bank-payment-alternative
+        #'account_payment_fr_lcr',  # OCA/l10n-france
+        #'l10n_fr_account_payment_intl_credit_transfer',  # OCA/l10n-france
         ### PY3O
         #'account_invoice_facturx_py3o',  # OCA/edi
         ### CHORUS
