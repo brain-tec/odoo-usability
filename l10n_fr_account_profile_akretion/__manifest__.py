@@ -21,6 +21,7 @@
         'account_lock_date_update',  # OCA/account-financial-tools
         'account_move_csv_import',  # akretion/account-move-import
         'account_move_line_reconcile_manual',  # OCA/account-reconcile
+        'account_dashboard_banner',  # OCA/account-financial-tools
         ### INVOICING
         'account_invoice_fiscal_position_update',  # OCA/account-invoicing
         'account_fiscal_position_vat_check',  # OCA/account-financial-tools
