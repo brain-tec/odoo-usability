@@ -7,6 +7,8 @@ from odoo import models
 
 class AccountAnalyticAccount(models.Model):
     _inherit = 'account.analytic.account'
+    # native: _order = 'plan_id, name asc'
+    _order = 'plan_id, code, name'
 
     def name_get(self):
         if self._context.get('analytic_account_show_code_only'):
