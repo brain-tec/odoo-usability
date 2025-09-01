@@ -16,6 +16,7 @@
         ],
     'data': [
         'views/commission_result.xml',
+        'views/commission_profile.xml',
         'wizards/res_config_settings.xml',
         ],
     'installable': False,
