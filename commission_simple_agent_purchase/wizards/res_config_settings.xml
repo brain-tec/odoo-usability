@@ -18,6 +18,10 @@
                 <label for="commission_product_id" class="col-md-5" />
                 <field name="commission_product_id" context="{'default_type': 'service', 'default_purchase_ok': True, 'default_sale_ok': False, 'default_available_in_pos': False, 'default_purchase_method': 'purchase'}"/>
             </div>
+            <div class="row" id="commission_po_config">
+                <label for="commission_po_config" class="col-md-5" string="Purchase Order"/>
+                <field name="commission_po_config" />
+            </div>
         </xpath>
     </field>
 </record>
