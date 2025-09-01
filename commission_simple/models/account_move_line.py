@@ -88,3 +88,18 @@ class AccountMoveLine(models.Model):
         if float_is_zero(lvals['commission_rate'], precision_digits=rate_prec) or self.company_currency_id.is_zero(lvals['commission_base']):
             return False
         return lvals
+
+    def _prepare_commission_xlsx(self):
+        self.ensure_one()
+        vals = {
+            "inv.name": self.move_id.name,
+            "inv.date": self.move_id.invoice_date,
+            "inv.partner": self.move_id.commercial_partner_id.display_name,
+            "product": self.product_id and self.product_id.display_name or self.name,
+            "qty": self.quantity,
+            "uom": self.product_uom_id.name,
+            "commission_base": self.commission_base,
+            "commission_rate": self.commission_rate / 100,
+            "commission_amount": self.commission_amount,
+        }
+        return vals
