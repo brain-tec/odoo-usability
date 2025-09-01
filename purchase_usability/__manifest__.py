@@ -15,6 +15,7 @@
         'views/purchase_order.xml',
         'views/purchase_report.xml',
         'views/account_move.xml',
+        'views/product_template.xml',
         ],
     'installable': True,
 }
