@@ -53,13 +53,10 @@ class CommissionResultXlsx(models.AbstractModel):
             sheet.write(i, col_vals['pos'], col_vals['label'], styles['col_title'])
             sheet.set_column(col_vals['pos'], col_vals['pos'], col_vals['width'])
         # table content
-        for line in result.line_ids.sorted(key=self._prepare_sort_field()):
+        for line in result._prepare_xlsx_lines():
             i += 1
             for col_key, value in line._prepare_commission_xlsx().items():
                 sheet.write(i, coldict[col_key]["pos"], value, styles[coldict[col_key]["style"]])
-
-    def _prepare_sort_field(self):
-        return "date"
 
     def _prepare_xlsx_cols(self):
         cols = [  # key, label, width, style_suffix

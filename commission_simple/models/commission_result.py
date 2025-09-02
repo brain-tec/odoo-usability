@@ -75,3 +75,7 @@ class CommissionResult(models.Model):
         'salesman_period_company_unique',
         'unique(company_id, partner_id, date_range_id)',
         'A commission result already exists for this salesman/agent for the same period.')]
+
+    def _prepare_xlsx_lines(self):
+        self.ensure_one()
+        return self.line_ids.sorted(key=lambda x: x.move_id.invoice_date)
