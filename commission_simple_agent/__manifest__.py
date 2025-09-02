@@ -4,7 +4,7 @@
 
 {
     'name': 'Commission Simple Agent',
-    'version': '16.0.1.0.0',
+    'version': '18.0.1.0.0',
     'category': 'Sales',
     'license': 'AGPL-3',
     'summary': 'Glue module between commission_simple and sale_agent',
