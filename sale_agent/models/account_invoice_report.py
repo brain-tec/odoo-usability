@@ -11,5 +11,4 @@ class AccountInvoiceReport(models.Model):
     invoice_agent_id = fields.Many2one("res.partner", string="Agent", readonly=True)
 
     def _select(self):
-        select_str = super()._select()
-        return f"{select_str}, move.invoice_agent_id AS invoice_agent_id"
+        return SQL(", move.invoice_agent_id AS invoice_agent_id", super()._select())
