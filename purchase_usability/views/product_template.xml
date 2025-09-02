@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2025 Akretion France (https://www.akretion.com/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+
+<record id="view_product_supplier_inherit" model="ir.ui.view">
+   <field name="model">product.template</field>
+   <field name="inherit_id" ref="purchase.view_product_supplier_inherit"/>
+   <field name="arch" type="xml">
+        <group name="bill" position="attributes">
+           <!-- native in purchase module : purchase.group_purchase_manager -->
+            <attribute name="groups">purchase.group_purchase_manager,account.group_account_manager</attribute>
+        </group>
+   </field>
+</record>
+
+
+</odoo>

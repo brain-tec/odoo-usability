@@ -30,10 +30,12 @@ This module has been written by Alexis de Lattre from Akretion
     'depends': [
         'account',
         'date_range',
+        'report_xlsx',
         ],
     'data': [
         'security/ir.model.access.csv',
         'security/rule.xml',
+        'reports/report.xml',
         'data/decimal_precision.xml',
         'views/commission_profile.xml',
         'views/commission_rule.xml',
