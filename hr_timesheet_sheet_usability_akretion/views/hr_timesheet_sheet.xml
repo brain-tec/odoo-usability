@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2025 Akretion France (https://www.akretion.com/)
+  @author: Alexis de Lattre <alexis.delattre@akretion.com>
+  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+-->
+
+<odoo>
+
+<record id="hr_timesheet_sheet_form" model="ir.ui.view">
+    <field name="model">hr_timesheet.sheet</field>
+    <field name="inherit_id" ref="hr_timesheet_sheet.hr_timesheet_sheet_form"/>
+    <field name="arch" type="xml">
+        <xpath expr="//sheet/field[@name='name']" position="before">
+            <div class="oe_button_box" name="button_box">
+                <button name="show_lines_fullscreen" type="object"
+                    class="oe_stat_button" icon="fa-bars" string="Détails plein écran"/>
+            </div>
+        </xpath>
+    </field>
+</record>
+
+</odoo>
