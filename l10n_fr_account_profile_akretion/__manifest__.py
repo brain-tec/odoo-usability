@@ -67,6 +67,7 @@
         #'account_payment_base_oca_sale',  # OCA/bank-payment-alternative
         #'account_payment_sepa_credit_transfer',  # OCA/bank-payment-alternative
         #'account_payment_sepa_direct_debit',  # OCA/bank-payment-alternative
+        #'account_payment_batch_oca_reconcile',  # OCA/bank-payment-alternative
         #'account_payment_fr_lcr',  # OCA/l10n-france
         #'l10n_fr_account_payment_intl_credit_transfer',  # OCA/l10n-france
         ### PY3O
