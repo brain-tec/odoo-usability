@@ -34,7 +34,10 @@ class CommissionResultXlsx(models.AbstractModel):
         sheet.write(i, 0, _('Currency'), styles['subtitle'])
         sheet.write(i, 1, result.company_id.currency_id.name, styles['subtitle'])
         i += 1
-        sheet.write(i, 0, _('Total Amount'), styles['subtitle'])
+        sheet.write(i, 0, _('Base Total'), styles['subtitle'])
+        sheet.write(i, 1, result.base_total, styles['subtitle_amount'])
+        i += 1
+        sheet.write(i, 0, _('Amount Total'), styles['subtitle'])
         sheet.write(i, 1, result.amount_total, styles['subtitle_amount'])
         i += 3
         cols = self._prepare_xlsx_cols()
