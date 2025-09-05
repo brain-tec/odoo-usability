@@ -24,6 +24,7 @@
                     <field name="date_range_id"/>
                     <field name="date_start"/>
                     <field name="date_end"/>
+                    <field name="base_total"/>
                     <field name="amount_total"/>
                     <field name="company_currency_id" invisible="1"/>
                     <field name="company_id" invisible="1"/>
@@ -48,7 +49,7 @@
                         <field name="price_unit" string="Price" optional="hide"/>
                         <field name="discount" string="Disc.%" optional="hide"/>
                         <field name="price_subtotal" optional="hide" string="Invoiced Amount"/>
-                        <field name="commission_base"/>
+                        <field name="commission_base" sum="1"/>
                         <field name="commission_rate" string="Rate (%)"/>
                         <field name="commission_amount" sum="1"/>
                         <field name="commission_rule_id" optional="hide"/>
@@ -79,6 +80,7 @@
             <field name="assign_type" optional="hide" widget="badge" decoration-warning="assign_type == 'user'"/>
             <field name="company_currency_id" invisible="1"/>
             <field name="company_id" groups="base.group_multi_company"/>
+            <field name="base_total" sum="1" optional="hide"/>
             <field name="amount_total" sum="1" optional="show"/>
             <field name="state" decoration-info="state == 'draft'" decoration-success="state == 'done'" widget="badge"/>
         </tree>
