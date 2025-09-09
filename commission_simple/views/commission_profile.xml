@@ -83,6 +83,7 @@
 
 <record id="commission_profile_action" model="ir.actions.act_window">
     <field name="name">Commission Profiles</field>
+    <field name="path">commission-profile</field>
     <field name="res_model">commission.profile</field>
     <field name="view_mode">list,form</field>
 </record>
