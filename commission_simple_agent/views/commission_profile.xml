@@ -12,7 +12,7 @@
     <field name="inherit_id" ref="commission_simple.commission_profile_form"/>
     <field name="arch" type="xml">
         <xpath expr="//field[@name='assign_ids']/list/field[@name='user_id']" position="after">
-            <field name="agent_id" required="assign_type == 'agent'" readonly="assign_type != 'agent'"/>
+            <field name="agent_id" required="assign_type == 'agent'" readonly="assign_type != 'agent'" context="{'default_agent': True}"/>
         </xpath>
     </field>
 </record>
