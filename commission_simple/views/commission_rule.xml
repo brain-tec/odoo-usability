@@ -68,6 +68,7 @@
 
 <record id="commission_rule_action" model="ir.actions.act_window">
     <field name="name">Commission Rules</field>
+    <field name="path">commission-rule</field>
     <field name="res_model">commission.rule</field>
     <field name="view_mode">list,form</field>
     <field name="context">{'commission_rule_main_view': True}</field>

@@ -4,7 +4,7 @@
 
 {
     'name': 'Commission Simple Agent Purchase',
-    'version': '16.0.1.0.0',
+    'version': '18.0.1.0.0',
     'category': 'Sales',
     'license': 'AGPL-3',
     'summary': 'Glue module between commission_simple_agent and purchase',
@@ -18,5 +18,5 @@
         'views/commission_result.xml',
         'wizards/res_config_settings.xml',
         ],
-    'installable': False,
+    'installable': True,
 }
