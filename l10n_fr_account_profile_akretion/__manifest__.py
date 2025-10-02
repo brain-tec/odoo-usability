@@ -37,6 +37,7 @@
         'account_statement_import_file_reconcile_oca',  # OCA/bank-statement-import
         'account_statement_import_ofx',  # OCA/bank-statement-import
         'account_statement_import_fr_cfonb',  # OCA/l10n-france
+        # 'account_statement_import_api_qonto',  # akretion/bank-statement-import-api
         'account_reconcile_oca',  # OCA/account-reconcile
         ### CURRENCY RATES
         'currency_rate_update',  # OCA/currency
@@ -52,9 +53,10 @@
         ### FRENCH DECLARATIONS
         'l10n_fr_account_vat_return_teledec',  # OCA/l10n-france
         'l10n_fr_account_vat_return_einvoice_generate',  # OCA/l10n-france
-        # Warning: intrastat_product depends on sale_stock and purchase_stock !
-        'l10n_fr_intrastat_product',  # OCA/l10n-france
-        'product_net_weight',  # OCA/product-attribute
+        # 'intrastat_product' depends on 'sale_stock' and 'purchase_stock', so I don't add
+        # as a depend on this module
+        # 'l10n_fr_intrastat_product',  # OCA/l10n-france
+        # 'product_net_weight',  # OCA/product-attribute
         'l10n_fr_intrastat_service',  # OCA/l10n-france
         'l10n_fr_das2',  # OCA/l10n-france
         # ANALYTIC
