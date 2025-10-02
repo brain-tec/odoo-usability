@@ -1,9 +1,10 @@
 [project]
 name = "odoo-addons-akretion-odoo-usability"
-version = "18.0.20250526.1"
+version = "18.0.20251002.0"
 dependencies = [
     "odoo-addon-account_usability_akretion==18.0.*",
     "odoo-addon-base_company_extension==18.0.*",
+    "odoo-addon-base_mail_sender_bcc==18.0.*",
     "odoo-addon-base_partner_ref==18.0.*",
     "odoo-addon-base_profile_akretion==18.0.*",
     "odoo-addon-base_usability_akretion==18.0.*",
