@@ -4,6 +4,7 @@
 
 from odoo import api, fields, models
 from odoo.tools.misc import format_amount
+from odoo.tools import float_is_zero
 
 
 class PurchaseOrder(models.Model):
@@ -19,11 +20,24 @@ class PurchaseOrder(models.Model):
     # the compute method of that field is inherited in purchase_stock_usability
     delivery_partner_id = fields.Many2one(
         'res.partner', compute='_compute_delivery_partner_id')
+    has_discount = fields.Boolean(compute='_compute_has_discount')
 
     @api.depends('dest_address_id')
     def _compute_delivery_partner_id(self):
         for order in self:
             order.delivery_partner_id = order.dest_address_id
+
+    @api.depends('order_line.discount')
+    def _compute_has_discount(self):
+        prec = self.env['decimal.precision'].precision_get('Discount')
+        for order in self:
+            has_discount = False
+            for line in order.order_line:
+                if not line.display_type and not float_is_zero(
+                        line.discount, precision_digits=prec):
+                    has_discount = True
+                    break
+            order.has_discount = has_discount
 
     # Re-write native _compute_display_name to use amount_untaxed instead of amount_total
     @api.depends('name', 'partner_ref', 'amount_total', 'currency_id')
