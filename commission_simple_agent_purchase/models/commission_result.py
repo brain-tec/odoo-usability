@@ -15,7 +15,7 @@ class CommissionResult(models.Model):
 
     def draft2done(self):
         for result in self:
-            if result.assign_type == 'agent':
+            if result.state == "draft" and result.assign_type == 'agent':
                 if not result.purchase_id:
                     vals = result._prepare_purchase_order()
                     po = self.env['purchase.order'].create(vals)
