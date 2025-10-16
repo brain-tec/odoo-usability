@@ -15,6 +15,7 @@
             <header>
                 <button name="draft2done" type="object" states="draft" string="Confirm" class="btn-primary"/>
                 <button name="backtodraft" type="object" states="done" string="Back to Draft" confirm="Are you sure you want to go back to draft?"/>
+                <button name="%(commission_simple.commission_result_xlsx_report)d" type="action" string="Excel Export"/>
                 <field name="state" widget="statusbar"/>
             </header>
             <group name="main">
@@ -23,6 +24,7 @@
                     <field name="date_range_id"/>
                     <field name="date_start"/>
                     <field name="date_end"/>
+                    <field name="base_total"/>
                     <field name="amount_total"/>
                     <field name="company_currency_id" invisible="1"/>
                     <field name="company_id" invisible="1"/>
@@ -42,8 +44,12 @@
                         <field name="product_id"/>
                         <field name="product_categ_id" optional="hide"/>
                         <field name="name" optional="hide"/>
+                        <field name="quantity" optional="hide"/>
+                        <field name="product_uom_id" optional="hide" groups="uom.group_uom"/>
+                        <field name="price_unit" string="Price" optional="hide"/>
+                        <field name="discount" string="Disc.%" optional="hide"/>
                         <field name="price_subtotal" optional="hide" string="Invoiced Amount"/>
-                        <field name="commission_base"/>
+                        <field name="commission_base" sum="1"/>
                         <field name="commission_rate" string="Rate (%)"/>
                         <field name="commission_amount" sum="1"/>
                         <field name="commission_rule_id" optional="hide"/>
@@ -74,6 +80,7 @@
             <field name="assign_type" optional="hide" widget="badge" decoration-warning="assign_type == 'user'"/>
             <field name="company_currency_id" invisible="1"/>
             <field name="company_id" groups="base.group_multi_company"/>
+            <field name="base_total" sum="1" optional="hide"/>
             <field name="amount_total" sum="1" optional="show"/>
             <field name="state" decoration-info="state == 'draft'" decoration-success="state == 'done'" widget="badge"/>
         </tree>

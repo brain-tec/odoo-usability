@@ -22,6 +22,7 @@
                         <field name="name"/>
                         <field name="active" invisible="1"/>
                         <field name="trigger_type" widget="radio"/>
+                        <field name="date_range_type_id"/>
                     </group>
                     <group name="main-right">
                         <field name="company_id" invisible="1"/>
@@ -55,9 +56,28 @@
         <tree>
             <field name="sequence" widget="handle"/>
             <field name="name" decoration-bf="1"/>
-            <field name="trigger_type" optional="show"/>
+            <field name="trigger_type" optional="show" widget="badge" decoration-info="trigger_type == 'invoice'" decoration-success="trigger_type == 'paid'" decoration-warning="trigger_type == 'in_payment'"/>
+            <field name="date_range_type_id" optional="show"/>
             <field name="company_id" groups="base.group_multi_company"/>
         </tree>
+    </field>
+</record>
+
+<record id="commission_profile_search" model="ir.ui.view">
+    <field name="model">commission.profile</field>
+    <field name="arch" type="xml">
+        <search>
+            <field name="name"/>
+            <filter string="Invoiced" name="invoice" domain="[('trigger_type', '=', 'invoice')]"/>
+            <filter string="Paid" name="paid" domain="[('trigger_type', '=', 'paid')]"/>
+            <filter string="In Payment and Paid" name="in_payment" domain="[('trigger_type', '=', 'in_payment')]"/>
+            <separator/>
+            <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+            <separator/>
+            <group name="groupby">
+                <filter name="date_range_type_groupby" string="Commission Periodicity" context="{'group_by': 'date_range_type_id'}"/>
+            </group>
+        </search>
     </field>
 </record>
 

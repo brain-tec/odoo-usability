@@ -25,6 +25,7 @@ setuptools.setup(
         'odoo14-addon-base_usability',
         'odoo14-addon-commission_simple',
         'odoo14-addon-commission_simple_agent',
+        'odoo14-addon-commission_simple_agent_purchase',
         'odoo14-addon-crm_usability',
         'odoo14-addon-delivery_usability',
         'odoo14-addon-developer_menu',
