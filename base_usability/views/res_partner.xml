@@ -24,6 +24,9 @@
         <xpath expr="//div[hasclass('o_address_format')]/field[@name='city']" position="before">
             <field name="zip" position="move"/>
         </xpath>
+        <field name="industry_id" position="attributes">
+            <attribute name="attrs"></attribute>
+        </field>
     </field>
 </record>
 
@@ -60,6 +63,9 @@
         <field name="phone" position="after">
             <field name="mobile" optional="show" widget="phone" class="o_force_ltr"/>
         </field>
+        <field name="category_id" position="after">
+            <field name="industry_id" optional="hide"/>
+        </field>
     </field>
 </record>
 
@@ -73,6 +79,9 @@
             <!-- for 'ref', change '=' to 'start with' -->
             <attribute name="filter_domain">['|','|',('display_name','ilike',self),('ref','=ilike',self + '%'),('email','ilike',self)]</attribute>
         </field>
+        <filter name="group_country" position="after">
+            <filter name="industry_groupby" string="Industry" context="{'group_by': 'industry_id'}"/>
+        </filter>
     </field>
 </record>
 

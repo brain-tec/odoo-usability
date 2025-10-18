@@ -63,7 +63,7 @@ class CommissionResult(models.Model):
         return super().unlink()
 
     def draft2done(self):
-        self.write({'state': 'done'})
+        self.filtered(lambda x: x.state == 'draft').write({'state': 'done'})
 
     def backtodraft(self):
         self.write({'state': 'draft'})
