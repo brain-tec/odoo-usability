@@ -52,9 +52,10 @@
         ### FRENCH DECLARATIONS
         'l10n_fr_account_vat_return_teledec',  # OCA/l10n-france
         'l10n_fr_account_vat_return_einvoice_generate',  # OCA/l10n-france
-        # Warning: intrastat_product depends on sale_stock and purchase_stock !
-        'l10n_fr_intrastat_product',  # OCA/l10n-france
-        'product_net_weight',  # OCA/product-attribute
+        # 'intrastat_product' depends on 'sale_stock' and 'purchase_stock', so it is
+        # commented in this list of dependencies
+        # 'l10n_fr_intrastat_product',  # OCA/l10n-france
+        # 'product_net_weight',  # OCA/product-attribute
         'l10n_fr_intrastat_service',  # OCA/l10n-france
         'l10n_fr_das2',  # OCA/l10n-france
         # ANALYTIC
