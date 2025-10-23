@@ -22,6 +22,7 @@
         'account_move_name_sequence',  # OCA/account-financial-tools
         'account_move_csv_import',  # akretion/account-move-import
         'account_move_line_reconcile_manual',  # OCA/account-reconcile
+        'account_dashboard_banner',  # OCA/account-financial-tools
         ### INVOICING
         'account_invoice_fiscal_position_update',  # OCA/account-invoicing
         'account_fiscal_position_vat_check',  # OCA/account-financial-tools
@@ -52,9 +53,10 @@
         ### FRENCH DECLARATIONS
         'l10n_fr_account_vat_return_teledec',  # OCA/l10n-france
         'l10n_fr_account_vat_return_einvoice_generate',  # OCA/l10n-france
-        # Warning: intrastat_product depends on sale_stock and purchase_stock !
-        'l10n_fr_intrastat_product',  # OCA/l10n-france
-        'product_net_weight',  # OCA/product-attribute
+        # 'intrastat_product' depends on 'sale_stock' and 'purchase_stock', so it is
+        # commented in this list of dependencies
+        # 'l10n_fr_intrastat_product',  # OCA/l10n-france
+        # 'product_net_weight',  # OCA/product-attribute
         'l10n_fr_intrastat_service',  # OCA/l10n-france
         'l10n_fr_das2',  # OCA/l10n-france
         # ANALYTIC
