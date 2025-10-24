@@ -17,6 +17,8 @@ class CommissionResult(models.Model):
         readonly=True, tracking=True)
     profile_id = fields.Many2one(
         'commission.profile', string='Commission Profile', readonly=True, tracking=True)
+    assignment_id = fields.Many2one(
+        'commission.profile.assignment', string="Commission Profile Assignment", readonly=True)
     assign_type = fields.Selection('_assign_type_selection', readonly=True, tracking=True)
     company_id = fields.Many2one(
         'res.company', string='Company', ondelete='cascade',

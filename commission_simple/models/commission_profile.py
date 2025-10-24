@@ -104,6 +104,7 @@ class CommissionProfileAssignment(models.Model):
             'profile_id': self.profile_id.id,
             'date_range_id': date_range.id,
             'assign_type': self.assign_type,
+            'assignment_id': self.id,
             'company_id': self.company_id.id,
             }
         return vals
