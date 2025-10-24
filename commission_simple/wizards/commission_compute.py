@@ -46,17 +46,12 @@ class CommissionCompute(models.TransientModel):
         if not self.date_start:
             raise UserError(_("Missing Period Start Date."))
         creso = self.env['commission.result']
-        existing_commissions = creso.search([
+        existing_commissions = creso.search_read([
             ('date_start', '=', self.date_start),
             ('company_id', '=', self.company_id.id),
-            ])
-        if existing_commissions:
-            raise UserError(_(
-                '%(count)s commissions already exist(s) with start date %(date_start)s in company %(company)s.',
-                count=len(existing_commissions),
-                date_start=format_date(self.env, self.date_start),
-                company=self.company_id.display_name))
-        com_result_ids = self._core_compute()
+            ], ['assignment_id'])
+        exclude_assignment_ids = [x['assignment_id'][0] for x in existing_commissions if x['assignment_id']]
+        com_result_ids = self._core_compute(exclude_assignment_ids)
         if not com_result_ids:
             raise UserError(_('No commissions generated.'))
         action = self.env['ir.actions.actions']._for_xml_id(
@@ -67,10 +62,11 @@ class CommissionCompute(models.TransientModel):
             })
         return action
 
-    def _core_compute(self):
+    def _core_compute(self, exclude_assignment_ids):
         rules = self.env['commission.rule'].load_all_rules()
         com_result_ids = []
-        assignments = self.env['commission.profile.assignment'].search([('company_id', '=', self.company_id.id)])
+        assignments = self.env['commission.profile.assignment'].search(
+            [('company_id', '=', self.company_id.id), ('id', 'not in', exclude_assignment_ids)])
         date_range_type2date_range = {}
         for assignment in assignments:
             profile = assignment.profile_id
