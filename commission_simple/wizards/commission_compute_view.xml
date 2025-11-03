@@ -15,10 +15,7 @@
             <group name="main">
                 <field name="company_id" groups="base.group_multi_company"/>
                 <field name="company_id" invisible="1"/>
-                <field name="date_range_type_id" invisible="1"/>
-                <field name="date_range_id"/>
                 <field name="date_start"/>
-                <field name="date_end"/>
             </group>
             <footer>
                 <button name="run" type="object" string="Compute"
