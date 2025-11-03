@@ -20,6 +20,9 @@
         <div attrs="{'invisible': [('same_vat_partner_id', '=', False)]}" position="attributes">
             <attribute name="class">alert alert-warning</attribute>
         </div>
+        <field name="industry_id" position="attributes">
+            <attribute name="attrs">{'invisible': [('parent_id', '!=', False)]}</attribute>
+        </field>
     </field>
 </record>
 
@@ -59,6 +62,9 @@
             <field name="street" optional="hide"/>
             <field name="street2" optional="hide"/>
             <field name="zip" optional="hide"/>
+        </field>
+        <field name="category_id" position="after">
+            <field name="industry_id" optional="hide"/>
         </field>
     </field>
 </record>
