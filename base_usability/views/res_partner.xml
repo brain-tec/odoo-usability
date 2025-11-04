@@ -25,7 +25,7 @@
             <field name="zip" position="move"/>
         </xpath>
         <field name="industry_id" position="attributes">
-            <attribute name="attrs"></attribute>
+            <attribute name="attrs">{'invisible': [('parent_id', '!=', False)]}</attribute>
         </field>
     </field>
 </record>
