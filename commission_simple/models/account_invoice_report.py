@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import api, fields, models
+from odoo.tools import SQL
 
 
 class AccountInvoiceReport(models.Model):
@@ -11,7 +12,5 @@ class AccountInvoiceReport(models.Model):
     commission_amount = fields.Float(readonly=True)
 
     @api.model
-    def _select(self):
-        select_str = super()._select()
-        select_str += ", line.commission_amount * currency_table.rate AS commission_amount"
-        return select_str
+    def _select(self) -> SQL:
+        return SQL("%s, line.commission_amount * account_currency_table.rate AS commission_amount", super()._select())

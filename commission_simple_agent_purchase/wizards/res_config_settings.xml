@@ -21,6 +21,7 @@
                 <setting id="commission_po_config" title="Purchase Order">
                     <field name="commission_po_config" />
                 </setting>
+            </block>
         </xpath>
     </field>
 </record>

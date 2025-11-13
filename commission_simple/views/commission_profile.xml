@@ -36,7 +36,7 @@
                                 <field name="assign_type"/>
                                 <field name="user_id" required="assign_type == 'user'" readonly="assign_type != 'user'"/>
                                 <field name="company_id" groups="base.group_multi_company"/>
-                                <field name="company_id" invisible="1"/>
+                                <field name="company_id" column_invisible="1"/>
                             </list>
                         </field>
                     </page>
