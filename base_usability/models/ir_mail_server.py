@@ -19,6 +19,12 @@ class IrMailServer(models.Model):
             smtp_debug=False, smtp_session=None):
         # _prepare_email_message() will remove the Bcc field in message
         # that's why we need to save it and re-inject it in message
+        if not smtp_session:
+            smtp_session = self.connect(
+                smtp_server, smtp_port, smtp_user, smtp_password, smtp_encryption,
+                smtp_from=message['From'], ssl_certificate=smtp_ssl_certificate,
+                ssl_private_key=smtp_ssl_private_key,
+                smtp_debug=smtp_debug, mail_server_id=mail_server_id)
         email_bcc = message['Bcc']
         smtp_from, smtp_to_list, message = self._prepare_email_message(
             message, smtp_session)
