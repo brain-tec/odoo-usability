@@ -17,15 +17,17 @@ class IrMailServer(models.Model):
             smtp_user=None, smtp_password=None, smtp_encryption=None,
             smtp_ssl_certificate=None, smtp_ssl_private_key=None,
             smtp_debug=False, smtp_session=None):
-        # Start copy from native method
+        # _prepare_email_message() will remove the Bcc field in message
+        # that's why we need to save it and re-inject it in message
+        email_bcc = message['Bcc']
         smtp_from, smtp_to_list, message = self._prepare_email_message(
             message, smtp_session)
-        # End copy from native method
+        message['Bcc'] = email_bcc
         logger.info(
             "Sending email from '%s' to '%s' Cc '%s' Bcc '%s' "
-            "with subject '%s'",
+            "with subject '%s'. smtp_to_list=%s",
             smtp_from, message.get('To'), message.get('Cc'),
-            message.get('Bcc'), message.get('Subject'))
+            message.get('Bcc'), message.get('Subject'), smtp_to_list)
         return super().send_email(
             message, mail_server_id=mail_server_id,
             smtp_server=smtp_server, smtp_port=smtp_port,
