@@ -30,7 +30,7 @@
         'account_financial_report',  # OCA/account-financial-reporting
         'account_balance_ebp_csv_export',  # OCA/l10n-france
         # 'l10n_fr_mis_reports',  # OCA/l10n-france
-        # 'l10n_fr_fec_oca',  # OCA/l10n-france
+        'l10n_fr_fec_oca',  # OCA/l10n-france
         ### BANK STATEMENTS
         'account_statement_completion_label_simple',  # akretion/bank-statement-reconcile-simple
         #'account_statement_completion_label_simple_sale',  # akretion/bank-statement-reconcile-simple
