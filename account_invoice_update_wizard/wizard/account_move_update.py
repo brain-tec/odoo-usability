@@ -14,6 +14,7 @@ class AccountMoveUpdate(models.TransientModel):
     invoice_id = fields.Many2one(
         'account.move', string='Invoice', required=True,
         readonly=True)
+    bank_partner_id = fields.Many2one(related="invoice_id.bank_partner_id")
     move_type = fields.Selection(related='invoice_id.move_type')
     company_id = fields.Many2one(related='invoice_id.company_id')
     partner_id = fields.Many2one(related='invoice_id.partner_id')
@@ -54,17 +55,6 @@ class AccountMoveUpdate(models.TransientModel):
                 'analytic_distribution': line.analytic_distribution,
                 'currency_id': line.currency_id.id,
             }])
-        return res
-
-    @api.onchange('move_type')
-    def move_type_on_change(self):
-        res = {'domain': {}}
-        if self.move_type in ('out_invoice', 'out_refund'):
-            res['domain']['partner_bank_id'] =\
-                "[('partner_id.ref_company_ids', 'in', [company_id])]"
-        else:
-            res['domain']['partner_bank_id'] =\
-                "[('partner_id', '=', partner_id)]"
         return res
 
     def _prepare_invoice(self):
