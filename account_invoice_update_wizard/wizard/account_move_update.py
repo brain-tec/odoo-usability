@@ -217,3 +217,5 @@ class AccountMoveLineUpdate(models.TransientModel):
             "Percentage Analytic"
         ),
     )
+    # needed because of analytic widget in view
+    company_id = fields.Many2one(related='invoice_line_id.company_id')
