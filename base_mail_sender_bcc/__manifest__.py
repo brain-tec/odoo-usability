@@ -17,8 +17,5 @@ With this module, when Odoo sends an outgoing email, it adds the sender as Bcc (
     'author': 'Akretion',
     'website': 'https://github.com/akretion/odoo-usability',
     'depends': ['base'],
-    # I set it to False, because this module doesn't work because of send_validated_to in context
-    # cf method _prepare_email_message()
-    # We should now use the module mail_composer_cc_bcc from OCA/social (moved to OCA/mail)
-    'installable': False,
+    'installable': True,
 }
