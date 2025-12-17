@@ -23,7 +23,6 @@
         'account_move_line_reconcile_manual',  # OCA/account-reconcile
         'account_dashboard_banner',  # OCA/account-financial-tools
         ### INVOICING
-        'account_invoice_fiscal_position_update',  # OCA/account-invoicing
         'account_fiscal_position_vat_check',  # OCA/account-financial-tools
         'account_invoice_facturx',  # OCA/edi
         ### FINANCIAL REPORTS
