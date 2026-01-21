@@ -79,10 +79,10 @@ class CommissionCompute(models.TransientModel):
                     ('type_id', '=', date_range_type.id),
                     ]
                 date_range = self.env['date.range'].search(
-                    domain + [('company_id', '=', self.company_id.id)], limit=1)
+                    domain + [('company_ids', 'in', self.company_id.ids)], limit=1)
                 if not date_range:
                     date_range = self.env['date.range'].search(
-                        domain + [('company_id', '=', False)], limit=1)
+                        domain + [('company_ids', '=', False)], limit=1)
                 if not date_range:
                     logger.info('There is no date range with type %s starting on %s. Skipping commission generation for assignment ID %s', date_range_type.name, self.date_start, assignment.id)
                     continue
