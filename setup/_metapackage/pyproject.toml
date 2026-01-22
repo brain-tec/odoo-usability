@@ -1,6 +1,6 @@
 [project]
 name = "odoo-addons-akretion-odoo-usability"
-version = "18.0.20251212.0"
+version = "18.0.20260122.0"
 dependencies = [
     "odoo-addon-account_invoice_update_wizard==18.0.*",
     "odoo-addon-account_usability_akretion==18.0.*",
@@ -22,6 +22,7 @@ dependencies = [
     "odoo-addon-product_usability_akretion==18.0.*",
     "odoo-addon-purchase_stock_usability_akretion==18.0.*",
     "odoo-addon-purchase_usability_akretion==18.0.*",
+    "odoo-addon-sale_order_route==18.0.*",
     "odoo-addon-sale_stock_usability_akretion==18.0.*",
     "odoo-addon-sale_usability_akretion==18.0.*",
     "odoo-addon-stock_usability_akretion==18.0.*",
