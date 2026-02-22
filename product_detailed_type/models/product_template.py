@@ -24,7 +24,11 @@ class ProductTemplate(models.Model):
     def _detailed_type_mapping_props(self):
         # key = detailed_type
         # value = {'type': 'consu', 'uom_id': 2, 'uom_po_id': 3}  # key 'type' is required
-        return {}
+        return {
+            'consu': {'type': 'consu'},
+            'service': {'type': 'service'},
+            'combo': {'type': 'combo'},
+            }
 
     @api.depends('detailed_type')
     def _compute_type(self):
