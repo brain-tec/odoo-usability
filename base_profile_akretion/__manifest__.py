@@ -35,9 +35,7 @@
         'mail_usability_akretion',  # akretion/odoo-usability
         'eradicate_quick_create',  # akretion/odoo-usability
         'base_company_extension',  # akretion/odoo-usability
-        # password_security will be enabled when the move to ir.config_parameter
-        # will be backported
-        #'password_security',  # OCA/server-auth
+        'password_security',  # OCA/server-auth
         ],
     'installable': True,
 }
