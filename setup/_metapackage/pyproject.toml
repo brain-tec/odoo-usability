@@ -1,6 +1,6 @@
 [project]
 name = "odoo-addons-akretion-odoo-usability"
-version = "18.0.20260220.0"
+version = "18.0.20260302.0"
 dependencies = [
     "odoo-addon-account_invoice_update_wizard==18.0.*",
     "odoo-addon-account_usability_akretion==18.0.*",
@@ -14,7 +14,9 @@ dependencies = [
     "odoo-addon-eradicate_quick_create==18.0.*",
     "odoo-addon-hr_contract_usability_akretion==18.0.*",
     "odoo-addon-l10n_fr_account_profile_akretion==18.0.*",
+    "odoo-addon-link_tracker_usability_akretion==18.0.*",
     "odoo-addon-mail_usability_akretion==18.0.*",
+    "odoo-addon-mass_mailing_usability_akretion==18.0.*",
     "odoo-addon-mrp_usability_akretion==18.0.*",
     "odoo-addon-partner_tree_default_account==18.0.*",
     "odoo-addon-partner_tree_default_base==18.0.*",
@@ -29,6 +31,7 @@ dependencies = [
     "odoo-addon-sale_order_route==18.0.*",
     "odoo-addon-sale_stock_usability_akretion==18.0.*",
     "odoo-addon-sale_usability_akretion==18.0.*",
+    "odoo-addon-stock_quant_package_move_wizard==18.0.*",
     "odoo-addon-stock_usability_akretion==18.0.*",
 ]
 classifiers=[
