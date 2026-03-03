@@ -2,7 +2,7 @@
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import api, fields, models
+from odoo import api, fields, models, Command
 
 
 class BankReconciliationReportWizard(models.TransientModel):
@@ -27,16 +27,17 @@ class BankReconciliationReportWizard(models.TransientModel):
         domain="[('type', '=', 'bank'), ('company_id', '=', company_id)]",
         required=True,
         check_company=True,
-        default=lambda self: self._default_journal_ids(),
+        compute="_compute_journal_ids", store=True, readonly=False, precompute=True,
     )
 
-    @api.model
-    def _default_journal_ids(self):
-        journals = self.env["account.journal"].search(
-            [
-                ("type", "=", "bank"),
-                ("bank_account_id", "!=", False),
-                ("company_id", "=", self.env.company.id),
-            ]
-        )
-        return journals
+    @api.depends('company_id')
+    def _compute_journal_ids(self):
+        for wiz in self:
+            journal_ids = list(self.env["account.journal"]._search(
+                [
+                    ("type", "=", "bank"),
+                    ("bank_account_id", "!=", False),
+                    ("company_id", "=", wiz.company_id.id),
+                ]
+            ))
+            wiz.journal_ids = [Command.set(journal_ids)]

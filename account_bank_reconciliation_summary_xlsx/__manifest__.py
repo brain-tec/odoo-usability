@@ -4,7 +4,7 @@
 
 {
     "name": "Bank Reconciliation Report",
-    "version": "14.0.2.0.0",
+    "version": "18.0.1.0.0",
     "license": "AGPL-3",
     "author": "Akretion",
     "website": "https://github.com/akretion/odoo-usability",
@@ -13,7 +13,6 @@
     "data": [
         "report/report.xml",
         "wizard/bank_reconciliation_report_wizard_view.xml",
-        "views/account_bank_statement.xml",
         "views/account_journal.xml",
         "security/ir.model.access.csv",
     ],

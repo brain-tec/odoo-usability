@@ -126,7 +126,7 @@ class BankReconciliationXlsx(models.AbstractModel):
     def generate_xlsx_report(self, workbook, data, wizard):
         lang = self.env.user.lang
         self = self.with_context(lang=lang)
-        wizard = wizard.with_context(lang=lang)
+        wizard = wizard.with_context(lang=lang).with_company(wizard.company_id.id)
         if not wizard.journal_ids:
             raise UserError(_("No bank journal selected."))
         date_dt = wizard.date
@@ -231,11 +231,13 @@ class BankReconciliationXlsx(models.AbstractModel):
 
             row += 2
             # 2) Show payment lines IN (debit)
-            debit_account = journal.payment_debit_account_id
-            row = self._write_move_lines_block(jdi, row, debit_account)
+            debit_accounts = journal.inbound_payment_method_line_ids.filtered(lambda x: x.payment_account_id)
+            for debit_account in debit_accounts:
+                row = self._write_move_lines_block(jdi, row, debit_account)
             # 3) Show payment lines OUT (credit)
-            credit_account = journal.payment_credit_account_id
-            row = self._write_move_lines_block(jdi, row, credit_account)
+            credit_accounts = journal.outbound_payment_method_line_ids.filtered(lambda x: x.payment_account_id)
+            for credit_account in credit_accounts:
+                row = self._write_move_lines_block(jdi, row, credit_account)
 
             for col in range(1):
                 sheet.write(row, col, "", style['title'])
