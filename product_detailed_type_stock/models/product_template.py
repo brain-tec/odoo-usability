@@ -2,12 +2,14 @@
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo import api, models
+from odoo import api, models, fields
 from odoo.exceptions import ValidationError
 
 
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
+
+    tracking = fields.Selection(default=False)  # disable default value, so that odoo always goes throught the compute method
 
     @api.depends('detailed_type')
     def compute_is_storable(self):
@@ -24,6 +26,8 @@ class ProductTemplate(models.Model):
         for record in self:
             if record.detailed_type and record.detailed_type in type_mapping and 'tracking' in type_mapping[record.detailed_type]:
                 record.tracking = type_mapping[record.detailed_type]['tracking']
+            else:
+                record.tracking = 'none'
 
     @api.constrains('detailed_type', 'tracking', 'is_storable')
     def _check_detailed_type_stock(self):

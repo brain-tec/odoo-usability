@@ -2,7 +2,7 @@
 # @author: Alexis de Lattre <alexis.delattre@akretion.com>
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
-from odoo import api, fields, models
+from odoo import api, fields, models, Command
 
 
 class StockQuantMoveWizard(models.TransientModel):
@@ -45,7 +45,7 @@ class StockQuantMoveWizard(models.TransientModel):
         for quant in quants.filtered(
             lambda q: not q.package_id and q.company_id.id == company_id
         ):
-            lines.append((0, 0, {"quant_id": quant.id, "quantity": quant.quantity}))
+            lines.append(Command.create({"quant_id": quant.id, "quantity": quant.quantity}))
         picking_type = self.env["stock.picking.type"].search(
             [("code", "=", "internal"), ("company_id", "=", company_id)], limit=1
         )
