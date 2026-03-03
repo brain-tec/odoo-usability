@@ -231,11 +231,11 @@ class BankReconciliationXlsx(models.AbstractModel):
 
             row += 2
             # 2) Show payment lines IN (debit)
-            debit_accounts = journal.inbound_payment_method_line_ids.filtered(lambda x: x.payment_account_id)
+            debit_accounts = journal.inbound_payment_method_line_ids.payment_account_id
             for debit_account in debit_accounts:
                 row = self._write_move_lines_block(jdi, row, debit_account)
             # 3) Show payment lines OUT (credit)
-            credit_accounts = journal.outbound_payment_method_line_ids.filtered(lambda x: x.payment_account_id)
+            credit_accounts = journal.outbound_payment_method_line_ids.payment_account_id
             for credit_account in credit_accounts:
                 row = self._write_move_lines_block(jdi, row, credit_account)
 
