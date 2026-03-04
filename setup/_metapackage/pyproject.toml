@@ -1,7 +1,8 @@
 [project]
 name = "odoo-addons-akretion-odoo-usability"
-version = "18.0.20260302.0"
+version = "18.0.20260303.0"
 dependencies = [
+    "odoo-addon-account_bank_reconciliation_summary_xlsx==18.0.*",
     "odoo-addon-account_invoice_update_wizard==18.0.*",
     "odoo-addon-account_usability_akretion==18.0.*",
     "odoo-addon-base_company_extension==18.0.*",
