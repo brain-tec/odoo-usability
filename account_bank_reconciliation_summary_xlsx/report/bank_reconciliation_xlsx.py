@@ -217,12 +217,11 @@ class BankReconciliationXlsx(models.AbstractModel):
             for col in range(1):
                 sheet.write(row, col, "", style['title'])
             sheet.write(row, 1, _("Balance %s:") % bank_account.code + ' ', style['title_right'])
+            domain = [('date', '<=', jdi['wizard'].date)]
             if wizard.move_state == 'posted':
-                domain = [('parent_state', '=', 'posted')]
-            else:
-                # by default, the native method _get_journal_bank_account_balance()
-                # has ('parent_state', '!=', 'cancel')
-                domain = None
+                domain += [('parent_state', '=', 'posted')]
+            # by default, the native method _get_journal_bank_account_balance()
+            # has ('parent_state', '!=', 'cancel')
             account_bal, nb_lines = journal._get_journal_bank_account_balance(domain=domain)
 
             sheet.write(row, 2, account_bal, style[f"{jdi['currency']}_bg"])
