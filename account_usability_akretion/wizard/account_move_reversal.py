@@ -35,6 +35,6 @@ class AccountMoveReversal(models.TransientModel):
         assert self._context.get('active_model') == 'account.move'
         amo = self.env['account.move']
         moves = amo.browse(self._context['active_ids'])
-        if len(moves) == 1:
+        if len(moves) == 1 and moves.move_type == 'entry':
             res['date'] = moves.date + relativedelta(days=1)
         return res
