@@ -11,11 +11,11 @@ class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
 
     commission_result_id = fields.Many2one(
-        'commission.result', string='Commission Result', check_company=True, index=True)
+        'commission.result', string='Commission Result', check_company=True, index=True, copy=False)
     commission_rule_id = fields.Many2one(
-        'commission.rule', 'Matched Commission Rule', ondelete='restrict', check_company=True)
-    commission_base = fields.Monetary('Commission Base', currency_field='company_currency_id')
-    commission_rate = fields.Float('Commission Rate', digits='Commission Rate')
+        'commission.rule', 'Matched Commission Rule', ondelete='restrict', check_company=True, copy=False)
+    commission_base = fields.Monetary('Commission Base', currency_field='company_currency_id', copy=False)
+    commission_rate = fields.Float('Commission Rate', digits='Commission Rate', copy=False)
     commission_amount = fields.Monetary(
         string='Commission Amount', currency_field='company_currency_id',
         readonly=True, compute='_compute_commission_amount', store=True)
