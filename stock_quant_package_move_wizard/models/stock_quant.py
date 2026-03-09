@@ -76,6 +76,7 @@ class StockQuant(models.Model):
             "product_uom_qty": qty,
             "product_uom": uom_id,
             "origin": origin,
+            "picked": True,
             "move_line_ids": [
                 Command.create(
                     {
