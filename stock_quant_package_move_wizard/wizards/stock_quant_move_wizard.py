@@ -3,6 +3,7 @@
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
 from odoo import api, fields, models, Command
+from odoo.tools import float_is_zero
 
 
 class StockQuantMoveWizard(models.TransientModel):
@@ -67,9 +68,12 @@ class StockQuantMoveWizard(models.TransientModel):
             )
             picking_id = self.env["stock.picking"].create(picking_vals).id
         smo = self.env["stock.move"]
+        prec = self.env['decimal.precision'].precision_get('Product Unit of Measure')
         for line in self.line_ids:
             quant = line.quant_id
             assert not quant.package_id
+            if float_is_zero(line.quantity, precision_digits=prec):
+                continue
             vals = quant._prepare_move_to_stock_move(
                 line.quantity, self.location_dest_id, picking_id, origin=self.origin
             )
