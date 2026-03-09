@@ -26,6 +26,10 @@
             <field name="product_supplier_code" optional="hide"/>
             <field name="product_barcode" optional="hide"/>
         </xpath>
+        <xpath expr="//field[@name='order_line']/tree//field[@name='analytic_distribution']" position="attributes">
+            <!-- native value : optional="hide" -->
+            <attribute name="optional">show</attribute>
+        </xpath>
     </field>
 </record>
 
