@@ -39,6 +39,7 @@
         # 'account_statement_import_api_qonto',  # akretion/bank-statement-import-api
         'account_reconcile_oca',  # OCA/account-reconcile
         'account_reconcile_oca_add_default_filters',  # OCA/account-reconcile
+        'account_reconcile_oca_usability_akretion',  # akretion/odoo-usability
         ### CURRENCY RATES
         'currency_rate_update',  # OCA/currency
         'currency_old_rate_notify',  # OCA/currency

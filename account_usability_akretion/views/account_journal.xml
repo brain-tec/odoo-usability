@@ -27,7 +27,7 @@
     <field name="arch"  type="xml">
         <field name="kanban_dashboard" position="after">
             <field name="hide_bank_statement_balance"/>
-            <field name="dashboard_default_account_balance"/>
+            <field name="bank_default_account_balance_str"/>
         </field>
         <xpath expr="//div[@id='dashboard_bank_cash_balance']/.." position="attributes">
             <attribute name="t-if">dashboard.nb_lines_bank_account_balance > 0 and !record.hide_bank_statement_balance.raw_value</attribute>
@@ -38,7 +38,7 @@
                     <span>Balance in GL</span>
                 </div>
                 <div id="bank_cash_balance_gl_value" class="col-auto text-end">
-                    <span dir="ltr"><t t-out="record.dashboard_default_account_balance.raw_value"/></span>
+                    <span dir="ltr"><t t-out="record.bank_default_account_balance_str.raw_value"/></span>
                 </div>
             </div>
         </xpath>
