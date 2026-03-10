@@ -17,8 +17,11 @@ class AccountJournal(models.Model):
         "the start/end balance and you regularly check the accounting balance "
         "of the bank account vs the amount of your bank account."
         )
-    dashboard_default_account_balance = fields.Char(
-        compute="_compute_dashboard_default_account_balance", string="Balance in GL")
+    bank_currency_id = fields.Many2one("res.currency", compute="_compute_bank_default_account_balance", string="Display Currency for Bank Journal")
+    bank_default_account_balance = fields.Monetary(
+        compute="_compute_bank_default_account_balance", string="Balance in GL (float)", currency_field="bank_currency_id")
+    bank_default_account_balance_str = fields.Char(
+        compute="_compute_bank_default_account_balance", string="Balance in GL")
 
     @api.depends('name', 'currency_id', 'company_id', 'code')
     @api.depends_context('journal_show_code_only')
@@ -35,7 +38,7 @@ class AccountJournal(models.Model):
                     name = f"{name} ({journal.currency_id.name})"
                 journal.display_name = name
 
-    def _compute_dashboard_default_account_balance(self):
+    def _compute_bank_default_account_balance(self):
         rg_res = self.env['account.move.line']._read_group(
             domain=[
                 ('account_id', 'in', tuple(self.default_account_id.ids)),
@@ -47,6 +50,8 @@ class AccountJournal(models.Model):
         )
         mapped_data = {account.id: (balance, amount_currency) for (account, balance, amount_currency) in rg_res}
         for journal in self:
+            balance = 0.0
+            currency = False
             balance_str = ''
             if journal.type in ('bank', 'cash', 'credit') and journal.default_account_id:
                 balance = 0.0
@@ -57,7 +62,9 @@ class AccountJournal(models.Model):
                     balance = mapped_data.get(journal.default_account_id.id, (0.0, 0.0))[0]
                     currency = journal.company_id.currency_id
                 balance_str = currency.format(balance)
-            journal.dashboard_default_account_balance = balance_str
+            journal.bank_currency_id = currency and currency.id or False
+            journal.bank_default_account_balance = balance
+            journal.bank_default_account_balance_str = balance_str
 
 #    def open_outstanding_payments(self):
 #        self.ensure_one()
