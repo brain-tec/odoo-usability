@@ -49,7 +49,7 @@ class CommissionResult(models.Model):
 
     def _prepare_purchase_order(self):
         self.ensure_one()
-        fp = self.env['account.fiscal.position']._get_fiscal_position(self.partner_id)
+        fp = self.env['account.fiscal.position'].with_company(self.company_id.id)._get_fiscal_position(self.partner_id)
         vals = {
             'partner_id': self.partner_id.id,
             'origin': _('Commission %s') % self.date_range_id.display_name,
