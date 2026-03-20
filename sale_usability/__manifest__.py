@@ -12,7 +12,7 @@
     'website': 'http://www.akretion.com',
     'depends': [
         'sale',
-        'account_usability',  # for company view
+        'account_usability_akretion',  # for company view
         'base_view_inheritance_extension',
         ],
     'data': [
