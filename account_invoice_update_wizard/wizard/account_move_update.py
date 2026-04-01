@@ -22,7 +22,6 @@ class AccountMoveUpdate(models.TransientModel):
     invoice_payment_term_id = fields.Many2one(
         'account.payment.term', string='Payment Term')
     ref = fields.Char(string='Reference')  # field label is customized in the view
-    invoice_date = fields.Date()
     invoice_origin = fields.Char(string='Source Document')
     partner_bank_id = fields.Many2one(
         'res.partner.bank', string='Bank Account')
@@ -32,7 +31,7 @@ class AccountMoveUpdate(models.TransientModel):
     @api.model
     def _simple_fields2update(self):
         '''List boolean, date, datetime, char, text fields'''
-        return ['ref', 'invoice_origin', 'invoice_date']
+        return ['ref', 'invoice_origin']
 
     @api.model
     def _m2o_fields2update(self):
@@ -46,15 +45,12 @@ class AccountMoveUpdate(models.TransientModel):
         for m2ofield in self._m2o_fields2update():
             res[m2ofield] = invoice[m2ofield].id or False
         for line in invoice.invoice_line_ids:
-            res['line_ids'].append([0, 0, {
+            res['line_ids'].append(Command.create({
                 'invoice_line_id': line.id,
                 'sequence': line.sequence,
                 'name': line.name,
-                'quantity': line.quantity,
-                'price_subtotal': line.price_subtotal,
                 'analytic_distribution': line.analytic_distribution,
-                'currency_id': line.currency_id.id,
-            }])
+            }))
         return res
 
     def _prepare_invoice(self):
@@ -140,8 +136,9 @@ class AccountMoveUpdate(models.TransientModel):
                         "same terms (number of terms and/or amount) as the "
                         "new payment term '%s'. You can only switch to a "
                         "payment term that has the same number of terms "
-                        "with the same amount.") % (
-                        inv.invoice_payment_term_id.name, self.invoice_payment_term_id.name))
+                        "with the same amount.",
+                        inv.invoice_payment_term_id.name,
+                        self.invoice_payment_term_id.name))
                 for line in lines:
                     line.date_maturity = new_pterm[iamount].pop()
 
@@ -186,26 +183,17 @@ class AccountMoveLineUpdate(models.TransientModel):
         'account.move.update', string='Wizard', ondelete='cascade')
     invoice_line_id = fields.Many2one(
         'account.move.line', string='Invoice Line', readonly=True)
+    # company_id is needed because of analytic widget in view
+    company_id = fields.Many2one(related='invoice_line_id.company_id')
+    display_type = fields.Selection(related="invoice_line_id.display_type")
+    quantity = fields.Float(related='invoice_line_id.quantity')
+    product_uom_id = fields.Many2one(related="invoice_line_id.product_uom_id")
+    price_subtotal = fields.Monetary(related="invoice_line_id.price_subtotal")
+    currency_id = fields.Many2one(related='invoice_line_id.currency_id')
     name = fields.Text(string='Description', required=True)
-    display_type = fields.Selection(
-        related="invoice_line_id.display_type",
-        help="Technical field for UX purpose.")
-    quantity = fields.Float(
-        string='Quantity', digits='Product Unit of Measure', readonly=True)
-    price_subtotal = fields.Monetary(
-        string='Amount', readonly=True)
-    currency_id = fields.Many2one('res.currency', readonly=True)
-    analytic_distribution = fields.Json(
-        string="Analytic",
-#        compute="_compute_writeoff_analytic_distribution",
-#        readonly=False,
-#        store=True,
-#        precompute=True,
-    )
+    analytic_distribution = fields.Json(string="Analytic")
     analytic_precision = fields.Integer(
         default=lambda self: self.env["decimal.precision"].precision_get(
             "Percentage Analytic"
         ),
     )
-    # needed because of analytic widget in view
-    company_id = fields.Many2one(related='invoice_line_id.company_id')

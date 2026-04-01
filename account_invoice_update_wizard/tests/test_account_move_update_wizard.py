@@ -2,6 +2,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo.tests.common import TransactionCase
+from odoo import Command
 
 
 class TestAccountInvoiceUpdateWizard(TransactionCase):
@@ -29,15 +30,13 @@ class TestAccountInvoiceUpdateWizard(TransactionCase):
             'partner_id': cls.customer12.id,
             'move_type': 'out_invoice',
             'invoice_line_ids': [
-                [0, None, {
+                Command.create({
                     'name': 'Line1',
                     'product_id': cls.product16.id,
                     'product_uom_id': uom_unit.id,
                     'quantity': 1,
                     'price_unit': 42.0,
-                    'credit': 42.0,
-                    'debit': 0
-                }],
+                }),
             ],
         })
 
