@@ -437,3 +437,8 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:account_usability_akretion.view_account_move_reversal
 msgid "You are about to reverse entries that have already been reversed:"
 msgstr "Vous êtes sur le point d'extourner des pièces comptables qui ont déjà été extournées :"
+
+#. module: account
+#: model:ir.ui.menu,name:account.menu_finance
+msgid "Accounting"
+msgstr "Comptabilité"
