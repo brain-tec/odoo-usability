@@ -12,7 +12,7 @@
     <field name="arch" type="xml">
         <button name="button_draft" position="before">
             <button name="prepare_update_wizard" type="object" string="Update Invoice" attrs="{'invisible': ['|', ('state', '!=', 'posted'), ('move_type', '=', 'entry')]}" groups="account.group_account_invoice"/>
-            <button name="prepare_update_wizard" type="object" string="Update Entry" attrs="{'invisible': ['|', ('state', '!= ', 'posted'), ('move_type', '!=', 'entry')]}" groups="account.group_account_invoice"/>
+            <button name="prepare_update_wizard" type="object" string="Update Entry" attrs="{'invisible': ['|', ('state', '!=', 'posted'), ('move_type', '!=', 'entry')]}" groups="account.group_account_invoice"/>
         </button>
     </field>
 </record>
