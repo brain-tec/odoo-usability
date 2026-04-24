@@ -33,11 +33,8 @@ This module has been written by Alexis de Lattre from Akretion
     """,
     'author': 'Akretion',
     'website': 'https://github.com/akretion/odoo-usability',
-    # We depend on point_of_sale and not only 'product'
-    # because the price barcode rule is added by the point_of_sale module
-    # (the weight barcode rule is added by the stock module)
     'depends': [
-        'point_of_sale',
+        'stock',
         'barcodes',
         ],
     'external_dependencies': {'python': ['python-barcode>=0.14.0']},
