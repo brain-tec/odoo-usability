@@ -98,10 +98,14 @@ class ProductPrintZplBarcode(models.TransientModel):
     nomenclature_id = fields.Many2one(
         'barcode.nomenclature', 'Barcode Nomenclature', required=True,
         states={'step2': [('readonly', True)]})
-    # label_size: remove readonly=True when we will support more labels
     label_size = fields.Selection([
         ('38x25', '38x25 mm'),
-        ], required=True, default='38x25', readonly=True)
+        ('30x15', '30x15 mm'),
+        ], required=True, default='38x25')
+    label_type = fields.Selection([
+        ('direct_thermal', 'Direct Thermal (thermal paper)'),
+        ('thermal_transfer', 'Thermal Transfer (ink ribbon required)'),
+        ], default='direct_thermal', required=True)
     pricelist_id = fields.Many2one(
         'product.pricelist', string='Pricelist', required=True,
         states={'step2': [('readonly', True)]}, check_company=True,
@@ -308,23 +312,42 @@ class ProductPrintZplBarcodeLine(models.TransientModel):
             assert len(barcode) == 13
             assert is_valid(barcode)
             # print("barcode FINAL=", barcode)
-        zpl_str = self._price_weight_barcode_type_zpl() % {
-            'product_name': self.product_name,
-            'ean_zpl_command': len(self.barcode) == 8 and 'B8' or 'BE',
-            'ean_no_checksum': barcode[:-1],
-            'price_uom': self.price_uom,
+        vals = self._prepare_common(barcode)
+        vals.update({
             'price': self.price,
-            'currency_symbol': self.currency_id.symbol,
-            'copies': self.copies,
             'quantity': value,
-            'uom_name': self.uom_id.name,
-        }
+        })
+        zpl_str = self._price_weight_barcode_type_zpl(self.parent_id.label_size) % vals
         return (barcode, zpl_str)
 
+    def _prepare_product_barcode_type(self):
+        vals = self._prepare_common(self.barcode)
+        zpl_str = self._product_barcode_type_zpl(self.parent_id.label_size) % vals
+        return (self.barcode, zpl_str)
+
+    def _prepare_common(self, barcode):
+        media_type_map = {
+            'direct_thermal': 'D',
+            'thermal_transfer': 'T',
+            }
+        vals = {
+            'copies': self.copies,
+            'media_type': media_type_map[self.parent_id.label_type],
+            'product_name': self.product_name,
+            'ean_zpl_command': len(barcode) == 8 and 'B8' or 'BE',
+            'ean_no_checksum': barcode[:-1],
+            'currency_symbol': self.currency_id.symbol,  # symbol is a required field
+            'price_uom': self.price_uom,
+            }
+        return vals
+
     @api.model
-    def _price_weight_barcode_type_zpl(self):
+    def _price_weight_barcode_type_zpl(self, label_size):
+        if label_size != '38x25':
+            raise UserError(_("For Weight barcodes, the only supported label size is 38x25 mm."))
         label = """
 ^XA
+^MT%(media_type)s
 ^CI28
 ^PW304
 ^LL200
@@ -342,9 +365,11 @@ class ProductPrintZplBarcodeLine(models.TransientModel):
         return label
 
     @api.model
-    def _product_barcode_type_zpl(self):
-        label = """
+    def _product_barcode_type_zpl(self, label_size):
+        if label_size == "38x25":
+            label = """
 ^XA
+^MT%(media_type)s
 ^CI28
 ^PW304
 ^LL200
@@ -357,15 +382,18 @@ class ProductPrintZplBarcodeLine(models.TransientModel):
 ^PQ%(copies)s
 ^XZ
 """
+        elif label_size == "30x15":
+            label = """
+^XA
+^MT%(media_type)s
+^CI28
+^PW240
+^LL120
+^LH0,20
+^FO20,20^%(ean_zpl_command)sN,50^FD%(ean_no_checksum)s^FS
+^PQ%(copies)s
+^XZ
+"""
+        else:
+            raise UserError(_("This label size is not supported."))
         return label
-
-    def _prepare_product_barcode_type(self):
-        zpl_str = self._product_barcode_type_zpl() % {
-            'product_name': self.product_name,
-            'ean_zpl_command': len(self.barcode) == 8 and 'B8' or 'BE',
-            'ean_no_checksum': self.barcode[:-1],
-            'price_uom': self.price_uom,
-            'currency_symbol': self.currency_id.symbol,  # symbol is a required field
-            'copies': self.copies,
-        }
-        return (self.barcode, zpl_str)
