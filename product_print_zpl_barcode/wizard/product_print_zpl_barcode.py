@@ -9,7 +9,6 @@ from stdnum.ean import is_valid, calc_check_digit
 import base64
 import re
 import socket
-import ipaddress
 
 import logging
 logger = logging.getLogger(__name__)
@@ -179,28 +178,32 @@ class ProductPrintZplBarcode(models.TransientModel):
     def print_zpl(self):
         if not self.zpl_printer_ip:
             raise UserError(_(
-                "You must configure the IP address of the ZPL Printer."))
+                "You must configure the IP address or DNS of the ZPL Printer."))
+        # code below is IPv4 and IPv6 compliant. That's important !
         try:
-            ip = ipaddress.ip_address(self.zpl_printer_ip)
+            addr_infos = socket.getaddrinfo(
+                self.zpl_printer_ip, PRINTER_PORT, socket.AF_UNSPEC, socket.SOCK_STREAM)
         except Exception as e:
-            raise UserError(str(e))
-        version = ip.version
-        # TODO works with DNS ?
-        if version == 6:  # IPv6
-            socket_inet = socket.AF_INET6
-        else:  # IPv4
-            socket_inet = socket.AF_INET
-        with socket.socket(socket_inet, socket.SOCK_STREAM) as s:
-            s.settimeout(TIMEOUT)
+            raise UserError(_("DNS resolution failed. Error: %s.", str(e)))
+        zpl_file_bytes = base64.decodebytes(self.zpl_file)
+        for addr_info in addr_infos:
+            af, socktype, proto, canonname, ip_port = addr_info
+            sock = None
             try:
-                s.connect((str(ip), PRINTER_PORT))
-            except Exception as e:
-                raise UserError(_(
-                    "Cannot connect to ZPL printer on %(ip)s. Error: %(error)s",
-                    ip=ip, error=e))
-            zpl_file_bytes = base64.decodebytes(self.zpl_file)
-            s.send(zpl_file_bytes)
-            s.close()
+                with socket.socket(af, socktype, proto) as sock:
+                    sock.settimeout(TIMEOUT)
+                    logger.info(f"Trying to connect on {ip_port[0]} port {ip_port[1]}")
+                    sock.connect(ip_port)
+                    sock.sendall(zpl_file_bytes)
+                    logger.info(f"Data successfully sent to {ip_port[0]} port {ip_port[1]}")
+                    return
+            except socket.error as err:
+                logger.warning(f"Could not connect to {ip_port[0]} port {ip_port[1]}. Error: {err}")
+                continue
+        else:
+            raise UserError(_(
+                "Could not connect to ZPL printer on '%(dns)s' port %(port)s.",
+                dns=self.zpl_printer_ip, port=PRINTER_PORT))
 
 
 class ProductPrintZplBarcodeLine(models.TransientModel):
