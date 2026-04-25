@@ -9,7 +9,6 @@ from stdnum.ean import is_valid, calc_check_digit
 import base64
 import re
 import socket
-import ipaddress
 
 import logging
 logger = logging.getLogger(__name__)
@@ -27,15 +26,16 @@ class ProductPrintZplBarcode(models.TransientModel):
         res = super().default_get(fields_list)
         nomenclature = self.env.ref('barcodes.default_barcode_nomenclature')
         company = self.env.company
-        posconfig = self.env['pos.config'].sudo().search(
-            [('company_id', '=', company.id)], limit=1)
-        if posconfig:
-            pricelist = posconfig.pricelist_id
-        else:
+        pricelist = False
+        # if POS is installed
+        if 'pos.config' in self.env:
+            posconfig = self.env['pos.config'].sudo().search(
+                [('company_id', '=', company.id)], limit=1)
+            if posconfig:
+                pricelist = posconfig.pricelist_id
+        if not pricelist:
             pricelist = self.env['product.pricelist'].search([
-                '|', ('company_id', '=', False),
-                ('company_id', '=', company.id),
-                ], limit=1)
+                ('company_id', 'in', (False, company.id))], limit=1)
         if not pricelist:
             raise UserError(_(
                 "There are no pricelist in company '%s'.") % company.name)
@@ -98,10 +98,14 @@ class ProductPrintZplBarcode(models.TransientModel):
     nomenclature_id = fields.Many2one(
         'barcode.nomenclature', 'Barcode Nomenclature', required=True,
         states={'step2': [('readonly', True)]})
-    # label_size: remove readonly=True when we will support more labels
     label_size = fields.Selection([
         ('38x25', '38x25 mm'),
-        ], required=True, default='38x25', readonly=True)
+        ('30x15', '30x15 mm'),
+        ], required=True, default='38x25')
+    label_type = fields.Selection([
+        ('direct_thermal', 'Direct Thermal (thermal paper)'),
+        ('thermal_transfer', 'Thermal Transfer (ink ribbon required)'),
+        ], default='direct_thermal', required=True)
     pricelist_id = fields.Many2one(
         'product.pricelist', string='Pricelist', required=True,
         states={'step2': [('readonly', True)]}, check_company=True,
@@ -174,28 +178,32 @@ class ProductPrintZplBarcode(models.TransientModel):
     def print_zpl(self):
         if not self.zpl_printer_ip:
             raise UserError(_(
-                "You must configure the IP address of the ZPL Printer."))
+                "You must configure the IP address or DNS of the ZPL Printer."))
+        # code below is IPv4 and IPv6 compliant. That's important !
         try:
-            ip = ipaddress.ip_address(self.zpl_printer_ip)
+            addr_infos = socket.getaddrinfo(
+                self.zpl_printer_ip, PRINTER_PORT, socket.AF_UNSPEC, socket.SOCK_STREAM)
         except Exception as e:
-            raise UserError(str(e))
-        version = ip.version
-        # TODO works with DNS ?
-        if version == 6:  # IPv6
-            socket_inet = socket.AF_INET6
-        else:  # IPv4
-            socket_inet = socket.AF_INET
-        with socket.socket(socket_inet, socket.SOCK_STREAM) as s:
-            s.settimeout(TIMEOUT)
+            raise UserError(_("DNS resolution failed. Error: %s.", str(e)))
+        zpl_file_bytes = base64.decodebytes(self.zpl_file)
+        for addr_info in addr_infos:
+            af, socktype, proto, canonname, ip_port = addr_info
+            sock = None
             try:
-                s.connect((str(ip), PRINTER_PORT))
-            except Exception as e:
-                raise UserError(_(
-                    "Cannot connect to ZPL printer on %(ip)s. Error: %(error)s",
-                    ip=ip, error=e))
-            zpl_file_bytes = base64.decodebytes(self.zpl_file)
-            s.send(zpl_file_bytes)
-            s.close()
+                with socket.socket(af, socktype, proto) as sock:
+                    sock.settimeout(TIMEOUT)
+                    logger.info(f"Trying to connect on {ip_port[0]} port {ip_port[1]}")
+                    sock.connect(ip_port)
+                    sock.sendall(zpl_file_bytes)
+                    logger.info(f"Data successfully sent to {ip_port[0]} port {ip_port[1]}")
+                    return
+            except socket.error as err:
+                logger.warning(f"Could not connect to {ip_port[0]} port {ip_port[1]}. Error: {err}")
+                continue
+        else:
+            raise UserError(_(
+                "Could not connect to ZPL printer on '%(dns)s' port %(port)s.",
+                dns=self.zpl_printer_ip, port=PRINTER_PORT))
 
 
 class ProductPrintZplBarcodeLine(models.TransientModel):
@@ -308,23 +316,43 @@ class ProductPrintZplBarcodeLine(models.TransientModel):
             assert len(barcode) == 13
             assert is_valid(barcode)
             # print("barcode FINAL=", barcode)
-        zpl_str = self._price_weight_barcode_type_zpl() % {
-            'product_name': self.product_name,
-            'ean_zpl_command': len(self.barcode) == 8 and 'B8' or 'BE',
-            'ean_no_checksum': barcode[:-1],
-            'price_uom': self.price_uom,
+        vals = self._prepare_common(barcode)
+        vals.update({
             'price': self.price,
-            'currency_symbol': self.currency_id.symbol,
-            'copies': self.copies,
             'quantity': value,
-            'uom_name': self.uom_id.name,
-        }
+        })
+        zpl_str = self._price_weight_barcode_type_zpl(self.parent_id.label_size) % vals
         return (barcode, zpl_str)
 
+    def _prepare_product_barcode_type(self):
+        vals = self._prepare_common(self.barcode)
+        zpl_str = self._product_barcode_type_zpl(self.parent_id.label_size) % vals
+        return (self.barcode, zpl_str)
+
+    def _prepare_common(self, barcode):
+        media_type_map = {
+            'direct_thermal': 'D',
+            'thermal_transfer': 'T',
+            }
+        vals = {
+            'copies': self.copies,
+            'media_type': media_type_map[self.parent_id.label_type],
+            'product_name': self.product_name,
+            'ean_zpl_command': len(barcode) == 8 and 'B8' or 'BE',
+            'ean_no_checksum': barcode[:-1],
+            'currency_symbol': self.currency_id.symbol,  # symbol is a required field
+            'price_uom': self.price_uom,
+            'uom_name': self.uom_id.name,
+            }
+        return vals
+
     @api.model
-    def _price_weight_barcode_type_zpl(self):
+    def _price_weight_barcode_type_zpl(self, label_size):
+        if label_size != '38x25':
+            raise UserError(_("For Weight barcodes, the only supported label size is 38x25 mm."))
         label = """
 ^XA
+^MT%(media_type)s
 ^CI28
 ^PW304
 ^LL200
@@ -342,9 +370,11 @@ class ProductPrintZplBarcodeLine(models.TransientModel):
         return label
 
     @api.model
-    def _product_barcode_type_zpl(self):
-        label = """
+    def _product_barcode_type_zpl(self, label_size):
+        if label_size == "38x25":
+            label = """
 ^XA
+^MT%(media_type)s
 ^CI28
 ^PW304
 ^LL200
@@ -357,15 +387,18 @@ class ProductPrintZplBarcodeLine(models.TransientModel):
 ^PQ%(copies)s
 ^XZ
 """
+        elif label_size == "30x15":
+            label = """
+^XA
+^MT%(media_type)s
+^CI28
+^PW240
+^LL120
+^LH0,20
+^FO20,20^%(ean_zpl_command)sN,50^FD%(ean_no_checksum)s^FS
+^PQ%(copies)s
+^XZ
+"""
+        else:
+            raise UserError(_("This label size is not supported."))
         return label
-
-    def _prepare_product_barcode_type(self):
-        zpl_str = self._product_barcode_type_zpl() % {
-            'product_name': self.product_name,
-            'ean_zpl_command': len(self.barcode) == 8 and 'B8' or 'BE',
-            'ean_no_checksum': self.barcode[:-1],
-            'price_uom': self.price_uom,
-            'currency_symbol': self.currency_id.symbol,  # symbol is a required field
-            'copies': self.copies,
-        }
-        return (self.barcode, zpl_str)

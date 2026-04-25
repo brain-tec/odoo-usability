@@ -18,6 +18,7 @@
                 <field name="company_id" invisible="1"/>
                 <field name="pricelist_id" attrs="{'readonly': [('state', '=', 'step2')]}"/>
                 <field name="label_size" attrs="{'readonly': [('state', '=', 'step2')]}"/>
+                <field name="label_type" attrs="{'readonly': [('state', '=', 'step2')]}"/>
                 <field name="nomenclature_id" attrs="{'readonly': [('state', '=', 'step2')]}"/>
             </group>
             <group name="step2" states="step2">
