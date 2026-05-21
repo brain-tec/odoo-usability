@@ -29,6 +29,20 @@ class AccountGroupGenerate(models.TransientModel):
                 "designed to generate account groups from scratch.")
                 % (len(groups), company.display_name))
         accounts = aao.search([('company_id', '=', company.id)])
+
+        group_1_to_5 = ago.create({
+            'name': '%s de 1 à 5' % self.name_prefix,
+            'code_prefix_start': '1',
+            'code_prefix_end': '5',
+            'company_id': company.id,
+        })
+        group_6_to_7 = ago.create({
+            'name': '%s de 6 à 7' % self.name_prefix,
+            'code_prefix_start': '6',
+            'code_prefix_end': '7',
+            'company_id': company.id,
+        })
+
         struct = {'childs': {}}
         for account in accounts:
             if len(account.code) <= self.level:
@@ -36,6 +50,16 @@ class AccountGroupGenerate(models.TransientModel):
                     "The code of account '%s' is %d caracters. "
                     "It cannot be inferior to level (%d).")
                     % (account.display_name, len(account.code), self.level))
+
+            # Determine top-level parent based on first digit
+            first_digit = account.code[0]
+            if first_digit in '12345':
+                top_parent = group_1_to_5
+            elif first_digit in '67':
+                top_parent = group_6_to_7
+            else:
+                top_parent = False
+
             n = 1
             parent = struct
             gparent = False
@@ -45,7 +69,7 @@ class AccountGroupGenerate(models.TransientModel):
                     new_group = ago.create({
                         'name': '%s %s' % (self.name_prefix or '', group_code),
                         'code_prefix_start': group_code,
-                        'parent_id': gparent and gparent.id or False,
+                        'parent_id': gparent and gparent.id or top_parent.id,
                         'company_id': company.id,
                         })
                     parent['childs'][group_code] = {'obj': new_group, 'childs': {}}
