@@ -37,6 +37,7 @@
         'account_statement_import_ofx',  # OCA/bank-statement-import
         'account_statement_import_fr_cfonb',  # OCA/l10n-france
         # 'account_statement_import_api_qonto',  # akretion/bank-statement-import-api
+        # 'account_statement_import_api_bridge',  # akretion/bank-statement-import-api
         'account_reconcile_oca',  # OCA/account-reconcile
         'account_reconcile_oca_add_default_filters',  # OCA/account-reconcile
         'account_reconcile_oca_usability_akretion',  # akretion/odoo-usability
