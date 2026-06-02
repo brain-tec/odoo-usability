@@ -30,6 +30,7 @@
         'web_no_bubble',  # OCA/web
         'web_dialog_size',  # OCA/web
         'web_chatter_position',  # OCA/web
+        'web_refresher',  # OCA/web
          ### MISC
         'base_usability',  # akretion/odoo-usability
         'mail_usability',  # akretion/odoo-usability
