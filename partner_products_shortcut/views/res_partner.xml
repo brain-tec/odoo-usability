@@ -16,7 +16,7 @@
             <button class="oe_inline oe_stat_button" type="object"
                 name="show_supplied_products"
                 icon="fa-shopping-basket"
-                attrs="{'invisible': [('product_supplied_count', '=', 0)]}">
+                invisible="not product_supplied_count">
                 <field string="Products Supplied" name="product_supplied_count"
                     widget="statinfo"/>
             </button>

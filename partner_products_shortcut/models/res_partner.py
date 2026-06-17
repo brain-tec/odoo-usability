@@ -32,7 +32,7 @@ class ResPartner(models.Model):
             'name': _('Products'),
             'type': "ir.actions.act_window",
             "res_model": "product.template",
-            "view_mode": 'tree,kanban,form',
+            "view_mode": 'list,kanban,form',
             'domain': f"[('id', 'in', {ptemplates.ids})]",
             }
         return action
