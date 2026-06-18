@@ -96,8 +96,7 @@ class ProductPrintZplBarcode(models.TransientModel):
     company_id = fields.Many2one(  # default value set by default_get
         'res.company', required=True, ondelete='cascade')
     nomenclature_id = fields.Many2one(
-        'barcode.nomenclature', 'Barcode Nomenclature', required=True,
-        states={'step2': [('readonly', True)]})
+        'barcode.nomenclature', 'Barcode Nomenclature', required=True)
     label_size = fields.Selection([
         ('38x25', '38x25 mm'),
         ('30x15', '30x15 mm'),
@@ -107,8 +106,7 @@ class ProductPrintZplBarcode(models.TransientModel):
         ('thermal_transfer', 'Thermal Transfer (ink ribbon required)'),
         ], default='direct_thermal', required=True)
     pricelist_id = fields.Many2one(
-        'product.pricelist', string='Pricelist', required=True,
-        states={'step2': [('readonly', True)]}, check_company=True,
+        'product.pricelist', string='Pricelist', required=True, check_company=True,
         domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]"
         )
     state = fields.Selection([
@@ -119,8 +117,7 @@ class ProductPrintZplBarcode(models.TransientModel):
     zpl_filename = fields.Char('ZPL Filename')
     zpl_printer_ip = fields.Char(string='ZPL Printer IP Address')
     line_ids = fields.One2many(
-        'product.print.zpl.barcode.line', 'parent_id',
-        string='Lines', states={'step2': [('readonly', True)]})
+        'product.print.zpl.barcode.line', 'parent_id', string='Lines')
 
     def generate(self):
         """Called by button for the wizard, 1st step"""
