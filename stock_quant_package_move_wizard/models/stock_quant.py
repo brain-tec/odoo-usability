@@ -66,8 +66,11 @@ class StockQuant(models.Model):
         location_id = self.location_id.id
         location_dest_id = dest_location.id
         uom_id = self.product_id.uom_id.id
+        # company_id of a quant is null on non-internal locations
+        company_id = self.company_id.id or self.env.company.id
         vals = {
             "picking_id": picking_id,
+            "company_id": company_id,
             "name": "%s: Move to %s"
             % (self.product_id.display_name, dest_location.display_name),
             "product_id": product_id,
@@ -82,6 +85,7 @@ class StockQuant(models.Model):
                     0,
                     {
                         "picking_id": picking_id,
+                        "company_id": company_id,
                         "product_id": product_id,
                         "product_uom_id": uom_id,
                         "qty_done": qty,
@@ -100,6 +104,7 @@ class StockQuant(models.Model):
             "location_dest_id": dest_location.id,
             "location_id": picking_type.default_location_src_id.id,
             "origin": origin,
+            # company_id is a related of picking_type_id
         }
         return vals
 

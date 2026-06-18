@@ -43,7 +43,7 @@ class StockQuantMoveWizard(models.TransientModel):
         quants = self.env["stock.quant"].browse(quants_ids)
         lines = []
         for quant in quants.filtered(
-            lambda q: not q.package_id and q.company_id.id == company_id
+            lambda q: not q.package_id and (q.company_id.id == company_id or not q.company_id)
         ):
             lines.append((0, 0, {"quant_id": quant.id, "quantity": quant.quantity}))
         picking_type = self.env["stock.picking.type"].search(
