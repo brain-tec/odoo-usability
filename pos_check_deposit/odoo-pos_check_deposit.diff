@@ -1,8 +1,8 @@
 diff --git a/addons/point_of_sale/models/pos_session.py b/addons/point_of_sale/models/pos_session.py
-index 546dbece6c4..0add2935f52 100644
+index 136973236be..1def7f27da0 100644
 --- a/addons/point_of_sale/models/pos_session.py
 +++ b/addons/point_of_sale/models/pos_session.py
-@@ -1123,8 +1123,13 @@ class PosSession(models.Model):
+@@ -1201,15 +1201,20 @@ class PosSession(models.Model):
          if not payment_method.journal_id:
              return self.env['account.move.line']
          outstanding_account = payment_method.outstanding_account_id
@@ -15,22 +15,20 @@ index 546dbece6c4..0add2935f52 100644
 +        else:
 +            accounting_partner = False
 +            destination_account = self._get_receivable_account(payment_method)
- 
-         if float_compare(amounts['amount'], 0, precision_rounding=self.currency_id.rounding) < 0:
-             # revert the accounts because account.payment doesn't accept negative amount.
-@@ -1132,7 +1137,8 @@ class PosSession(models.Model):
+         payment_type = "inbound"
+         if self.currency_id.compare_amounts(amounts['amount'], 0) < 0:
+             payment_type = 'outbound'
  
          account_payment = self.env['account.payment'].create({
              'amount': abs(amounts['amount']),
--            'partner_id': payment.partner_id.id,
-+            # HACK for pos_check_deposit
+-            'partner_id': accounting_partner.id,
 +            'partner_id': accounting_partner and accounting_partner.id or False,
              'journal_id': payment_method.journal_id.id,
              'force_outstanding_account_id': outstanding_account.id,
              'destination_account_id': destination_account.id,
-@@ -1141,7 +1147,8 @@ class PosSession(models.Model):
-             'pos_session_id': self.id,
-         })
+@@ -1221,7 +1226,8 @@ class PosSession(models.Model):
+ 
+         self._ensure_payment_outstanding_account(account_payment, amounts['amount'])
          account_payment.action_post()
 -        return account_payment.move_id.line_ids.filtered(lambda line: line.account_id == accounting_partner.property_account_receivable_id)
 +        # HACK for pos_check_deposit
@@ -38,18 +36,18 @@ index 546dbece6c4..0add2935f52 100644
  
      def _create_cash_statement_lines_and_cash_move_lines(self, data):
          # Create the split and combine cash statement lines and account move lines.
-@@ -1292,8 +1299,8 @@ class PosSession(models.Model):
-                 lines.filtered(lambda line: not line.reconciled).reconcile()
+@@ -1371,8 +1377,8 @@ class PosSession(models.Model):
+                 lines.filtered(lambda line: not line.reconciled).with_context(no_cash_basis=True).reconcile()
  
          for payment, lines in payment_to_receivable_lines.items():
 -            if payment.partner_id.property_account_receivable_id.reconcile:
--                lines.filtered(lambda line: not line.reconciled).reconcile()
+-                lines.filtered(lambda line: not line.reconciled).with_context(no_cash_basis=True).reconcile()
 +            # HACK for pos_check_deposit
-+            lines.filtered(lambda line: line.account_id.reconcile and not line.reconciled).reconcile()
++            lines.filtered(lambda line: line.account_id.reconcile and not line.reconciled).with_context(no_cash_basis=True).reconcile()
  
          # Reconcile invoice payments' receivable lines. But we only do when the account is reconcilable.
          # Though `account_default_pos_receivable_account_id` should be of type receivable, there is currently
-@@ -1333,16 +1340,17 @@ class PosSession(models.Model):
+@@ -1412,16 +1418,17 @@ class PosSession(models.Model):
                  return self._credit_amounts(partial_args, amount, amount_converted)
  
      def _get_split_receivable_vals(self, payment, amount, amount_converted):
@@ -76,10 +74,10 @@ index 546dbece6c4..0add2935f52 100644
          }
          return self._debit_amounts(partial_vals, amount, amount_converted)
 diff --git a/addons/point_of_sale/static/src/app/screens/payment_screen/payment_screen.js b/addons/point_of_sale/static/src/app/screens/payment_screen/payment_screen.js
-index c94484b8a26..39d3b66cc63 100644
+index 5d56de71f0e..bc60635a2c3 100644
 --- a/addons/point_of_sale/static/src/app/screens/payment_screen/payment_screen.js
 +++ b/addons/point_of_sale/static/src/app/screens/payment_screen/payment_screen.js
-@@ -407,8 +407,9 @@ export class PaymentScreen extends Component {
+@@ -422,8 +422,9 @@ export class PaymentScreen extends Component {
          }
      }
      async _askForCustomerIfRequired() {
