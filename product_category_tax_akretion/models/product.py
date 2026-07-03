@@ -12,12 +12,15 @@ class ProductCategTaxMixin(models.AbstractModel):
 
     @api.onchange('categ_id')
     def onchange_categ_id(self):
+        # NO sudo(), only in current company, because otherwize you get an ir.rule error
+        # anyway, it is just for the user interface, because it will go later in create()
+        # or write()
         if self.categ_id:
             self.taxes_id, self.supplier_taxes_id = (
-                self.apply_tax_from_category(self.categ_id))
+                self._apply_tax_from_category(self.categ_id))
 
     @api.model
-    def apply_tax_from_category(self, categ):
+    def _apply_tax_from_category(self, categ):
         # I cannot use the commented line below:
         # self.taxes_id = self.categ_id.sale_tax_ids.ids
         #   because it ADDS the taxes (equivalent of (4, ID)) instead
@@ -28,20 +31,32 @@ class ProductCategTaxMixin(models.AbstractModel):
                 [Command.set(categ.purchase_tax_ids.ids)])
 
     @api.model
-    def write_or_create(self, vals):
-        if vals.get('categ_id'):
-            categ = self.env['product.category'].browse(vals['categ_id'])
-            vals['taxes_id'], vals['supplier_taxes_id'] =\
-                self.apply_tax_from_category(categ)
+    def _tax_update_vals(self, categ, vals):
+        # use sudo() to get taxes from ALL companies
+        vals['taxes_id'], vals['supplier_taxes_id'] = self._apply_tax_from_category(categ.sudo())
+        return list(self.env['res.company']._search([]))
 
     @api.model_create_multi
     def create(self, vals_list):
+        allowed_company_ids = self.env.company.ids
         for vals in vals_list:
-            self.write_or_create(vals)
-        return super().create(vals_list)
+            if vals.get('categ_id'):
+                categ = self.env['product.category'].browse(vals['categ_id'])
+                allowed_company_ids = self._tax_update_vals(categ, vals)
+        return super(ProductCategTaxMixin, self.with_context(allowed_company_ids=allowed_company_ids)).create(vals_list)
 
     def write(self, vals):
-        self.write_or_create(vals)
+        if vals.get('categ_id'):
+            categ = self.env['product.category'].browse(vals['categ_id'])
+            allowed_company_ids = self._tax_update_vals(categ, vals)
+            return super(ProductCategTaxMixin, self.with_context(allowed_company_ids=allowed_company_ids)).write(vals)
+        elif vals.get('taxes_id') or vals.get('supplier_taxes_id'):
+            for product in self:
+                categ = product.categ_id
+                pvals = dict(vals)
+                allowed_company_ids = self._tax_update_vals(categ, pvals)
+                super(ProductCategTaxMixin, product.with_context(allowed_company_ids=allowed_company_ids)).write(pvals)
+            return True
         return super().write(vals)
 
 
