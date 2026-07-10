@@ -58,7 +58,6 @@
         'account_invoice_overdue_reminder',  # OCA/credit-control
         ### FRENCH DECLARATIONS
         'l10n_fr_account_vat_return_teledec',  # OCA/l10n-france
-        'l10n_fr_account_vat_return_einvoice_generate',  # OCA/l10n-france
         # 'intrastat_product' depends on 'sale_stock' and 'purchase_stock', so I don't add
         # as a depend on this module
         # 'l10n_fr_intrastat_product',  # OCA/l10n-france
