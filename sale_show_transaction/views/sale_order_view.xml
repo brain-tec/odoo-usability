@@ -5,20 +5,21 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form" />
         <field name="arch" type="xml">
-            <xpath expr="//group[@name='note_group']/group/field[@name='note']" position="after">
-                <separator string="Transaction" colspan="4" attrs="{'invisible': [('transaction_ids', '=', [])]} "/>
-                <field name="transaction_ids" nolabel="1" colspan="4" attrs="{'invisible': [('transaction_ids', '=', [])]}">
-                    <tree
+            <xpath expr="//group[@name='note_group']" position="after">
+                <group string="Transaction" name="transactions" invisible="not transaction_ids" > 
+                <field name="transaction_ids" nolabel="1" colspan="4"  >
+                    <list
                         decoration-danger="state in ('error', 'cancel')"
                         decoration-success="state == 'done'"
                         >
                         <field name="reference"/>
                         <field name="create_date"/>
-                        <field name="acquirer_id"/>
+                        <field name="provider_id"/>
                         <field name="amount"/>
                         <field name="state"/>
-                    </tree>
+                    </list>
                 </field>
+            </group>
             </xpath>
         </field>
     </record>
@@ -28,7 +29,7 @@
         <field name="inherit_id" ref="sale.view_order_tree" />
         <field name="arch" type="xml">
             <field name="state" position="after">
-                <field name="main_acquirer_id" optional="hide" />
+                <field name="main_provider_id" optional="hide" />
             </field>
         </field>
     </record>
@@ -38,7 +39,7 @@
         <field name="inherit_id" ref="sale.view_quotation_tree" />
         <field name="arch" type="xml">
             <field name="currency_id" position="after">
-                <field name="main_acquirer_id" optional="hide" />
+                <field name="main_provider_id" optional="hide" />
             </field>
         </field>
     </record>
