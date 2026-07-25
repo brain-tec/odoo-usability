@@ -34,7 +34,14 @@ class ProductCategTaxMixin(models.AbstractModel):
     def _tax_update_vals(self, categ, vals):
         # use sudo() to get taxes from ALL companies
         vals['taxes_id'], vals['supplier_taxes_id'] = self._apply_tax_from_category(categ.sudo())
-        return list(self.env['res.company']._search([]))
+        allowed_company_ids = list(self.env['res.company']._search([]))
+        # Put self.env.company at the first position of allowed_company_ids
+        # because in the ORM code he takes self.env.company as allowed_company_ids[0]
+        cur_company_id = self.env.company.id
+        if cur_company_id in allowed_company_ids:
+            allowed_company_ids.remove(cur_company_id)
+            allowed_company_ids.insert(0, cur_company_id)
+        return allowed_company_ids
 
     @api.model_create_multi
     def create(self, vals_list):
