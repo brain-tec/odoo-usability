@@ -31,6 +31,7 @@
         'web_dialog_size',  # OCA/web
         'web_chatter_position',  # OCA/web
         'web_refresher',  # OCA/web
+        'web_tree_many2one_clickable',  # OCA/web
          ### MISC
         'base_usability_akretion',  # akretion/odoo-usability
         'mail_usability_akretion',  # akretion/odoo-usability
