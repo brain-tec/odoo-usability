@@ -26,7 +26,10 @@
         ### INVOICING
         'account_invoice_fiscal_position_update',  # OCA/account-invoicing
         'account_fiscal_position_vat_check',  # OCA/account-financial-tools
-        'account_invoice_facturx',  # OCA/edi
+        # 'l10n_fr_account_invoice_facturx',  # OCA/edi (replaced by l10n_fr_account_invoice_en16931)
+        # 'l10n_fr_einvoicing_import',  # akretion/fr-einvoicing
+        # 'l10n_fr_einvoicing_sale',  # akretion/fr-einvoicing
+        # 'l10n_fr_einvoicing_dashboard_banner',  # akretion/fr-einvoicing
         ### FINANCIAL REPORTS
         'account_financial_report',  # OCA/account-financial-reporting
         'account_balance_ebp_csv_export',  # OCA/l10n-france
@@ -53,7 +56,6 @@
         'account_invoice_overdue_reminder',  # OCA/credit-control
         ### FRENCH DECLARATIONS
         'l10n_fr_account_vat_return_teledec',  # OCA/l10n-france
-        'l10n_fr_account_vat_return_einvoice_generate',  # OCA/l10n-france
         # 'intrastat_product' depends on 'sale_stock' and 'purchase_stock', so it is
         # commented in this list of dependencies
         # 'l10n_fr_intrastat_product',  # OCA/l10n-france
