@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError
 
 
 class ResPartner(models.Model):
@@ -30,6 +31,26 @@ class ResPartner(models.Model):
                 title = partner_lg.title.shortcut or partner_lg.title.name
                 name_title = ' '.join([title, name_title])
             partner.name_title = name_title
+
+    @api.constrains('parent_id', 'is_company')
+    def _check_parent_child_partner(self):
+        for partner in self:
+            if partner.parent_id and partner.parent_id.parent_id:
+                raise ValidationError(_(
+                    "Partner '%(partner)s' has a parent partner '%(parent_partner)s' "
+                    "which itself has a parent partner '%(parent_parent_partner)s'. "
+                    "This is not allowed.",
+                    partner=partner.name,
+                    parent_partner=partner.parent_id.name,
+                    parent_parent_partner=partner.parent_id.parent_id.name))
+            if partner.parent_id and partner.is_company:
+                raise ValidationError(_(
+                    "Partner '%(partner)s' has a parent partner '%(parent_partner)s', "
+                    "so it must be configured as an Individual (configuration as "
+                    "Company is only for parent partners).",
+                    partner=partner.name,
+                    parent_partner=partner.parent_id.name,
+                    ))
 
     def _display_address(self, without_company=False):
         '''Remove empty lines'''
