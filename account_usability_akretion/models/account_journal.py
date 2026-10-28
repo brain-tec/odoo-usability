@@ -17,10 +17,6 @@ class AccountJournal(models.Model):
         "the start/end balance and you regularly check the accounting balance "
         "of the bank account vs the amount of your bank account."
         )
-    # Used to set default user_type_id on account fields via context
-#    account_type_current_assets_id = fields.Many2one(
-#        'account.account.type',
-#        default=lambda self: self.env.ref('account.data_account_type_current_assets').id)
 
     @api.depends(
         'name', 'currency_id', 'company_id', 'company_id.currency_id', 'code')
